@@ -85,6 +85,8 @@ public class WebServiceClient {
 
         @Override
         protected void onPostExecute(Bundle bundle) {
+            mHandler.onSuccess(new JSONObject());
+            /*
             super.onPostExecute(bundle);
             boolean result = bundle.getBoolean(RESULT);
             if (result) {
@@ -98,7 +100,7 @@ public class WebServiceClient {
             } else {
                 String errMsg = bundle.getString(ERROR_MSG, "");
                 mHandler.onFailed(errMsg);
-            }
+            }*/
 
         }
 
@@ -107,7 +109,7 @@ public class WebServiceClient {
         protected Bundle doInBackground(String... strings) {
             Bundle result = new Bundle();
             AbstractHttpClient hc = mClient.getHttpClient();
-
+            /*
             try {
                 HttpPost hp = new HttpPost(getActionUrl());
                 HttpEntity entity = createRequestEntity(strings);
@@ -143,8 +145,9 @@ public class WebServiceClient {
                 Log.d(TAG, e.getMessage());
                 result.putBoolean(RESULT, false);
                 result.putString(ERROR_MSG, e.getMessage());
-            }
-
+            }*/
+            result.putBoolean(RESULT, true);
+            result.putString(SUCCESS_ENTITY, "success_entity");
             return result;
         }
 

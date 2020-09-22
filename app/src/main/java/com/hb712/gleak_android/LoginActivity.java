@@ -147,7 +147,6 @@ public class LoginActivity extends AppCompatActivity {
                     MainApplication.getInstance().saveUsername(username);
                     MainApplication.getInstance().savePassword(password);
                 }
-
                 gotoMainActivity(username, password);
             }
 
