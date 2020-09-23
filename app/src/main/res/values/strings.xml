@@ -22,6 +22,11 @@
     <string name="password_hint">密码</string>
     <string name="save_username_pwd">自动登录</string>
     <string name="login_button_string">登录</string>
+    <!--mainActivity-->
+    <string name="main_view">监测</string>
+    <string name="main_setting">设置</string>
+    <string name="main_other">其他</string>
+    <string name="main_contact">联系</string>
     <!--others-->
     <string name="copy_right">copy_right</string>
 </resources>
