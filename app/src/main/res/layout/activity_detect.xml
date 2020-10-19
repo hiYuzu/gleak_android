@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".DetectActivity">
+
+    <SurfaceView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:onClick="connectClick"
+            android:id="@+id/detectConnectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/login_button_background"
+            android:minWidth="@dimen/dimen_50dp"
+            android:minHeight="@dimen/dimen_25dp"
+            android:text="@string/detect_connect"
+            android:textColor="@color/login_textColor" />
+
+        <Button
+            android:onClick="fireClick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:background="@color/login_button_background"
+            android:minWidth="@dimen/dimen_50dp"
+            android:minHeight="@dimen/dimen_25dp"
+            android:text="@string/detect_fire"
+            android:textColor="@color/login_textColor" />
+
+        <Button
+
+            android:onClick="fireClick2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:background="@color/login_button_background"
+            android:minWidth="@dimen/dimen_50dp"
+            android:minHeight="@dimen/dimen_25dp"
+            android:text="@string/detect_fire_2"
+            android:textColor="@color/login_textColor" />
+
+        <Button
+
+            android:onClick="ceasefireClick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:background="@color/login_button_background"
+            android:minWidth="@dimen/dimen_50dp"
+            android:minHeight="@dimen/dimen_25dp"
+            android:text="@string/detect_ceasefire"
+            android:textColor="@color/login_textColor" />
+
+        <Button
+            android:onClick="recordClick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:background="@color/login_button_background"
+            android:minWidth="@dimen/dimen_50dp"
+            android:minHeight="@dimen/dimen_25dp"
+            android:text="@string/detect_record"
+            android:textColor="@color/login_textColor" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_10dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/connDevice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/detect_disconnected" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/detectSeries"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="selectSeries"
+            android:text="@string/detect_series"
+            android:textColor="@color/launch_text_color" />
+
+        <TextView
+            android:id="@+id/detectFactor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dimen_25dp"
+            android:onClick="selectFactor"
+            android:text="@string/detect_factor"
+            android:textColor="@color/launch_text_color" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dimen_25dp"
+            android:text="@string/detect_value" />
+
+        <EditText
+            android:id="@+id/detectValue"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:inputType="number"
+            android:minWidth="@dimen/dimen_50dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dimen_10dp"
+            android:text="@string/detect_maxvalue" />
+
+        <EditText
+            android:id="@+id/detectMaxvalue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:minWidth="@dimen/dimen_50dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/deviceParam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/login_button_background"
+            android:minHeight="@dimen/dimen_25dp"
+            android:onClick="deviceParamClick"
+            android:text="@string/detect_device_param" />
+
+        <Button
+            android:id="@+id/currentTrend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dimen_50dp"
+            android:background="@color/login_button_background"
+            android:minHeight="@dimen/dimen_25dp"
+            android:onClick="currentTrendClick"
+            android:text="@string/detect_current_trend" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dimen_10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detect_param_power" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detect_param_vol" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detect_param_pump" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detect_param_discharge_press" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detect_param_outlet_hydrogen_press" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detect_param_system_current" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/dimen_100dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detect_param_hydrogen" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detect_param_hydrogen_press" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detect_param_cc_temp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detect_param_fire_temp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detect_param_micro_current" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

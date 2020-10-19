@@ -9,8 +9,11 @@ import org.apache.http.impl.client.AbstractHttpClient;
 
 import java.util.List;
 
+
 /**
- * Created by xujun on 2018/2/7.
+ * @author hiYuzu
+ * @version V1.0
+ * @date 2020/9/19 10:56
  */
 
 public class WebViewCookiesUtils {

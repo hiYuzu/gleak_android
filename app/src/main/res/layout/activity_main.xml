@@ -1,73 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="411dp"
-        android:layout_height="187dp"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:background="@color/launch_text_color"
         android:contentDescription="@string/app_name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.481"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@color/launch_text_color" />
+        android:maxHeight="250dp"
+        android:minHeight="125dp" />
 
-    <ImageButton
-        android:id="@+id/viewButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="97dp"
-        android:layout_marginBottom="37dp"
-        android:contentDescription="@string/main_view"
-        android:onClick="viewClick"
-        app:layout_constraintBottom_toTopOf="@+id/settingButton"
-        app:layout_constraintEnd_toStartOf="@+id/otherButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:srcCompat="@mipmap/ic_launcher_round" />
+        android:layout_marginTop="@dimen/fab_margin"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
 
-    <ImageButton
-        android:id="@+id/otherButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="37dp"
-        android:contentDescription="@string/main_other"
-        app:layout_constraintBottom_toTopOf="@+id/contactButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:srcCompat="@mipmap/ic_launcher_round" />
+        <ImageButton
+            android:id="@+id/detectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/main_detect"
+            android:minWidth="@dimen/min_wh"
+            android:minHeight="@dimen/min_wh"
+            android:onClick="detectClick"
+            android:src="@mipmap/ic_launcher" />
 
-    <ImageButton
-        android:id="@+id/settingButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="97dp"
-        android:layout_marginBottom="64dp"
-        android:contentDescription="@string/main_setting"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/contactButton"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@mipmap/ic_launcher_round" />
+        <ImageButton
+            android:id="@+id/calibrateButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/min_wh"
+            android:contentDescription="@string/main_calibrate"
+            android:minWidth="@dimen/min_wh"
+            android:minHeight="@dimen/min_wh"
+            android:onClick="calibrateClick"
+            android:src="@mipmap/ic_launcher" />
 
-    <ImageButton
-        android:id="@+id/contactButton"
-        android:layout_width="wrap_content"
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="64dp"
-        android:contentDescription="@string/main_contact"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@mipmap/ic_launcher_round" />
-</android.support.constraint.ConstraintLayout>
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_detect" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:text="@string/main_calibrate" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/historyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/main_history"
+            android:minWidth="@dimen/min_wh"
+            android:minHeight="@dimen/min_wh"
+            android:onClick="historyClick"
+            android:src="@mipmap/ic_launcher" />
+
+        <ImageButton
+            android:id="@+id/settingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/min_wh"
+            android:contentDescription="@string/main_settings"
+            android:minWidth="@dimen/min_wh"
+            android:minHeight="@dimen/min_wh"
+            android:onClick="settingsClick"
+            android:src="@mipmap/ic_launcher" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_history" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/text_margin"
+            android:text="@string/main_settings" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,25 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header
+        android:fragment="com.hb712.gleak_android.SettingsActivity$GeneralPreferenceFragment"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="@string/settings_general" />
+
+    <header
+        android:fragment="com.hb712.gleak_android.SettingsActivity$DevicePreferenceFragment"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/settings_device" />
+
+    <header
+        android:fragment="com.hb712.gleak_android.SettingsActivity$AboutPreferenceFragment"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="@string/settings_about" />
+
+    <header
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title="@string/settings_update" />
+
+    <header
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title="@string/settings_logout" />
+</preference-headers>

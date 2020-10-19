@@ -1,0 +1,8 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="general_remember"
+        android:title="@string/settings_general_remember" />
+
+</PreferenceScreen>

@@ -1,7 +1,10 @@
 package com.hb712.gleak_android.util;
 
+
 /**
- * Created by xujun on 2018/2/7.
+ * @author hiYuzu
+ * @version V1.0
+ * @date 2020/9/19 10:56
  */
 
 class JavaScriptEscapeUtils {

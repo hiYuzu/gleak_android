@@ -20,8 +20,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void viewClick(View view) {
-        Intent intent = new Intent(MainActivity.this, ViewActivity.class);
+    public void detectClick(View view) {
+        Intent intent = new Intent(MainActivity.this, DetectActivity.class);
+        startActivity(intent);
+    }
+
+    public void calibrateClick(View view) {
+        Intent intent = new Intent(MainActivity.this, CalibrateActivity.class);
+        startActivity(intent);
+    }
+
+    public void historyClick(View view) {
+        Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+        startActivity(intent);
+    }
+
+    public void settingsClick(View view) {
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(intent);
     }
 }
