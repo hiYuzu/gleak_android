@@ -26,7 +26,7 @@ public class BluetoothUtil {
     private String mDeviceAddress = null;
     private boolean isConnected = false;
     private boolean isConnecting = false;
-    private boolean isAndroid = BluetoothState.DEVICE_ANDROID;
+    private boolean isAndroid = GlobalParam.DEVICE_ANDROID;
 
     private static BluetoothUtil instance;
 
@@ -84,7 +84,7 @@ public class BluetoothUtil {
     //开启蓝牙一直监听是否连接的状态
     public void startService(boolean isAndroid) {
         if (mChatService != null) {
-            if (mChatService.getState() == BluetoothState.STATE_NONE) {
+            if (mChatService.getState() == GlobalParam.STATE_NONE) {
                 mChatService.start(isAndroid);
                 this.isAndroid = isAndroid;
             }
@@ -95,7 +95,7 @@ public class BluetoothUtil {
     private final Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case BluetoothState.MESSAGE_READ:
+                case GlobalParam.MESSAGE_READ:
                     String message = "";
                     byte[] readBuf = (byte[]) msg.obj;
                     if (readBuf != null && readBuf.length > 0) {
@@ -103,17 +103,17 @@ public class BluetoothUtil {
                             mDataReceivedListener.onDataReceived(readBuf, message);
                     }
                     break;
-                case BluetoothState.MESSAGE_DEVICE_NAME:
-                    mDeviceName = msg.getData().getString(BluetoothState.DEVICE_NAME);
-                    mDeviceAddress = msg.getData().getString(BluetoothState.DEVICE_ADDRESS);
+                case GlobalParam.MESSAGE_DEVICE_NAME:
+                    mDeviceName = msg.getData().getString(GlobalParam.DEVICE_NAME);
+                    mDeviceAddress = msg.getData().getString(GlobalParam.DEVICE_ADDRESS);
                     if (mBluetoothConnectionListener != null)
                         mBluetoothConnectionListener.onDeviceConnected(mDeviceName, mDeviceAddress);
                     isConnected = true;
                     break;
-                case BluetoothState.MESSAGE_STATE_CHANGE:
+                case GlobalParam.MESSAGE_STATE_CHANGE:
                     if (mBluetoothStateListener != null)
                         mBluetoothStateListener.onServiceStateChanged(msg.arg1);
-                    if (isConnected && msg.arg1 != BluetoothState.STATE_CONNECTED) {
+                    if (isConnected && msg.arg1 != GlobalParam.STATE_CONNECTED) {
                         if (mBluetoothConnectionListener != null) {
                             mBluetoothConnectionListener.onDeviceDisconnected();
                         }
@@ -121,10 +121,10 @@ public class BluetoothUtil {
                         mDeviceName = null;
                         mDeviceAddress = null;
                     }
-                    if (!isConnecting && msg.arg1 == BluetoothState.STATE_CONNECTING) {
+                    if (!isConnecting && msg.arg1 == GlobalParam.STATE_CONNECTING) {
                         isConnecting = true;
                     } else if (isConnecting) {
-                        if (msg.arg1 != BluetoothState.STATE_CONNECTED) {
+                        if (msg.arg1 != GlobalParam.STATE_CONNECTED) {
                             if (mBluetoothConnectionListener != null)
                                 mBluetoothConnectionListener.onDeviceConnectionFailed();
                         }
@@ -141,7 +141,7 @@ public class BluetoothUtil {
             LogUtil.debugOut(TAG, "无参数，连接失败");
             return;
         }
-        String address = bundle.getString(BluetoothState.DEVICE_ADDRESS);
+        String address = bundle.getString(GlobalParam.DEVICE_ADDRESS);
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         mChatService.connect(device);
     }
@@ -149,7 +149,7 @@ public class BluetoothUtil {
     public void disconnect() {
         if (mChatService != null) {
             mChatService.stop();
-            if (mChatService.getState() == BluetoothState.STATE_NONE) {
+            if (mChatService.getState() == GlobalParam.STATE_NONE) {
                 mChatService.start(BluetoothUtil.this.isAndroid);
             }
         }

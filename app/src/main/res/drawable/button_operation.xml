@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="@color/accent" />
+            <corners android:radius="@dimen/dimen_10dp" />
+            <padding android:left="@dimen/dimen_2dp" android:top="@dimen/dimen_2dp" android:right="@dimen/dimen_2dp" android:bottom="@dimen/dimen_2dp" />
+        </shape>
+    </item>
+    <item android:state_focused="true">
+        <shape>
+            <solid android:color="@color/accent" />
+            <corners android:radius="@dimen/dimen_10dp" />
+            <padding android:left="@dimen/dimen_2dp" android:top="@dimen/dimen_2dp" android:right="@dimen/dimen_2dp" android:bottom="@dimen/dimen_2dp" />
+        </shape>
+    </item>
+    <item android:state_enabled="false">
+        <shape>
+            <solid android:color="@color/color_button_disEnabled" />
+            <corners android:radius="@dimen/dimen_10dp" />
+            <padding android:left="@dimen/dimen_2dp" android:top="@dimen/dimen_2dp" android:right="@dimen/dimen_2dp" android:bottom="@dimen/dimen_2dp" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <solid android:color="@color/btn_operation" />
+            <corners android:radius="@dimen/dimen_10dp" />
+            <padding android:left="@dimen/dimen_2dp" android:top="@dimen/dimen_2dp" android:right="@dimen/dimen_2dp" android:bottom="@dimen/dimen_2dp" />
+        </shape>
+    </item>
+</selector>

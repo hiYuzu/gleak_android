@@ -1,5 +1,6 @@
 package com.hb712.gleak_android;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -20,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hb712.gleak_android.service.WebServiceClient;
+import com.hb712.gleak_android.util.GlobalParam;
+import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.WebViewCookiesUtils;
 
 import org.json.JSONException;
@@ -41,46 +44,43 @@ public class LoginActivity extends AppCompatActivity {
     private CheckBox mSaveUsernameCheckBox;
     private ImageView mLoadingImage;
 
+    @SuppressLint("BatteryLife")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
-                Intent intent = new Intent();
-                String packageName = getPackageName();
-                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                intent.setData(Uri.parse("package:" + packageName));
-                LoginActivity.this.startActivity(intent);
+        try {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (pm == null) {
+                    throw new Exception("PowerManager为NULL");
+                }
+                if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                    Intent intent = new Intent();
+                    String packageName = getPackageName();
+                    intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + packageName));
+                    LoginActivity.this.startActivity(intent);
+                }
             }
-        }
+        } catch (Exception e) {
+            LogUtil.errorOut(TAG, e, e.getMessage());
+        } finally {
+            mSaveUsernameCheckBox = findViewById(R.id.save_username_pwd);
+            mUsernameEdit = findViewById(R.id.username);
+            mPasswordEdit = findViewById(R.id.password);
+            mMessageText = findViewById(R.id.message);
+            mResultText = findViewById(R.id.result_message);
+            mLoginButton = findViewById(R.id.login_button);
+            mLoadingImage = findViewById(R.id.loading_image);
 
-        mSaveUsernameCheckBox = findViewById(R.id.save_username_passwd);
-        mUsernameEdit = findViewById(R.id.username);
-        mPasswordEdit = findViewById(R.id.password);
-        mMessageText = findViewById(R.id.message);
-        mResultText = findViewById(R.id.result_message);
-        mLoginButton = findViewById(R.id.login_button);
-        mLoadingImage = findViewById(R.id.loading_image);
+            mMessageText.setVisibility(View.GONE);
+            mResultText.setVisibility(View.GONE);
+            mLoadingImage.setVisibility(View.GONE);
 
-        mMessageText.setVisibility(View.GONE);
-        mResultText.setVisibility(View.GONE);
-        mLoadingImage.setVisibility(View.GONE);
+            MainApplication.getInstance().removeUserPwd();
 
-
-        MainApplication application = MainApplication.getInstance();
-        application.removePassword();
-
-        String username = application.getUsername();
-
-        mUsernameEdit.setText(username);
-
-        mLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+            mLoginButton.setOnClickListener(v -> {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromInputMethod(v.getWindowToken(), 0);
@@ -100,12 +100,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 startLoginAction(username, password);
-            }
-        });
-
+            });
+        }
     }
 
-    private void onLoginFailed(String message){
+    private void onLoginFailed(String message) {
         mLoginButton.setEnabled(true);
         mUsernameEdit.setEnabled(true);
         mPasswordEdit.setEnabled(true);
@@ -137,16 +136,11 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "Login onSuccess: " + obj.toString());
                 try {
                     String displayUser = obj.getString("DisplayUsername");
-                    WebViewCookiesUtils.saveCookie(MainApplication.baseUrl, "displayUser", displayUser);
+                    WebViewCookiesUtils.saveCookie(MainApplication.getInstance().baseUrl, "displayUser", displayUser);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                Boolean saveUsername = mSaveUsernameCheckBox.isChecked();
-                if(saveUsername) {
-                    MainApplication.getInstance().saveUsername(username);
-                    MainApplication.getInstance().savePassword(password);
-                }
+                MainApplication.getInstance().saveUserPwd(username, password, mSaveUsernameCheckBox.isChecked());
                 gotoMainActivity(username, password);
             }
 

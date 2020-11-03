@@ -36,7 +36,7 @@ import java.util.List;
 public class WebServiceClient {
 
     private static final String TAG = WebServiceClient.class.getSimpleName();
-    private static final String LOGIN_URL = MainApplication.baseUrl + "UserController/validateUser";
+    private static final String LOGIN_URL = MainApplication.getInstance().baseUrl + "UserController/validateUser";
     private AbstractHttpClient mHttpClient;
 
     private static final String RESULT = "result";
@@ -211,7 +211,7 @@ public class WebServiceClient {
         @Override
         protected void onPostedRequest(AbstractHttpClient httpClient, HttpRequest request) throws TaskException {
             super.onPostedRequest(httpClient, request);
-            com.hb712.gleak_android.util.WebViewCookiesUtils.syncCookieFromHttpClient(MainApplication.baseUrl, httpClient);
+            com.hb712.gleak_android.util.WebViewCookiesUtils.syncCookieFromHttpClient(MainApplication.getInstance().baseUrl, httpClient);
         }
 
         @Override
@@ -238,7 +238,7 @@ public class WebServiceClient {
     }
 
     private static class CheckUpdateTask extends BaseTask {
-        private static final String actionUrl = MainApplication.baseUrl + "/SystemController/querySystem";
+        private static final String actionUrl = MainApplication.getInstance().baseUrl + "/SystemController/querySystem";
 
         CheckUpdateTask(WebServiceClient serviceClient, TaskHandler handler) {
             super(serviceClient, handler);

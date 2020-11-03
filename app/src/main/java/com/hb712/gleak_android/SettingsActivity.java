@@ -1,6 +1,7 @@
 package com.hb712.gleak_android;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -9,12 +10,19 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
+import com.hb712.gleak_android.util.GlobalParam;
+import com.hb712.gleak_android.util.SPUtil;
 
 import java.util.List;
 
@@ -23,12 +31,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     /**
      * 监听Preference
      */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            preference.setSummary(value.toString());
-            return true;
-        }
+    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, value) -> {
+        preference.setSummary(value.toString());
+        return true;
     };
 
     private static boolean isXLargeTablet(Context context) {
@@ -70,16 +75,88 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 || DevicePreferenceFragment.class.getName().equals(fragmentName);
     }
 
+    @Override
+    public void onHeaderClick(Header header, int position) {
+        super.onHeaderClick(header, position);
+        if (header.id == R.id.checkUpdate) {
+            checkUpdate();
+        } else if (header.id == R.id.exitApp) {
+            backLogin();
+        }
+    }
+
+    private void checkUpdate() {
+        Toast.makeText(this, "检查更新中...", Toast.LENGTH_SHORT).show();
+        //TODO..
+    }
+
+    private void backLogin() {
+        new AlertDialog.Builder(this).setTitle("提示").setMessage("确定登出？").setNegativeButton("取消", (paramAnonymousDialogInterface, paramAnonymousInt) -> paramAnonymousDialogInterface.dismiss()).setPositiveButton("确认", (paramAnonymousDialogInterface, paramAnonymousInt) -> {
+            paramAnonymousDialogInterface.dismiss();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }).show();
+    }
+
     /**
      * 通用设置fragment UI
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
+
+        private final String SERVE_IP = "serve_ip";
+        private final String SERVE_PORT = "serve_port";
+
+        private SwitchPreference general_remember;
+        private EditTextPreference serveIp;
+        private EditTextPreference servePort;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
+
+            general_remember = (SwitchPreference) findPreference("general_remember");
+
+            general_remember.setChecked(GlobalParam.rememberPwd);
+            general_remember.setOnPreferenceChangeListener((preference, newValue) -> {
+                MainApplication context = MainApplication.getInstance();
+                if ((boolean) newValue) {
+                    context.saveUserPwd();
+                } else {
+                    context.removeUserPwd();
+                }
+                return true;
+            });
+
+            serveIp = (EditTextPreference) findPreference(SERVE_IP);
+            servePort = (EditTextPreference) findPreference(SERVE_PORT);
+            serveIp.setText(MainApplication.getInstance().appIP);
+            servePort.setText(MainApplication.getInstance().appPort);
+            serveIp.setOnPreferenceChangeListener((preference, newValue) -> {
+                String ip = (String) newValue;
+                if (isCorrectIp(ip)) {
+                    serveIp.setSummary(ip);
+                    SPUtil.put(MainApplication.getInstance(), SERVE_IP, ip);
+                    return true;
+                } else {
+                    Toast.makeText(MainApplication.getInstance(), "请输入正确的IP格式", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
+            servePort.setOnPreferenceChangeListener((preference, newValue) -> {
+                String port = (String) newValue;
+                if (isCorrectPort(port)) {
+                    servePort.setSummary(port);
+                    SPUtil.put(MainApplication.getInstance(), SERVE_PORT, port);
+                    return true;
+                } else {
+                    Toast.makeText(MainApplication.getInstance(), "请输入正确的Port格式", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
         }
 
         @Override
@@ -90,6 +167,43 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 return true;
             }
             return super.onOptionsItemSelected(item);
+        }
+
+        private boolean isCorrectIp(String ip) {
+            //0.0.0.0 -> 255.255.255.255
+            if (ip.length() < 7 || ip.length() > 15) {
+                return false;
+            }
+            String[] ipArray = ip.split("\\.");
+            if (ipArray.length != 4) {
+                return false;
+            }
+            for (String temp : ipArray) {
+                try {
+                    int num = Integer.parseInt(temp);
+                    if (num < 0 || num > 255) {
+                        return false;
+                    }
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private boolean isCorrectPort(String port) {
+            if (port.isEmpty()) {
+                return true;
+            }
+            try {
+                int portInt = Integer.parseInt(port);
+                if (portInt < 1 || portInt > 65535) {
+                    return false;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+            return true;
         }
     }
 

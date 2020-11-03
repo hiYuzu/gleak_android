@@ -4,5 +4,13 @@
         android:defaultValue="true"
         android:key="general_remember"
         android:title="@string/settings_general_remember" />
-
+    <EditTextPreference
+        android:key="serve_port"
+        android:singleLine="true"
+        android:title="服务器ip" />
+    <EditTextPreference
+        android:key="serve_port"
+        android:numeric="integer"
+        android:singleLine="true"
+        android:title="服务器port" />
 </PreferenceScreen>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/aboutText"
+            android:layout_width="wrap_content"
+            android:text="@string/max_value"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/historyMaxValue"
+            style="@style/aboutText"
+            android:layout_weight="1"
+            android:textSize="16sp" />
+
+        <TextView
+            style="@style/aboutText"
+            android:layout_width="wrap_content"
+            android:text="@string/min_value"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/historyMinValue"
+            style="@style/aboutText"
+            android:layout_weight="1"
+            android:textSize="16sp" />
+
+        <TextView
+            style="@style/aboutText"
+            android:layout_width="wrap_content"
+            android:text="@string/avg_value"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/historyAvgValue"
+            style="@style/aboutText"
+            android:layout_weight="1"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/dimen_5dp">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/text_style_16_default"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/dimen_2dp"
+                android:singleLine="false"
+                android:text="@string/number" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2">
+
+            <TextView
+                style="@style/text_style_16_default"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="2dp"
+                android:singleLine="false"
+                android:text="@string/sample_name" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2">
+
+            <TextView
+                style="@style/text_style_16_default"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="2dp"
+                android:singleLine="false"
+                android:text="@string/history_detect_value"
+                android:textAlignment="center" />
+        </RelativeLayout>
+
+        <TextView
+            style="@style/text_style_16_default"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_weight="2"
+            android:singleLine="false"
+            android:text="@string/detect_time" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/historyList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

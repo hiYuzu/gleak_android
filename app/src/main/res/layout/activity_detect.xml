@@ -10,7 +10,7 @@
         android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,61 +20,61 @@
         android:orientation="horizontal">
 
         <Button
-            android:onClick="connectClick"
             android:id="@+id/detectConnectButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/login_button_background"
             android:minWidth="@dimen/dimen_50dp"
             android:minHeight="@dimen/dimen_25dp"
+            android:onClick="connectClick"
             android:text="@string/detect_connect"
-            android:textColor="@color/login_textColor" />
+            android:textColor="@color/white" />
 
         <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:background="@color/login_button_background"
+            android:minWidth="@dimen/dimen_50dp"
+            android:minHeight="@dimen/dimen_25dp"
             android:onClick="fireClick"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fab_margin"
-            android:background="@color/login_button_background"
-            android:minWidth="@dimen/dimen_50dp"
-            android:minHeight="@dimen/dimen_25dp"
             android:text="@string/detect_fire"
-            android:textColor="@color/login_textColor" />
+            android:textColor="@color/white" />
 
         <Button
 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:background="@color/login_button_background"
+            android:minWidth="@dimen/dimen_50dp"
+            android:minHeight="@dimen/dimen_25dp"
             android:onClick="fireClick2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fab_margin"
-            android:background="@color/login_button_background"
-            android:minWidth="@dimen/dimen_50dp"
-            android:minHeight="@dimen/dimen_25dp"
             android:text="@string/detect_fire_2"
-            android:textColor="@color/login_textColor" />
+            android:textColor="@color/white" />
 
         <Button
 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:background="@color/login_button_background"
+            android:minWidth="@dimen/dimen_50dp"
+            android:minHeight="@dimen/dimen_25dp"
             android:onClick="ceasefireClick"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fab_margin"
-            android:background="@color/login_button_background"
-            android:minWidth="@dimen/dimen_50dp"
-            android:minHeight="@dimen/dimen_25dp"
             android:text="@string/detect_ceasefire"
-            android:textColor="@color/login_textColor" />
+            android:textColor="@color/white" />
 
         <Button
-            android:onClick="recordClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fab_margin"
             android:background="@color/login_button_background"
             android:minWidth="@dimen/dimen_50dp"
             android:minHeight="@dimen/dimen_25dp"
+            android:onClick="recordClick"
             android:text="@string/detect_record"
-            android:textColor="@color/login_textColor" />
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <LinearLayout
@@ -89,6 +89,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/detect_disconnected" />
+
+        <TextView
+            android:id="@+id/detectUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dimen_50dp"
+            android:text="@string/detect_value_unit_ppm" />
     </LinearLayout>
 
     <LinearLayout
@@ -131,7 +138,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimen_10dp"
-            android:text="@string/detect_maxvalue" />
+            android:text="@string/max_value" />
 
         <EditText
             android:id="@+id/detectMaxvalue"
@@ -164,81 +171,240 @@
             android:background="@color/login_button_background"
             android:minHeight="@dimen/dimen_25dp"
             android:onClick="currentTrendClick"
-            android:text="@string/detect_current_trend" />
+            android:text="@string/detect_current_trend"
+            android:textColor="@color/white" />
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/detectFrame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
+
+        <ScrollView
+            android:id="@+id/detectStatus"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/dimen_10dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/detect_param_power" />
+
+                        <TextView
+                            android:id="@+id/detectParamPower"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/detect_param_vol" />
+
+                        <TextView
+                            android:id="@+id/detectParamVol"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/detect_param_pump" />
+
+                        <TextView
+                            android:id="@+id/detectParamPump"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/detect_param_discharge_press" />
+
+                        <TextView
+                            android:id="@+id/detectParamDischargePress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/detect_param_outlet_hydrogen_press" />
+
+                        <TextView
+                            android:id="@+id/detectParamOutletHydrogenPress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/detect_param_system_current" />
+
+                        <TextView
+                            android:id="@+id/detectParamSystemCurrent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/dimen_100dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/detect_param_hydrogen" />
+
+                        <TextView
+                            android:id="@+id/detectParamHydrogen"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/detect_param_hydrogen_press" />
+
+                        <TextView
+                            android:id="@+id/detectParamHydrogenPress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/detect_param_cc_temp" />
+
+                        <TextView
+                            android:id="@+id/detectParamCcTemp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/detect_param_fire_temp" />
+
+                        <TextView
+                            android:id="@+id/detectParamFireTemp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/detect_param_micro_current" />
+
+                        <TextView
+                            android:id="@+id/detectParamMicroCurrent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/dimen_10dp"
-            android:orientation="vertical">
+            android:id="@+id/detectCurve"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detect_param_power" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detect_param_vol" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detect_param_pump" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detect_param_discharge_press" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detect_param_outlet_hydrogen_press" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detect_param_system_current" />
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/detectCurveChart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/dimen_10dp"
+                android:layout_marginEnd="@dimen/dimen_10dp"
+                android:layout_marginBottom="@dimen/dimen_10dp" />
         </LinearLayout>
+    </FrameLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/dimen_100dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detect_param_hydrogen" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detect_param_hydrogen_press" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detect_param_cc_temp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detect_param_fire_temp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detect_param_micro_current" />
-        </LinearLayout>
-    </LinearLayout>
 </LinearLayout>

@@ -1,9 +1,11 @@
 package com.hb712.gleak_android;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.os.Process;
 
 /**
  * @author hiYuzu
@@ -11,7 +13,7 @@ import android.view.View;
  * @date 2020/9/22 10:20
  */
 public class MainActivity extends AppCompatActivity {
-    public static final String EXTRA_USERNAME = "staff_id";
+    public static final String EXTRA_USERNAME = "username";
     public static final String EXTRA_PASSWORD = "password";
 
     @Override
@@ -38,5 +40,12 @@ public class MainActivity extends AppCompatActivity {
     public void settingsClick(View view) {
         Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(intent);
+    }
+
+    public void onBackPressed() {
+        new AlertDialog.Builder(this).setTitle("提示").setMessage("确定退出？").setNegativeButton("取消", (paramAnonymousDialogInterface, paramAnonymousInt) -> paramAnonymousDialogInterface.dismiss()).setPositiveButton("确认", (paramAnonymousDialogInterface, paramAnonymousInt) -> {
+            paramAnonymousDialogInterface.dismiss();
+            Process.killProcess(Process.myPid());
+        }).show();
     }
 }

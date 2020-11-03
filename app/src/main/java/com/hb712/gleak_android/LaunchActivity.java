@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.hb712.gleak_android.service.WebServiceClient;
+import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.WebViewCookiesUtils;
 
 import org.json.JSONException;
@@ -23,20 +24,17 @@ public class LaunchActivity extends Activity {
     private TextView mMessage;
 
     private Handler mLoginHandle = new Handler();
-    private Runnable mLoginAction = new Runnable() {
-        @Override
-        public void run() {
-            String username = MainApplication.getInstance().getUsername();
-            String password = MainApplication.getInstance().getPassword();
+    private Runnable mLoginAction = () -> {
 
-            if (username.isEmpty() || password.isEmpty()) {
-                gotoLoginActivity();
-                return;
-            }
+        String username = MainApplication.getInstance().getLocUsername();
+        String password = MainApplication.getInstance().getLocPassword();
 
-            login(username, password);
-
+        if (username.isEmpty() || password.isEmpty()) {
+            gotoLoginActivity();
+            return;
         }
+        GlobalParam.rememberPwd = true;
+        login(username, password);
 
     };
 
@@ -91,7 +89,7 @@ public class LaunchActivity extends Activity {
                 Log.d(TAG, "Login onSuccess: " + obj.toString());
                 try {
                     String displayUser = obj.getString("DisplayUsername");
-                    WebViewCookiesUtils.saveCookie(MainApplication.baseUrl, "displayUser", displayUser);
+                    WebViewCookiesUtils.saveCookie(MainApplication.getInstance().baseUrl, "displayUser", displayUser);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

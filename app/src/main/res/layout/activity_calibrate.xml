@@ -1,9 +1,236 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CalibrateActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/dimen_10dp"
+        android:paddingTop="@dimen/dimen_25dp"
+        android:paddingEnd="@dimen/dimen_10dp"
+        android:paddingBottom="@dimen/dimen_25dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/common_add_label"
+                android:text="@string/cali_series" />
+
+            <Spinner
+                android:id="@+id/caliSeriesSp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="72" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/common_add_label"
+                android:text="@string/cali_current_signal" />
+
+            <TextView
+                android:id="@+id/caliCurrentSignal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="72" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/common_add_label"
+                android:text="@string/cali_current_ppm" />
+
+            <TextView
+                android:id="@+id/caliCurrentPpm"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="72" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/dimen_10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/common_add_label"
+                        android:layout_width="@dimen/dimen_35dp"
+                        android:layout_marginTop="0dp"
+                        android:text="@string/cali_gas_1" />
+
+                    <EditText
+                        android:id="@+id/caliGas1"
+                        style="@style/common_add_content"
+                        android:layout_marginTop="0dp"
+                        android:inputType="number"
+                        tools:ignore="Autofill,LabelFor" />
+
+                    <Button
+                        android:id="@+id/caliBtn1"
+                        style="@style/toolButtonStyle"
+                        android:text="@string/cali_cali_1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/common_add_label"
+                        android:layout_width="@dimen/dimen_35dp"
+                        android:layout_marginTop="0dp"
+                        android:text="@string/cali_gas_2" />
+
+                    <EditText
+                        android:id="@+id/caliGas2"
+                        style="@style/common_add_content"
+                        android:layout_marginTop="0dp"
+                        android:inputType="number"
+                        tools:ignore="Autofill,LabelFor" />
+
+                    <Button
+                        android:id="@+id/caliBtn2"
+                        style="@style/toolButtonStyle"
+                        android:text="@string/cali_cali_2" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/common_add_label"
+                        android:layout_width="@dimen/dimen_35dp"
+                        android:layout_marginTop="0dp"
+                        android:text="@string/cali_gas_3" />
+
+                    <EditText
+                        android:id="@+id/caliGas3"
+                        style="@style/common_add_content"
+                        android:layout_marginTop="0dp"
+                        android:inputType="number"
+                        tools:ignore="Autofill,LabelFor" />
+
+                    <Button
+                        android:id="@+id/caliBtn3"
+                        style="@style/toolButtonStyle"
+                        android:text="@string/cali_cali_3" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/common_add_label"
+                        android:layout_width="@dimen/dimen_35dp"
+                        android:layout_marginTop="0dp"
+                        android:text="@string/cali_gas_4" />
+
+                    <EditText
+                        android:id="@+id/caliGas4"
+                        style="@style/common_add_content"
+                        android:layout_marginTop="0dp"
+                        android:inputType="number"
+                        tools:ignore="Autofill,LabelFor" />
+
+                    <Button
+                        android:id="@+id/caliBtn4"
+                        style="@style/toolButtonStyle"
+                        android:text="@string/cali_cali_4" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/common_add_label"
+                        android:layout_width="@dimen/dimen_35dp"
+                        android:layout_marginTop="0dp"
+                        android:text="@string/cali_gas_5" />
+
+                    <EditText
+                        android:id="@+id/caliGas5"
+                        style="@style/common_add_content"
+                        android:layout_marginTop="0dp"
+                        android:inputType="number"
+                        tools:ignore="Autofill,LabelFor" />
+
+                    <Button
+                        android:id="@+id/caliBtn5"
+                        style="@style/toolButtonStyle"
+                        android:text="@string/cali_cali_5" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/common_add_label"
+                        android:layout_width="@dimen/dimen_35dp"
+                        android:layout_marginTop="0dp"
+                        android:text="@string/cali_gas_6" />
+
+                    <EditText
+                        android:id="@+id/caliGas6"
+                        style="@style/common_add_content"
+                        android:layout_marginTop="0dp"
+                        android:inputType="number"
+                        tools:ignore="Autofill,LabelFor" />
+
+                    <Button
+                        android:id="@+id/caliBtn6"
+                        style="@style/toolButtonStyle"
+                        android:text="@string/cali_cali_6" />
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="@dimen/dimen_5dp">
+
+                    <Button
+                        android:id="@+id/caliToDetect"
+                        style="@style/toolButtonStyle"
+                        android:layout_centerInParent="true"
+                        android:layout_marginTop="@dimen/dimen_10dp"
+                        android:text="@string/cali_to_detect" />
+                </RelativeLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

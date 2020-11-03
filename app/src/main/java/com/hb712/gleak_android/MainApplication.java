@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.hb712.gleak_android.service.WebServiceClient;
+import com.hb712.gleak_android.util.GlobalParam;
+import com.hb712.gleak_android.util.LogUtil;
+import com.hb712.gleak_android.util.SPUtil;
 
 
 /**
@@ -13,62 +16,71 @@ import com.hb712.gleak_android.service.WebServiceClient;
  * @date 2020/9/22 9:57
  */
 public class MainApplication extends Application {
-    private static final String TAG = MainApplication.class.getSimpleName();
-    public static final String appIP = "127.0.0.1";
-    public static final String appPort = "";
-    public static final String appAddress = appIP + (appPort.isEmpty()? "" : ":" + appPort);
-    public static final String baseUrl = "http://" + appAddress;
 
+    private final String TAG = MainApplication.class.getSimpleName();
+    public String appIP = "127.0.0.1";
+    public String appPort = "";
+    public String baseUrl = "http://" + appIP + (appPort.isEmpty() ? "" : ":" + appPort);
+    public final String SETTINGS_USERNAME = "username";
+    public final String SETTINGS_PASSWORD = "password";
 
-    private static final String SETTINGS_USERNAME = "staff_id";
-    private static final String SETTINGS_PASSWORD = "password";
+    private String username;
+    private String password;
+
     private WebServiceClient mWebServiceClient;
 
-    public static MainApplication getInstance(){
+    public static MainApplication getInstance() {
         return singleton;
     }
 
     private static MainApplication singleton;
 
-    SharedPreferences mSettings;
-
     @Override
     public void onCreate() {
         super.onCreate();
         singleton = this;
-        mSettings = this.getSharedPreferences(MainApplication.appAddress, 0);
         mWebServiceClient = new WebServiceClient();
     }
 
-    public void saveUsername(String username) {
-        Log.d(TAG, "saveUsername: " + username);
-        SharedPreferences.Editor editor = mSettings.edit();
-        editor.putString(MainApplication.SETTINGS_USERNAME, username);
-        editor.apply();
+    public void saveUserPwd(String username, String password, boolean isSave) {
+        this.username = username;
+        this.password = password;
+        if (isSave) {
+            GlobalParam.rememberPwd = true;
+            SPUtil.put(this, SETTINGS_USERNAME, username);
+            SPUtil.put(this, SETTINGS_PASSWORD, password);
+        }
     }
 
-    public void savePassword(String password){
-        Log.d(TAG, "savePassword: " + password);
-        SharedPreferences.Editor editor = mSettings.edit();
-        editor.putString(MainApplication.SETTINGS_PASSWORD, password);
-        editor.apply();
+    public void saveUserPwd() {
+        GlobalParam.rememberPwd = true;
+        SPUtil.put(this, SETTINGS_USERNAME, username);
+        SPUtil.put(this, SETTINGS_PASSWORD, password);
     }
 
-    public void removePassword() {
-        SharedPreferences.Editor editor = mSettings.edit();
-        editor.remove(MainApplication.SETTINGS_PASSWORD);
-        editor.apply();
+    public void removeUserPwd() {
+        GlobalParam.rememberPwd = false;
+        SPUtil.remove(this, SETTINGS_USERNAME);
+        SPUtil.remove(this, SETTINGS_PASSWORD);
     }
 
-    public String getUsername() {
-        return mSettings.getString(SETTINGS_USERNAME, "");
+    public String getLocUsername() {
+        return SPUtil.get(this, SETTINGS_USERNAME, "").toString();
     }
 
-    public String getPassword() {
-        return mSettings.getString(SETTINGS_PASSWORD, "");
+    public String getLocPassword() {
+        return SPUtil.get(this, SETTINGS_PASSWORD, "").toString();
     }
 
     public WebServiceClient getWebServiceClient() {
         return mWebServiceClient;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

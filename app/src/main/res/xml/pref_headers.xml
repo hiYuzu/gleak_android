@@ -16,10 +16,12 @@
         android:title="@string/settings_about" />
 
     <header
+        android:id="@+id/checkUpdate"
         android:icon="@drawable/ic_sync_black_24dp"
         android:title="@string/settings_update" />
 
     <header
+        android:id="@+id/exitApp"
         android:icon="@drawable/ic_sync_black_24dp"
         android:title="@string/settings_logout" />
 </preference-headers>

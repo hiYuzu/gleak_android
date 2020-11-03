@@ -16,7 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hb712.gleak_android.util.BluetoothState;
+import com.hb712.gleak_android.util.GlobalParam;
 
 import java.util.Set;
 
@@ -36,8 +36,8 @@ public class DeviceActivity extends AppCompatActivity {
             } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    if (BluetoothState.NONE_DEVICE.equals(pairedDevicesAdapter.getItem(0))) {
-                        pairedDevicesAdapter.remove(BluetoothState.NONE_DEVICE);
+                    if (GlobalParam.NONE_DEVICE.equals(pairedDevicesAdapter.getItem(0))) {
+                        pairedDevicesAdapter.remove(GlobalParam.NONE_DEVICE);
                     }
                     pairedDevicesAdapter.add(device.getName() + "\n" + device.getAddress());
                 }
@@ -47,11 +47,11 @@ public class DeviceActivity extends AppCompatActivity {
         }
     };
     private AdapterView.OnItemClickListener mDeviceClickListener = (parent, view, position, id) -> {
-        if (!((TextView) view).getText().toString().equals(BluetoothState.NONE_DEVICE)) {
+        if (!((TextView) view).getText().toString().equals(GlobalParam.NONE_DEVICE)) {
             String info = ((TextView) view).getText().toString();
             String address = info.substring(info.length() - 17);
             Intent intent = new Intent();
-            intent.putExtra(BluetoothState.DEVICE_ADDRESS, address);
+            intent.putExtra(GlobalParam.DEVICE_ADDRESS, address);
             setResult(Activity.RESULT_OK, intent);
             finish();
         }
@@ -81,7 +81,7 @@ public class DeviceActivity extends AppCompatActivity {
                 pairedDevicesAdapter.add(device.getName() + "\n" + device.getAddress());
             }
         } else {
-            pairedDevicesAdapter.add(BluetoothState.NONE_DEVICE);
+            pairedDevicesAdapter.add(GlobalParam.NONE_DEVICE);
         }
     }
 
@@ -97,7 +97,7 @@ public class DeviceActivity extends AppCompatActivity {
                 pairedDevicesAdapter.add(device.getName() + "\n" + device.getAddress());
             }
         } else {
-            pairedDevicesAdapter.add(BluetoothState.NONE_DEVICE);
+            pairedDevicesAdapter.add(GlobalParam.NONE_DEVICE);
         }
 
         if (bluetoothAdapter.isDiscovering()) {

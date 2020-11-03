@@ -17,6 +17,48 @@
     </style>
 
     <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/black_overlay</item>
+        <item name="android:background">@color/black</item>
+    </style>
+
+    <style name="aboutText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_width">@dimen/dimen_120dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="text_style_16_default">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="common_add_label">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_weight">28</item>
+    </style>
+
+    <style name="toolButtonStyle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/button_operation</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:focusable">true</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/dimen_35dp</item>
+    </style>
+
+    <style name="common_add_content">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:paddingLeft">@dimen/dimen_10dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/dimen_2dp</item>
+        <item name="android:layout_marginTop">@dimen/dimen_2dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_weight">72</item>
     </style>
 </resources>

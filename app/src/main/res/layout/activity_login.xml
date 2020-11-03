@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/username_hint"
             android:textColorHint="@color/login_textHintColor"
-            android:textColor="@color/login_textColor"
+            android:textColor="@color/white"
             android:inputType="text"
             style="@style/AppTheme"
             tools:ignore="LabelFor" />
@@ -32,13 +32,13 @@
             android:hint="@string/password_hint"
             android:inputType="textPassword"
             android:textColorHint="@color/login_textHintColor"
-            android:textColor="@color/login_textColor"
+            android:textColor="@color/white"
             style="@style/AppTheme"
             tools:ignore="LabelFor" />
         <CheckBox
-            android:id="@+id/save_username_passwd"
+            android:id="@+id/save_username_pwd"
             android:text="@string/save_username_pwd"
-            android:textColor="@color/login_textColor"
+            android:textColor="@color/white"
             android:layout_marginTop="@dimen/fab_margin"
             android:layout_marginBottom="@dimen/fab_margin"
             android:layout_width="match_parent"
@@ -49,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/login_button_background"
-            android:textColor="@color/login_textColor"
+            android:textColor="@color/white"
             style="@style/AppTheme"
             android:text="@string/login_button_string" />
 
@@ -63,7 +63,7 @@
         <TextView
             android:id="@+id/result_message"
             android:layout_marginTop="@dimen/fab_margin"
-            android:textColor="@color/login_textColor"
+            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

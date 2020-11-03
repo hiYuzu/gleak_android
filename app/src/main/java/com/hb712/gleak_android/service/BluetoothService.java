@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-import com.hb712.gleak_android.util.BluetoothState;
+import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.LogUtil;
 
 import java.io.ByteArrayInputStream;
@@ -38,11 +38,11 @@ public class BluetoothService {
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
-    private boolean isAndroid = BluetoothState.DEVICE_ANDROID;
+    private boolean isAndroid = GlobalParam.DEVICE_ANDROID;
 
     public BluetoothService(Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
-        mState = BluetoothState.STATE_NONE;
+        mState = GlobalParam.STATE_NONE;
         mHandler = handler;
     }
 
@@ -50,7 +50,7 @@ public class BluetoothService {
     private synchronized void setState(int state) {
         LogUtil.debugOut(TAG, "设置状态 " + mState + " -> " + state);
         mState = state;
-        mHandler.obtainMessage(BluetoothState.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
+        mHandler.obtainMessage(GlobalParam.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
     }
 
     public synchronized int getState() {
@@ -67,7 +67,7 @@ public class BluetoothService {
             mConnectedThread.cancel();
             mConnectedThread = null;
         }
-        setState(BluetoothState.STATE_LISTEN);
+        setState(GlobalParam.STATE_LISTEN);
 
         if (mSecureAcceptThread == null) {
             mSecureAcceptThread = new AcceptThread(isAndroid);
@@ -78,7 +78,7 @@ public class BluetoothService {
 
     public synchronized void connect(BluetoothDevice device) {
         // 关掉任何正在连接的线程
-        if (mState == BluetoothState.STATE_CONNECTING) {
+        if (mState == GlobalParam.STATE_CONNECTING) {
             if (mConnectThread != null) {
                 mConnectThread.cancel();
                 mConnectThread = null;
@@ -94,7 +94,7 @@ public class BluetoothService {
         // 启动线程连接给定的设备
         mConnectThread = new ConnectThread(device);
         mConnectThread.start();
-        setState(BluetoothState.STATE_CONNECTING);
+        setState(GlobalParam.STATE_CONNECTING);
     }
 
     private synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
@@ -115,13 +115,13 @@ public class BluetoothService {
         mConnectedThread.start();
 
         //已连接
-        Message msg = mHandler.obtainMessage(BluetoothState.MESSAGE_DEVICE_NAME);
+        Message msg = mHandler.obtainMessage(GlobalParam.MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
-        bundle.putString(BluetoothState.DEVICE_NAME, device.getName());
-        bundle.putString(BluetoothState.DEVICE_ADDRESS, device.getAddress());
+        bundle.putString(GlobalParam.DEVICE_NAME, device.getName());
+        bundle.putString(GlobalParam.DEVICE_ADDRESS, device.getAddress());
         msg.setData(bundle);
         mHandler.sendMessage(msg);
-        setState(BluetoothState.STATE_CONNECTED);
+        setState(GlobalParam.STATE_CONNECTED);
     }
 
     public synchronized void stop() {
@@ -140,13 +140,13 @@ public class BluetoothService {
             mSecureAcceptThread.kill();
             mSecureAcceptThread = null;
         }
-        setState(BluetoothState.STATE_NONE);
+        setState(GlobalParam.STATE_NONE);
     }
 
     public void write(byte[] out) {
         ConnectedThread r;
         synchronized (this) {
-            if (mState != BluetoothState.STATE_CONNECTED) {
+            if (mState != GlobalParam.STATE_CONNECTED) {
                 return;
             }
             r = mConnectedThread;
@@ -181,7 +181,7 @@ public class BluetoothService {
             setName("AcceptThread");
             BluetoothSocket socket;
             //死循环监听蓝牙连接状态，首次今进入一定满足条件，蓝牙连上后，循环停止
-            while (mState != BluetoothState.STATE_CONNECTED && isRunning) {
+            while (mState != GlobalParam.STATE_CONNECTED && isRunning) {
                 try {
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
@@ -191,12 +191,12 @@ public class BluetoothService {
                 if (socket != null) {
                     synchronized (BluetoothService.this) {
                         switch (mState) {
-                            case BluetoothState.STATE_LISTEN:
-                            case BluetoothState.STATE_CONNECTING:
+                            case GlobalParam.STATE_LISTEN:
+                            case GlobalParam.STATE_CONNECTING:
                                 connected(socket, socket.getRemoteDevice());
                                 break;
-                            case BluetoothState.STATE_NONE:
-                            case BluetoothState.STATE_CONNECTED:
+                            case GlobalParam.STATE_NONE:
+                            case GlobalParam.STATE_CONNECTED:
                                 try {
                                     socket.close();
                                 } catch (IOException e) {
@@ -314,7 +314,7 @@ public class BluetoothService {
                         buffer[i] = ((Integer) mmInStream.read()).byteValue();
                     }
                     Message msg = Message.obtain();
-                    msg.what = BluetoothState.MESSAGE_READ;
+                    msg.what = GlobalParam.MESSAGE_READ;
                     msg.obj = buffer;
                     mHandler.sendMessage(msg);
                 } catch (IOException e) {
