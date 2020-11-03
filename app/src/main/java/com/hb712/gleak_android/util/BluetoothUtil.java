@@ -21,8 +21,6 @@ public class BluetoothUtil {
     private BluetoothConnectionListener mBluetoothConnectionListener = null;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothService mBluetoothService = null;
-    private String mDeviceName = null;
-    private String mDeviceAddress = null;
     private boolean isConnected = false;
     private boolean isConnecting = false;
 
@@ -88,8 +86,8 @@ public class BluetoothUtil {
                     }
                     break;
                 case GlobalParam.MESSAGE_DEVICE_NAME:
-                    mDeviceName = msg.getData().getString(GlobalParam.DEVICE_NAME);
-                    mDeviceAddress = msg.getData().getString(GlobalParam.DEVICE_ADDRESS);
+                    String mDeviceName = msg.getData().getString(GlobalParam.DEVICE_NAME);
+                    String mDeviceAddress = msg.getData().getString(GlobalParam.DEVICE_ADDRESS);
                     if (mBluetoothConnectionListener != null)
                         mBluetoothConnectionListener.onDeviceConnected(mDeviceName, mDeviceAddress);
                     isConnected = true;
@@ -100,8 +98,6 @@ public class BluetoothUtil {
                             mBluetoothConnectionListener.onDeviceDisconnected();
                         }
                         isConnected = false;
-                        mDeviceName = null;
-                        mDeviceAddress = null;
                     }
                     if (!isConnecting && msg.arg1 == GlobalParam.STATE_CONNECTING) {
                         isConnecting = true;
@@ -140,11 +136,5 @@ public class BluetoothUtil {
 
     public void setBluetoothConnectionListener(BluetoothConnectionListener listener) {
         mBluetoothConnectionListener = listener;
-    }
-
-    public void send(byte[] data) {
-        int length = data.length;
-        byte[] sendMsg = new byte[length];
-        mBluetoothService.write(sendMsg);
     }
 }

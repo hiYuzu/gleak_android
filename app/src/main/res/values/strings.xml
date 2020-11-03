@@ -7,7 +7,7 @@
     <string name="title_activity_history">历史记录</string>
     <string name="title_activity_settings">设置</string>
     <!--launchActivity-->
-    <string name="launch_content">津普利</string>
+    <string name="launch_content">Enpromi Explorer</string>
     <string name="copy_right">Copyright © Enpromi. All Right Reserved.</string>
     <!--loginActivity-->
     <string name="username_hint">用户名</string>

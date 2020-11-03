@@ -188,12 +188,6 @@ public class BluetoothService {
         }
     }
 
-    private static int ByteArrayToInt(byte b[]) throws IOException {
-        ByteArrayInputStream buf = new ByteArrayInputStream(b);
-        DataInputStream dis = new DataInputStream(buf);
-        return dis.readInt();
-    }
-
     //已连接
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
@@ -219,11 +213,8 @@ public class BluetoothService {
             byte[] buffer;
             while (true) {
                 try {
-                    //数据长度信息
-                    byte[] bufLength = new byte[512];
-                    int length = ByteArrayToInt(bufLength);
-                    buffer = new byte[length];
-                    for (int i = 0; i < length; i++) {
+                    buffer = new byte[100];
+                    for (int i = 0; i < buffer.length; i++) {
                         buffer[i] = ((Integer) mmInStream.read()).byteValue();
                     }
                     mHandler.obtainMessage(GlobalParam.MESSAGE_READ, buffer).sendToTarget();

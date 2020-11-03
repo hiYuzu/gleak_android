@@ -16,30 +16,32 @@
         android:textColor="@color/launch_text_color"
         android:textSize="50sp"
         android:textStyle="bold" />
-    <TextView
-        android:id="@+id/launch_message"
-        android:gravity="center"
-        android:textColor="@color/login_textHintColor"
-        android:layout_below="@id/fullscreen_content"
-        android:layout_marginTop="@dimen/fab_margin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
     <TextView
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:layout_above="@id/version_text"
-        android:id="@+id/copy_right"
-        android:text="@string/copy_right"
-        android:textAlignment="center"
+        android:id="@+id/launch_message"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fullscreen_content"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:gravity="center"
+        android:textColor="@color/login_textHintColor" />
+
+    <TextView
+        android:id="@+id/copy_right"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:layout_above="@id/version_text"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:text="@string/copy_right" />
+
     <TextView
         android:id="@+id/version_text"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:layout_marginBottom="@dimen/fab_margin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:gravity="end" />
 
 
 </RelativeLayout>
