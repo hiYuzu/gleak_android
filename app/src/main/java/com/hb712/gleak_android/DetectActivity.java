@@ -43,6 +43,7 @@ import org.greenrobot.greendao.query.WhereCondition;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DetectActivity extends AppCompatActivity {
@@ -194,6 +195,7 @@ public class DetectActivity extends AppCompatActivity {
         });
 
         mBluetooth.setOnDataReceivedListener((data, message) -> {
+            System.out.println("接收到蓝牙信息:" + Arrays.toString(data));
             //仪器参数
             showFragmentContent(data);
         });
@@ -274,7 +276,6 @@ public class DetectActivity extends AppCompatActivity {
         } else {
             if (!mBluetooth.isServiceAvailable()) {
                 mBluetooth.setupService();
-                mBluetooth.startService(GlobalParam.DEVICE_ANDROID);
             }
         }
     }
@@ -298,7 +299,6 @@ public class DetectActivity extends AppCompatActivity {
         } else if (requestCode == GlobalParam.REQUEST_ENABLE_BT) {
             if (resultCode == Activity.RESULT_OK) {
                 mBluetooth.setupService();
-                mBluetooth.startService(GlobalParam.DEVICE_ANDROID);
             } else {
                 finish();
             }
@@ -341,8 +341,7 @@ public class DetectActivity extends AppCompatActivity {
      */
     public void fireClick(View view) {
         if (isConnected()) {
-            //TODO..
-            mBluetooth.send(new byte[1]);
+            System.out.println("点火1");
         }
     }
 
@@ -353,7 +352,7 @@ public class DetectActivity extends AppCompatActivity {
      */
     public void fireClick2(View view) {
         if (isConnected()) {
-            //TODO..
+            System.out.println("点火2");
         }
     }
 
@@ -364,7 +363,7 @@ public class DetectActivity extends AppCompatActivity {
      */
     public void ceasefireClick(View view) {
         if (isConnected()) {
-            //TODO..
+            System.out.println("关火");
         }
     }
 
@@ -375,7 +374,7 @@ public class DetectActivity extends AppCompatActivity {
      */
     public void recordClick(View view) {
         if (isConnected()) {
-            //TODO..
+            System.out.println("记录");
         }
     }
 

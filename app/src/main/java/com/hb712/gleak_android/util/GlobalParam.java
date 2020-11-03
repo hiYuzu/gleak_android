@@ -12,9 +12,8 @@ public class GlobalParam {
 
     // 蓝牙状态
     public static final int STATE_NONE = 0;       	// 无动作
-    public static final int STATE_LISTEN = 1;     	// 监听连接
-    public static final int STATE_CONNECTING = 2; 	// 正在连接
-    public static final int STATE_CONNECTED = 3;  	// 已连接
+    public static final int STATE_CONNECTING = 1; 	// 正在连接
+    public static final int STATE_CONNECTED = 2;  	// 已连接
 
     //message what
     public static final int MESSAGE_STATE_CHANGE = 1;
@@ -28,7 +27,5 @@ public class GlobalParam {
     //其他
     public static final String DEVICE_NAME = "device_name";
     public static final String DEVICE_ADDRESS = "device_address";
-    public static final String NONE_DEVICE = "未发现设备";
-    public static final boolean DEVICE_ANDROID = true;
-    public static final boolean DEVICE_OTHER = false;
+    public static final boolean DEVICE_ANDROID = false;
 }

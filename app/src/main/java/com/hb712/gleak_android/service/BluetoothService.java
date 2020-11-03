@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
+
 /**
  * @author hiYuzu
  * @version V1.0
@@ -34,7 +35,6 @@ public class BluetoothService {
 
     private final BluetoothAdapter mAdapter;
     private final Handler mHandler;
-    private AcceptThread mSecureAcceptThread;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
@@ -57,27 +57,8 @@ public class BluetoothService {
         return mState;
     }
 
-    public synchronized void start(boolean isAndroid) {
-        // 关掉所有试图建立连接的线程
-        if (mConnectThread != null) {
-            mConnectThread.cancel();
-            mConnectThread = null;
-        }
-        if (mConnectedThread != null) {
-            mConnectedThread.cancel();
-            mConnectedThread = null;
-        }
-        setState(GlobalParam.STATE_LISTEN);
-
-        if (mSecureAcceptThread == null) {
-            mSecureAcceptThread = new AcceptThread(isAndroid);
-            mSecureAcceptThread.start();
-            BluetoothService.this.isAndroid = isAndroid;
-        }
-    }
-
     public synchronized void connect(BluetoothDevice device) {
-        // 关掉任何正在连接的线程
+        // 关掉正在连接的设备
         if (mState == GlobalParam.STATE_CONNECTING) {
             if (mConnectThread != null) {
                 mConnectThread.cancel();
@@ -85,7 +66,7 @@ public class BluetoothService {
             }
         }
 
-        // 关掉当前正在连接的线程
+        // 关掉当前已连接设备
         if (mConnectedThread != null) {
             mConnectedThread.cancel();
             mConnectedThread = null;
@@ -105,10 +86,6 @@ public class BluetoothService {
         if (mConnectedThread != null) {
             mConnectedThread.cancel();
             mConnectedThread = null;
-        }
-        if (mSecureAcceptThread != null) {
-            mSecureAcceptThread.cancel();
-            mSecureAcceptThread = null;
         }
 
         mConnectedThread = new ConnectedThread(socket);
@@ -135,11 +112,6 @@ public class BluetoothService {
             mConnectedThread = null;
         }
 
-        if (mSecureAcceptThread != null) {
-            mSecureAcceptThread.cancel();
-            mSecureAcceptThread.kill();
-            mSecureAcceptThread = null;
-        }
         setState(GlobalParam.STATE_NONE);
     }
 
@@ -155,74 +127,15 @@ public class BluetoothService {
     }
 
     private void connectionFailed() {
-        BluetoothService.this.start(BluetoothService.this.isAndroid);
-    }
-
-    //监听连接请求
-    private class AcceptThread extends Thread {
-        private BluetoothServerSocket mmServerSocket;
-        boolean isRunning = true;
-
-        AcceptThread(boolean isAndroid) {
-            BluetoothServerSocket tmp = null;
-            try {
-                if (isAndroid) {
-                    tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE, UUID_ANDROID_DEVICE);
-                } else {
-                    tmp = mAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE, UUID_OTHER_DEVICE);
-                }
-            } catch (IOException e) {
-                LogUtil.warnOut(TAG, e, "");
-            }
-            mmServerSocket = tmp;
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
         }
-
-        public void run() {
-            setName("AcceptThread");
-            BluetoothSocket socket;
-            //死循环监听蓝牙连接状态，首次今进入一定满足条件，蓝牙连上后，循环停止
-            while (mState != GlobalParam.STATE_CONNECTED && isRunning) {
-                try {
-                    socket = mmServerSocket.accept();
-                } catch (IOException e) {
-                    break;
-                }
-
-                if (socket != null) {
-                    synchronized (BluetoothService.this) {
-                        switch (mState) {
-                            case GlobalParam.STATE_LISTEN:
-                            case GlobalParam.STATE_CONNECTING:
-                                connected(socket, socket.getRemoteDevice());
-                                break;
-                            case GlobalParam.STATE_NONE:
-                            case GlobalParam.STATE_CONNECTED:
-                                try {
-                                    socket.close();
-                                } catch (IOException e) {
-                                    LogUtil.warnOut(TAG, e, "socket关闭失败");
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-            }
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel();
+            mConnectedThread = null;
         }
-
-        void cancel() {
-            try {
-                mmServerSocket.close();
-                mmServerSocket = null;
-            } catch (IOException e) {
-                LogUtil.warnOut(TAG, e, "Socket关闭失败");
-            }
-        }
-
-        void kill() {
-            isRunning = false;
-        }
+        setState(GlobalParam.STATE_NONE);
     }
 
     //发起连接
@@ -234,10 +147,11 @@ public class BluetoothService {
             mmDevice = device;
             BluetoothSocket tmp = null;
             try {
-                if (BluetoothService.this.isAndroid)
+                if (BluetoothService.this.isAndroid) {
                     tmp = device.createRfcommSocketToServiceRecord(UUID_ANDROID_DEVICE);
-                else
+                } else {
                     tmp = device.createRfcommSocketToServiceRecord(UUID_OTHER_DEVICE);
+                }
             } catch (IOException e) {
                 LogUtil.warnOut(TAG, e, "获取socket失败");
             }
@@ -258,6 +172,7 @@ public class BluetoothService {
                 connectionFailed();
                 return;
             }
+            //完成连接，重置连接线程
             synchronized (BluetoothService.this) {
                 mConnectThread = null;
             }
@@ -273,11 +188,10 @@ public class BluetoothService {
         }
     }
 
-    private static int ByteArrayToInt(byte b[]) throws Exception {
+    private static int ByteArrayToInt(byte b[]) throws IOException {
         ByteArrayInputStream buf = new ByteArrayInputStream(b);
         DataInputStream dis = new DataInputStream(buf);
         return dis.readInt();
-
     }
 
     //已连接
@@ -306,23 +220,22 @@ public class BluetoothService {
             while (true) {
                 try {
                     //数据长度信息
-                    byte[] bufLength = new byte[4];
+                    byte[] bufLength = new byte[512];
                     int length = ByteArrayToInt(bufLength);
                     buffer = new byte[length];
-
                     for (int i = 0; i < length; i++) {
                         buffer[i] = ((Integer) mmInStream.read()).byteValue();
                     }
-                    Message msg = Message.obtain();
-                    msg.what = GlobalParam.MESSAGE_READ;
-                    msg.obj = buffer;
-                    mHandler.sendMessage(msg);
+                    mHandler.obtainMessage(GlobalParam.MESSAGE_READ, buffer).sendToTarget();
+                    sleep(100);
                 } catch (IOException e) {
                     LogUtil.warnOut(TAG, e, "收发失败");
                     connectionFailed();
                     break;
-                } catch (Exception e) {
-                    LogUtil.warnOut(TAG, e, "");
+                } catch (InterruptedException e) {
+                    LogUtil.warnOut(TAG, e, "thread sleep异常");
+                    connectionFailed();
+                    break;
                 }
             }
         }

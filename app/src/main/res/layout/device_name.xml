@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textColor="#222222"
+    android:paddingStart="@dimen/dimen_25dp"
+    android:paddingEnd="@dimen/dimen_25dp"
+    android:paddingTop="@dimen/dimen_5dp"
+    android:paddingBottom="@dimen/dimen_5dp"
+    android:textColor="#444444"
     android:textSize="18sp"
-    android:padding="5dp" />
+    android:background="@drawable/print_setting_menu_selector"/>

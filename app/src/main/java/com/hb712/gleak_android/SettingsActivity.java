@@ -133,12 +133,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             serveIp = (EditTextPreference) findPreference(SERVE_IP);
             servePort = (EditTextPreference) findPreference(SERVE_PORT);
-            serveIp.setText(MainApplication.getInstance().appIP);
-            servePort.setText(MainApplication.getInstance().appPort);
+            serveIp.setText(SPUtil.get(MainApplication.getInstance(), SERVE_IP, "127.0.0.1").toString());
+            servePort.setText(SPUtil.get(MainApplication.getInstance(), SERVE_PORT, "").toString());
             serveIp.setOnPreferenceChangeListener((preference, newValue) -> {
                 String ip = (String) newValue;
                 if (isCorrectIp(ip)) {
                     serveIp.setSummary(ip);
+                    serveIp.setText(ip);
                     SPUtil.put(MainApplication.getInstance(), SERVE_IP, ip);
                     return true;
                 } else {
@@ -150,6 +151,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 String port = (String) newValue;
                 if (isCorrectPort(port)) {
                     servePort.setSummary(port);
+                    serveIp.setText(port);
                     SPUtil.put(MainApplication.getInstance(), SERVE_PORT, port);
                     return true;
                 } else {

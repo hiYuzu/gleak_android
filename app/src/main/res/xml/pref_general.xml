@@ -5,7 +5,7 @@
         android:key="general_remember"
         android:title="@string/settings_general_remember" />
     <EditTextPreference
-        android:key="serve_port"
+        android:key="serve_ip"
         android:singleLine="true"
         android:title="服务器ip" />
     <EditTextPreference

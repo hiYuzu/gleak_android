@@ -1,13 +1,14 @@
 <resources>
 
+    <string name="blank"/>
     <string name="app_name">Explorer</string>
     <string name="title_activity_detect">检测</string>
     <string name="title_activity_calibrate">校准</string>
     <string name="title_activity_history">历史记录</string>
     <string name="title_activity_settings">设置</string>
     <!--launchActivity-->
-    <string name="launch_content">launch_content</string>
-    <string name="copy_right">copy_right</string>
+    <string name="launch_content">津普利</string>
+    <string name="copy_right">Copyright © Enpromi. All Right Reserved.</string>
     <!--loginActivity-->
     <string name="username_hint">用户名</string>
     <string name="password_hint">密码</string>
@@ -50,6 +51,13 @@
     <string name="name">名称：</string>
     <string name="search">搜索</string>
     <string name="ckb_no">无响应因子</string>
+    <!--deviceActivity-->
+    <string name="paired_devices">已配对设备</string>
+    <string name="other_devices">其他可见设备</string>
+    <string name="none_found">未发现设备</string>
+    <string name="none_paired">没有已匹配的设备</string>
+    <string name="other">其他</string>
+    <string name="select_device">选择一个设备连接</string>
     <!--calibrateActivity-->
     <string name="cali_series">工作曲线</string>
     <string name="cali_current_signal">当前信号</string>

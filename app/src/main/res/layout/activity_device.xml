@@ -3,24 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".DeviceActivity">
 
     <ListView
-        android:id="@+id/listDevice"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="@dimen/dimen_10dp"
-        android:layout_weight="1"
-        android:smoothScrollbar="true" />
-
-    <Button
+        android:id="@+id/paired_devices"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dimen_10dp"
-        android:layout_marginEnd="@dimen/dimen_10dp"
-        android:layout_marginBottom="@dimen/dimen_10dp"
-        android:onClick="discoverDevice"
-        android:text="@string/device_search" />
+        android:padding="@dimen/dimen_5dp"
+        android:smoothScrollbar="true"/>
 </LinearLayout>

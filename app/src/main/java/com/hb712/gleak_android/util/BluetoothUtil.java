@@ -17,16 +17,14 @@ import com.hb712.gleak_android.service.BluetoothService;
 public class BluetoothUtil {
     private final String TAG = BluetoothUtil.class.getSimpleName();
 
-    private BluetoothStateListener mBluetoothStateListener = null;
     private OnDataReceivedListener mDataReceivedListener = null;
     private BluetoothConnectionListener mBluetoothConnectionListener = null;
     private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothService mChatService = null;
+    private BluetoothService mBluetoothService = null;
     private String mDeviceName = null;
     private String mDeviceAddress = null;
     private boolean isConnected = false;
     private boolean isConnecting = false;
-    private boolean isAndroid = GlobalParam.DEVICE_ANDROID;
 
     private static BluetoothUtil instance;
 
@@ -40,10 +38,6 @@ public class BluetoothUtil {
     //获取蓝牙adapter
     private BluetoothUtil() {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    }
-
-    public interface BluetoothStateListener {
-        void onServiceStateChanged(int state);
     }
 
     public interface OnDataReceivedListener {
@@ -74,21 +68,11 @@ public class BluetoothUtil {
     }
 
     public boolean isServiceAvailable() {
-        return mChatService != null;
+        return mBluetoothService != null;
     }
 
     public void setupService() {
-        mChatService = new BluetoothService(mHandler);
-    }
-
-    //开启蓝牙一直监听是否连接的状态
-    public void startService(boolean isAndroid) {
-        if (mChatService != null) {
-            if (mChatService.getState() == GlobalParam.STATE_NONE) {
-                mChatService.start(isAndroid);
-                this.isAndroid = isAndroid;
-            }
-        }
+        mBluetoothService = new BluetoothService(mHandler);
     }
 
     @SuppressLint("HandlerLeak")
@@ -111,8 +95,6 @@ public class BluetoothUtil {
                     isConnected = true;
                     break;
                 case GlobalParam.MESSAGE_STATE_CHANGE:
-                    if (mBluetoothStateListener != null)
-                        mBluetoothStateListener.onServiceStateChanged(msg.arg1);
                     if (isConnected && msg.arg1 != GlobalParam.STATE_CONNECTED) {
                         if (mBluetoothConnectionListener != null) {
                             mBluetoothConnectionListener.onDeviceDisconnected();
@@ -143,15 +125,12 @@ public class BluetoothUtil {
         }
         String address = bundle.getString(GlobalParam.DEVICE_ADDRESS);
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-        mChatService.connect(device);
+        mBluetoothService.connect(device);
     }
 
     public void disconnect() {
-        if (mChatService != null) {
-            mChatService.stop();
-            if (mChatService.getState() == GlobalParam.STATE_NONE) {
-                mChatService.start(BluetoothUtil.this.isAndroid);
-            }
+        if (mBluetoothService != null) {
+            mBluetoothService.stop();
         }
     }
 
@@ -166,6 +145,6 @@ public class BluetoothUtil {
     public void send(byte[] data) {
         int length = data.length;
         byte[] sendMsg = new byte[length];
-        mChatService.write(sendMsg);
+        mBluetoothService.write(sendMsg);
     }
 }

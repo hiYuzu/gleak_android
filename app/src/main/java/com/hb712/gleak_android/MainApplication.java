@@ -18,9 +18,9 @@ import com.hb712.gleak_android.util.SPUtil;
 public class MainApplication extends Application {
 
     private final String TAG = MainApplication.class.getSimpleName();
-    public String appIP = "127.0.0.1";
-    public String appPort = "";
-    public String baseUrl = "http://" + appIP + (appPort.isEmpty() ? "" : ":" + appPort);
+    public final String appIP = "127.0.0.1";
+    public final String appPort = "";
+    public final String baseUrl = "http://" + appIP + (appPort.isEmpty() ? "" : ":" + appPort);
     public final String SETTINGS_USERNAME = "username";
     public final String SETTINGS_PASSWORD = "password";
 

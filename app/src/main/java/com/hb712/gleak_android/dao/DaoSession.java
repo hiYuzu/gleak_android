@@ -25,7 +25,7 @@ public class DaoSession extends AbstractDaoSession {
     //曲线
     private final SeriesInfoDao seriesInfoDao;
     private final DaoConfig seriesInfoDaoConfig;
-    //校准
+    //ic_calibration
     private final CalibrationInfoDao calibrationInfoDao;
     private final DaoConfig calibrationInfoDaoConfig;
     //曲线limit
