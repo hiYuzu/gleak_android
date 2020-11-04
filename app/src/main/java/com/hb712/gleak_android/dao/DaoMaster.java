@@ -11,6 +11,10 @@ import org.greenrobot.greendao.database.StandardDatabase;
 import org.greenrobot.greendao.identityscope.IdentityScopeType;
 
 /**
+ * 保存数据库对象（SQLiteDatabase）并管理特定模式的Dao类
+ * 静态方法创建或删除表
+ * 内部类OpenHelper和DevOpenHelper是SQLite数据库的SQLiteOpenHelper实现
+ *
  * @author hiYuzu
  * @version V1.0
  * @date 2020/10/21 14:27

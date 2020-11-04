@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.hb712.gleak_android.util.LogUtil;
-
 /**
  * @author hiYuzu
  * @version V1.0

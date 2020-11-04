@@ -30,7 +30,7 @@ public class CalibrationInfoDao extends AbstractDao<CalibrationInfo, Long> {
         this.daoSession = daoSession;
     }
 
-    public static void createTable(Database paramDatabase, boolean paramBoolean) {
+    static void createTable(Database paramDatabase, boolean paramBoolean) {
         String str;
         if (paramBoolean) {
             str = "IF NOT EXISTS ";
@@ -43,7 +43,7 @@ public class CalibrationInfoDao extends AbstractDao<CalibrationInfo, Long> {
         paramDatabase.execSQL(sql);
     }
 
-    public static void dropTable(Database paramDatabase, boolean paramBoolean) {
+    static void dropTable(Database paramDatabase, boolean paramBoolean) {
         String str;
         if (paramBoolean) {
             str = "IF EXISTS ";

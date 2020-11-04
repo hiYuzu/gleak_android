@@ -14,6 +14,9 @@ import org.greenrobot.greendao.internal.DaoConfig;
 import java.util.Map;
 
 /**
+ * 管理特定模式的所有可用Dao对象，使用getter方法获取
+ * 可以为实体提供通用的持久性方法，如插入，加载，更新，刷新和删除
+ *
  * @author hiYuzu
  * @version V1.0
  * @date 2020/10/21 14:51
