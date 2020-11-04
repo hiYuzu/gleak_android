@@ -11,7 +11,7 @@
         android:layout_height="250dp"
         android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"
-        android:src="@mipmap/main_background_c"/>
+        android:src="@mipmap/main_background_c" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,6 +24,7 @@
             android:id="@+id/detectButton"
             android:layout_width="@dimen/dimen_120dp"
             android:layout_height="@dimen/dimen_120dp"
+            android:background="@color/white"
             android:contentDescription="@string/main_detect"
             android:minWidth="@dimen/dimen_50dp"
             android:minHeight="@dimen/dimen_50dp"
@@ -36,6 +37,7 @@
             android:layout_width="@dimen/dimen_120dp"
             android:layout_height="@dimen/dimen_120dp"
             android:layout_marginStart="@dimen/dimen_50dp"
+            android:background="@color/white"
             android:contentDescription="@string/main_calibrate"
             android:minWidth="@dimen/dimen_50dp"
             android:minHeight="@dimen/dimen_50dp"
@@ -74,6 +76,7 @@
             android:id="@+id/historyButton"
             android:layout_width="@dimen/dimen_120dp"
             android:layout_height="@dimen/dimen_120dp"
+            android:background="@color/white"
             android:contentDescription="@string/main_history"
             android:minWidth="@dimen/dimen_50dp"
             android:minHeight="@dimen/dimen_50dp"
@@ -85,6 +88,7 @@
             android:layout_width="@dimen/dimen_120dp"
             android:layout_height="@dimen/dimen_120dp"
             android:layout_marginStart="@dimen/dimen_50dp"
+            android:background="@color/white"
             android:contentDescription="@string/main_settings"
             android:minWidth="@dimen/dimen_50dp"
             android:minHeight="@dimen/dimen_50dp"
