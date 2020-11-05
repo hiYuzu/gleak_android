@@ -43,13 +43,16 @@
         <activity
             android:name=".DetectActivity"
             android:label="@string/title_activity_detect"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".CalibrateActivity"
-            android:label="@string/title_activity_calibrate" />
+            android:label="@string/title_activity_calibrate"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".HistoryActivity"
-            android:label="@string/title_activity_history" />
+            android:label="@string/title_activity_history"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
