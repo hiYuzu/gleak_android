@@ -7,12 +7,19 @@ import android.os.Bundle;
 import android.view.View;
 import android.os.Process;
 
+import com.hb712.gleak_android.base.BaseActivity;
+import com.hb712.gleak_android.base.BaseBean;
+import com.hb712.gleak_android.interfaceabs.OKHttpListener;
+import com.hb712.gleak_android.util.CommonUtils;
+import com.hb712.gleak_android.util.HttpUtils;
+import com.hb712.gleak_android.util.MapUtils;
+
 /**
  * @author hiYuzu
  * @version V1.0
  * @date 2020/9/22 10:20
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     public static final String EXTRA_USERNAME = "username";
     public static final String EXTRA_PASSWORD = "password";
 
@@ -20,6 +27,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //TODO 测试http，可屏蔽掉
+        HttpUtils.postDefault(this, "http://127.0.0.1:8888/getUsers",
+                MapUtils.getHttpInstance().put("type", 1),
+                BaseBean.class, new OKHttpListener<BaseBean>() {
+                    @Override
+                    public void onSuccess(BaseBean bean) {
+                        CommonUtils.toast(bean.response);
+                    }
+                });
     }
 
     public void detectClick(View view) {

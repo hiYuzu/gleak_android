@@ -1,12 +1,8 @@
 package com.hb712.gleak_android;
 
-import android.app.Application;
-import android.content.SharedPreferences;
-import android.util.Log;
-
+import com.hb712.gleak_android.base.BaseApplication;
 import com.hb712.gleak_android.service.WebServiceClient;
 import com.hb712.gleak_android.util.GlobalParam;
-import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.SPUtil;
 
 
@@ -15,7 +11,7 @@ import com.hb712.gleak_android.util.SPUtil;
  * @version V1.0
  * @date 2020/9/22 9:57
  */
-public class MainApplication extends Application {
+public class MainApplication extends BaseApplication {
 
     private final String TAG = MainApplication.class.getSimpleName();
     public final String appIP = "127.0.0.1";
