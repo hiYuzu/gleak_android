@@ -1,14 +1,18 @@
 package com.hb712.gleak_android;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +37,7 @@ import com.hb712.gleak_android.dialog.SeriesDialog;
 import com.hb712.gleak_android.pojo.FactorCoefficientInfo;
 import com.hb712.gleak_android.pojo.SeriesInfo;
 import com.hb712.gleak_android.pojo.SeriesLimitInfo;
+import com.hb712.gleak_android.rtsp.RtspPlayer;
 import com.hb712.gleak_android.util.BluetoothUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.LogUtil;
@@ -97,6 +102,8 @@ public class DetectActivity extends AppCompatActivity {
     private double detectMaxvaluePPM = 0;
     private double detectMaxvalueMg = 0;
 
+    private RtspPlayer mRtspPlayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +114,7 @@ public class DetectActivity extends AppCompatActivity {
         initBluetooth();
         initClass();
         initCurveInfo();
+        runOnUiThread(this::loadRtsp);
     }
 
     private void setupActionBar() {
@@ -234,6 +242,43 @@ public class DetectActivity extends AppCompatActivity {
         } catch (Exception e) {
             LogUtil.warnOut(TAG, e, "");
         }
+    }
+
+    private void loadRtsp() {
+        String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (ActivityCompat.checkSelfPermission(this, permissions[0]) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, permissions, 1234);
+        }
+        mRtspPlayer = new RtspPlayer();
+        mRtspPlayer.init(DetectActivity.this, new RtspPlayer.BaseLoadingView() {
+            @Override
+            public void showLoading() {
+
+            }
+
+            @Override
+            public void dismissLoading() {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mRtspPlayer.startPlay();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mRtspPlayer.stopPlay();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mRtspPlayer.release();
     }
 
     /**
