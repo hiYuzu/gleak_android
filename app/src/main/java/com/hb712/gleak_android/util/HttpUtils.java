@@ -10,11 +10,13 @@ import com.hb712.gleak_android.interfaceabs.DialogPopWindowInterface;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -43,12 +45,6 @@ public class HttpUtils {
         httpCustom(httpInterface, httpUrl, new Request.Builder(), null, mClass, mClient, listener);
     }
 
-    //dialog
-//    public static <T extends BaseBean> void getDialog(HttpInterface httpInterface, String httpUrl, Class<T> mClass,
-//                                                      @NonNull OKHttpListener<T> listener) {
-//        httpCustom(httpInterface, httpUrl, new Request.Builder(), new LoadingDialog(httpInterface.getActivity())/*此处创建一个默认的dialog*/, mClass, mClient, listener);
-//    }
-
     //postDefault
     public static <T extends BaseBean> void postDefault(HttpInterface httpInterface, String httpUrl, MapUtils mapUtils,
                                                         Class<T> mClass, @NonNull OKHttpListener<T> listener) {
@@ -62,15 +58,28 @@ public class HttpUtils {
         postCustom(httpInterface, httpUrl, builder.build(), null, mClass, listener);
     }
 
-    //dialog
-//    public static <T extends BaseBean> void postDialog(HttpInterface httpInterface, String httpUrl, MapUtils mapUtils,
-//                                                       Class<T> mClass, @NonNull OKHttpListener<T> listener) {
-//        if (mapUtils.get(KEY_USERID) == null) {
-//            mapUtils.put(KEY_USERID, "用户id");
-//        }
-//        postCustom(httpInterface, httpUrl, RequestBody.create(mMediaType, mapUtils.toString()),
-//                new LoadingDialog(httpInterface.getActivity())/*此处创建一个默认的dialog*/, mClass, listener);
-//    }
+    //postMultiple
+    public static <T extends BaseBean> void postMultiple(HttpInterface httpInterface, String httpUrl, MapUtils mapUtils, MapUtils mapFileUtils,
+                                                         Class<T> mClass, @NonNull OKHttpListener<T> listener) {
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        if (mapUtils != null && mapUtils.size() > 0) {
+            for (Map.Entry entry : mapUtils.entrySet()) {
+                builder.addFormDataPart(entry.getKey().toString(), entry.getValue().toString());
+            }
+        }
+        if (mapFileUtils != null && mapFileUtils.size() > 0) {
+            for (Map.Entry entry : mapFileUtils.entrySet()) {
+                builder.addFormDataPart(entry.getKey().toString(), entry.getValue().toString());
+                File file = (File) entry.getValue();
+                String fileName = entry.getKey().toString();
+                // MediaType.parse() 里面是上传的文件类型。
+                RequestBody body = RequestBody.create(MediaType.parse("image/*"), file);
+                // 参数分别为， 请求key ，文件名称 ， RequestBody
+                builder.addFormDataPart("headImage", fileName, body);
+            }
+        }
+        postCustom(httpInterface, httpUrl, builder.build(), null, mClass, listener);
+    }
 
     //RequestBody  Dialog可以传null
     public static <T extends BaseBean> void postCustom(HttpInterface httpInterface, String httpUrl, RequestBody requestBody,
