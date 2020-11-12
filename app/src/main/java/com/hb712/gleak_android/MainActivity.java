@@ -28,8 +28,8 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //TODO 测试http，可屏蔽掉
-        HttpUtils.postDefault(this, "http://127.0.0.1:8888/getUsers",
-                MapUtils.getHttpInstance().put("type", 1),
+        HttpUtils.postDefault(this, "http://114.115.217.241/GeneralMonitorController/getGenaralAreaData",
+                MapUtils.getHttpInstance().put("select", "plst"),
                 BaseBean.class, new OKHttpListener<BaseBean>() {
                     @Override
                     public void onSuccess(BaseBean bean) {

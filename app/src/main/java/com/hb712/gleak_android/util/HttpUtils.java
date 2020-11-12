@@ -10,8 +10,10 @@ import com.hb712.gleak_android.interfaceabs.DialogPopWindowInterface;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -29,7 +31,7 @@ public class HttpUtils {
             .build();
 
     //类型 utf-8
-    public static final MediaType mMediaType = MediaType.parse("application/json;charset=UTF-8");
+    public static final MediaType mMediaType = MediaType.parse("application/json;charset=utf-8");
 
     ///////////////////////////////////////////////////////////////////////////
     // 以下是http公共方法
@@ -50,10 +52,14 @@ public class HttpUtils {
     //postDefault
     public static <T extends BaseBean> void postDefault(HttpInterface httpInterface, String httpUrl, MapUtils mapUtils,
                                                         Class<T> mClass, @NonNull OKHttpListener<T> listener) {
-        if (mapUtils.get(KEY_USERID) == null) {
-            mapUtils.put(KEY_USERID, "用户id");
+
+        FormBody.Builder builder = new FormBody.Builder();
+        if (mapUtils != null && mapUtils.size() > 0) {
+            for (Map.Entry entry : mapUtils.entrySet()) {
+                builder.add(entry.getKey().toString(), entry.getValue().toString());
+            }
         }
-        postCustom(httpInterface, httpUrl, RequestBody.create(mMediaType, mapUtils.toString()), null, mClass, listener);
+        postCustom(httpInterface, httpUrl, builder.build(), null, mClass, listener);
     }
 
     //dialog
@@ -103,10 +109,9 @@ public class HttpUtils {
 
             @Override
             protected BaseBean doInBackground(Void... params) {
-                builder.tag(httpUrl).url(httpUrl)
-
-                        //添加头信息
-                        .addHeader(KEY_USERTOKEN, "token");
+                builder.tag(httpUrl).url(httpUrl);
+                //添加头信息
+//                .addHeader(KEY_USERTOKEN, "token")
 
                 try {
                     Response response = client.newCall(builder.build()).execute();
@@ -115,6 +120,7 @@ public class HttpUtils {
                         try {
                             BaseBean bean = JSON.parseObject(body, mClass, Feature.SupportNonPublicField);//支持私有变量
                             bean.httpCode = response.code();
+                            bean.code = OKHttpListener.CODE_SUCCESS;
                             bean.response = body;
                             bean.httpUrl = httpUrl;
                             return bean;
