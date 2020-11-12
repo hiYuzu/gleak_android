@@ -69,7 +69,6 @@ public class HttpUtils {
         }
         if (mapFileUtils != null && mapFileUtils.size() > 0) {
             for (Map.Entry entry : mapFileUtils.entrySet()) {
-                builder.addFormDataPart(entry.getKey().toString(), entry.getValue().toString());
                 File file = (File) entry.getValue();
                 String fileName = entry.getKey().toString();
                 // MediaType.parse() 里面是上传的文件类型。
