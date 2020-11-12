@@ -1,5 +1,7 @@
 package com.hb712.gleak_android.util;
 
+import android.annotation.SuppressLint;
+
 /**
  * @author hiYuzu
  * @version V1.0
@@ -28,4 +30,9 @@ public class GlobalParam {
     public static final String DEVICE_NAME = "device_name";
     public static final String DEVICE_ADDRESS = "device_address";
     public static final boolean DEVICE_ANDROID = false;
+
+    //video
+    public static boolean loadFirst = true;
+    @SuppressLint("AuthLeak")
+    public static String VIDEO_URL = "rtsp://admin:tjtcb712@192.168.1.100:554/h264/ch1/main/av_stream";
 }

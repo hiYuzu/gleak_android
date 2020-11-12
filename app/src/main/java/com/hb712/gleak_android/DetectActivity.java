@@ -3,16 +3,18 @@ package com.hb712.gleak_android;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -323,6 +325,31 @@ public class DetectActivity extends AppCompatActivity {
                 mBluetooth.setupService();
             }
         }
+    }
+
+    public void setVideoIp(View view) {
+        EditText ipEdit = new EditText(this);
+        ipEdit.setText(GlobalParam.VIDEO_URL);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("视频ip地址");
+        builder.setView(ipEdit);
+        builder.setPositiveButton("确定",
+                (dialog, which) -> {
+                    GlobalParam.VIDEO_URL = ipEdit.getText().toString();
+                })
+                .setNegativeButton("取消", (dialog, which) -> {
+                })
+                .setCancelable(true)
+                .show();
+    }
+
+    public void videoStartClick(View view) {
+        mRtspPlayer.startPlay();
+    }
+
+    public void videoStopClick(View view) {
+        mRtspPlayer.stopPlay();
     }
 
     public void connectClick(View view) {

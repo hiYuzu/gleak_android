@@ -179,7 +179,6 @@ public final class MeasureHelper {
                 }
             }
         }
-        // 没有尺寸，采用给定的规格尺寸
         mMeasuredWidth = width;
         mMeasuredHeight = height;
     }

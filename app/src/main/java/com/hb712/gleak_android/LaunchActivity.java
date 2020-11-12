@@ -48,12 +48,10 @@ public class LaunchActivity extends Activity {
         PackageInfo info;
         try {
             info = getPackageManager().getPackageInfo(getPackageName(), 0);
-
             String versionStr = info.versionName;
             if (!versionStr.isEmpty()) {
                 mVersion.setText(String.format("Version: %s", versionStr));
             }
-
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

@@ -1,11 +1,12 @@
 package com.hb712.gleak_android.rtsp;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 
 import com.hb712.gleak_android.R;
-import com.hb712.gleak_android.rtsp.listener.IjkPlayerListener;
 import com.hb712.gleak_android.rtsp.widget.IjkVideoView;
+import com.hb712.gleak_android.util.GlobalParam;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -18,9 +19,6 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public class RtspPlayer {
 
     private static final String TAG = RtspPlayer.class.getSimpleName();
-    @SuppressLint("AuthLeak")
-    private static final String URL = "rtsp://admin:tjtcb712@192.168.1.100:554/h264/ch1/main/av_stream";
-    private IjkMediaPlayer mIjkMediaPlayer;
     private IjkVideoView mVideoView;
     private BaseLoadingView mLoadingView;
 
@@ -30,27 +28,18 @@ public class RtspPlayer {
         IjkMediaPlayer.native_profileBegin("libijkplayer.so");
 
         mVideoView = activity.findViewById(R.id.videoView);
-        mVideoView.setIjkPlayerListener(new IjkPlayerListener() {
-            @Override
-            public void onIjkPlayer(IjkMediaPlayer ijkMediaPlayer) {
-                mIjkMediaPlayer = ijkMediaPlayer;
-            }
-        });
         mVideoView.setOnCompletionListener(iMediaPlayer -> mVideoView.resume());
-        mVideoView.setOnInfoListener(new IMediaPlayer.OnInfoListener() {
-            @Override
-            public boolean onInfo(IMediaPlayer iMediaPlayer, int i, int i1) {
-                if (i == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                    mLoadingView.dismissLoading();
-                }
-                return true;
+        mVideoView.setOnInfoListener((iMediaPlayer, i, i1) -> {
+            if (i == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                mLoadingView.dismissLoading();
             }
+            return true;
         });
     }
 
     public void startPlay() {
         mLoadingView.showLoading();
-        mVideoView.setVideoPath(URL);
+        mVideoView.setVideoPath(GlobalParam.VIDEO_URL);
         mVideoView.start();
     }
 

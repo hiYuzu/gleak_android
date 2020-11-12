@@ -14,8 +14,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
@@ -26,7 +24,6 @@ import com.hb712.gleak_android.util.LogUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -70,28 +67,16 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     private int mSurfaceWidth;
     private int mSurfaceHeight;
     private int mVideoRotationDegree;
-    private IMediaController mMediaController;
     private IMediaPlayer.OnCompletionListener mOnCompletionListener;
-    private IMediaPlayer.OnPreparedListener mOnPreparedListener;
     private int mCurrentBufferPercentage;
-    private IMediaPlayer.OnErrorListener mOnErrorListener;
     private IMediaPlayer.OnInfoListener mOnInfoListener;
     // 准备时记录seek position
     private int mSeekWhenPrepared;
-    private boolean mCanPause = true;
-    private boolean mCanSeekBack = true;
-    private boolean mCanSeekForward = true;
 
     private Context mAppContext;
     private IRenderView mRenderView;
     private int mVideoSarNum;
     private int mVideoSarDen;
-
-    private long mPrepareStartTime = 0;
-    private long mPrepareEndTime = 0;
-
-    private long mSeekStartTime = 0;
-    private long mSeekEndTime = 0;
 
     private TextView subtitleDisplay;
 
@@ -145,25 +130,21 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             IRenderView.AR_ASPECT_WRAP_CONTENT,
             IRenderView.AR_16_9_FIT_PARENT,
             IRenderView.AR_4_3_FIT_PARENT};
-    private int mCurrentAspectRatioIndex = 0;
-    private int mCurrentAspectRatio = s_allAspectRatio[mCurrentAspectRatioIndex];
+    private final int mCurrentAspectRatio = s_allAspectRatio[0];
     public static final int RENDER_NONE = 0;
     public static final int RENDER_SURFACE_VIEW = 1;
     public static final int RENDER_TEXTURE_VIEW = 2;
-    private List<Integer> mAllRenders = new ArrayList<>();
-    private int mCurrentRenderIndex = 0;
-    private int mCurrentRender = RENDER_NONE;
+    private final List<Integer> mAllRenders = new ArrayList<>();
 
     private void initRenders() {
         mAllRenders.clear();
-
         mAllRenders.add(RENDER_SURFACE_VIEW);
         mAllRenders.add(RENDER_TEXTURE_VIEW);
         mAllRenders.add(RENDER_NONE);
         if (mAllRenders.isEmpty()) {
             mAllRenders.add(RENDER_SURFACE_VIEW);
         }
-        mCurrentRender = mAllRenders.get(mCurrentRenderIndex);
+        int mCurrentRender = mAllRenders.get(0);
         setRender(mCurrentRender);
     }
 
@@ -189,7 +170,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                 break;
             }
             default:
-                LogUtil.errorOut(TAG, null, String.format(Locale.getDefault(), "invalid render %d\n", render));
+                LogUtil.errorOut(TAG, null, String.format(Locale.getDefault(), "无效的渲染 %d\n", render));
                 break;
         }
     }
@@ -198,7 +179,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         @Override
         public void onSurfaceCreated(@androidx.annotation.NonNull IRenderView.ISurfaceHolder holder, int width, int height) {
             if (holder.getRenderView() != mRenderView) {
-                LogUtil.errorOut(TAG, null, "onSurfaceCreated: unmatched render callback\n");
+                LogUtil.errorOut(TAG, null, "onSurfaceCreated: 不匹配的渲染回调\n");
                 return;
             }
             mSurfaceHolder = holder;
@@ -212,7 +193,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         @Override
         public void onSurfaceChanged(@androidx.annotation.NonNull IRenderView.ISurfaceHolder holder, int format, int width, int height) {
             if (holder.getRenderView() != mRenderView) {
-                LogUtil.errorOut(TAG, null, "onSurfaceChanged: unmatched render callback\n");
+                LogUtil.errorOut(TAG, null, "onSurfaceChanged: 不匹配的渲染回调\n");
                 return;
             }
             mSurfaceWidth = width;
@@ -230,7 +211,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         @Override
         public void onSurfaceDestroyed(@androidx.annotation.NonNull IRenderView.ISurfaceHolder holder) {
             if (holder.getRenderView() != mRenderView) {
-                LogUtil.errorOut(TAG, null, "onSurfaceDestroyed: unmatched render callback\n");
+                LogUtil.errorOut(TAG, null, "onSurfaceDestroyed: 不匹配的渲染回调\n");
                 return;
             }
             mSurfaceHolder = null;
@@ -288,7 +269,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             // 未准备，稍后再试
             return;
         }
-        // 不能清除target状态，之前可能调用了start()方法
+        // 不清除target状态
         release(false);
 
         AudioManager am = (AudioManager) mAppContext.getSystemService(Context.AUDIO_SERVICE);
@@ -315,14 +296,12 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             bindSurfaceHolder(mMediaPlayer, mSurfaceHolder);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setScreenOnWhilePlaying(true);
-            mPrepareStartTime = System.currentTimeMillis();
             mMediaPlayer.prepareAsync();
 
             // 保留之前的目标状态
             mCurrentState = STATE_PREPARING;
-            attachMediaController();
         } catch (IOException | IllegalArgumentException ex) {
-            LogUtil.warnOut(TAG, ex, "Unable to open content: " + mUri);
+            LogUtil.warnOut(TAG, ex, "无法打开: " + mUri);
             mCurrentState = STATE_ERROR;
             mTargetState = STATE_ERROR;
             mErrorListener.onError(mMediaPlayer, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
@@ -344,49 +323,27 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     };
 
     IMediaPlayer.OnPreparedListener mPreparedListener = iMediaPlayer -> {
-        mPrepareEndTime = System.currentTimeMillis();
         mCurrentState = STATE_PREPARED;
-        // 获取当前流的播放器功能
-        if (mOnPreparedListener != null) {
-            mOnPreparedListener.onPrepared(mMediaPlayer);
-        }
-        if (mMediaController != null) {
-            mMediaController.setEnabled(true);
-        }
         mVideoWidth = iMediaPlayer.getVideoWidth();
         mVideoHeight = iMediaPlayer.getVideoHeight();
 
-        int seekToPosition = mSeekWhenPrepared;  // mSeekWhenPrepared may be changed after seekTo() call
+        // mSeekWhenPrepared可能在seekTo()方法后发生变化
+        int seekToPosition = mSeekWhenPrepared;
         if (seekToPosition != 0) {
             seekTo(seekToPosition);
         }
         if (mVideoWidth != 0 && mVideoHeight != 0) {
-            //Log.i("@@@@", "video size: " + mVideoWidth +"/"+ mVideoHeight);
-            // REMOVED: getHolder().setFixedSize(mVideoWidth, mVideoHeight);
             if (mRenderView != null) {
                 mRenderView.setVideoSize(mVideoWidth, mVideoHeight);
                 mRenderView.setVideoSampleAspectRatio(mVideoSarNum, mVideoSarDen);
                 if (!mRenderView.shouldWaitForResize() || mSurfaceWidth == mVideoWidth && mSurfaceHeight == mVideoHeight) {
-                    // We didn't actually change the size (it was already at the size
-                    // we need), so we won't get a "surface changed" callback, so
-                    // start the video here instead of in the callback.
                     if (mTargetState == STATE_PLAYING) {
                         start();
-                        if (mMediaController != null) {
-                            mMediaController.show();
-                        }
-                    } else if (!isPlaying() &&
-                            (seekToPosition != 0 || getCurrentPosition() > 0)) {
-                        if (mMediaController != null) {
-                            // Show the media controls when we're paused into a video and make 'em stick.
-                            mMediaController.show(0);
-                        }
                     }
                 }
             }
         } else {
-            // We don't know the video size yet, but should start anyway.
-            // The video size might be reported to us later.
+            // 不知道视频size，但是仍要start()，视频size可能会在之后获取
             if (mTargetState == STATE_PLAYING) {
                 start();
             }
@@ -396,9 +353,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     private IMediaPlayer.OnCompletionListener mCompletionListener = iMediaPlayer -> {
         mCurrentState = STATE_PLAYBACK_COMPLETED;
         mTargetState = STATE_PLAYBACK_COMPLETED;
-        if (mMediaController != null) {
-            mMediaController.hide();
-        }
         if (mOnCompletionListener != null) {
             mOnCompletionListener.onCompletion(mMediaPlayer);
         }
@@ -456,16 +410,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         LogUtil.debugOut(TAG, "Error: " + i + "," + i1);
         mCurrentState = STATE_ERROR;
         mTargetState = STATE_ERROR;
-        if (mMediaController != null) {
-            mMediaController.hide();
-        }
-
-        // 如果mOnErrorListener不为空，即已提供OnErrorListener实现
-        if (mOnErrorListener != null) {
-            if (mOnErrorListener.onError(mMediaPlayer, i, i1)) {
-                return true;
-            }
-        }
 
         if (getWindowToken() != null) {
             Resources r = mAppContext.getResources();
@@ -473,12 +417,12 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             if (i == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK) {
                 message = "Invalid progressive playback";
             } else {
-                message = "Unknown";
+                message = "视频信号连接失败";
             }
 
             new AlertDialog.Builder(getContext())
                     .setMessage(message)
-                    .setPositiveButton("OK",
+                    .setPositiveButton("重连",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     if (mOnCompletionListener != null) {
@@ -486,7 +430,9 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                                     }
                                 }
                             })
-                    .setCancelable(false)
+                    .setNegativeButton("取消", (dialog, which) -> {
+                    })
+                    .setCancelable(true)
                     .show();
         }
         return true;
@@ -497,7 +443,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     };
 
     private IMediaPlayer.OnSeekCompleteListener mSeekCompleteListener = iMediaPlayer -> {
-        mSeekEndTime = System.currentTimeMillis();
     };
 
     private IMediaPlayer.OnTimedTextListener mOnTimedTextListener = (iMediaPlayer, ijkTimedText) -> {
@@ -531,22 +476,12 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         holder.bindToMediaPlayer(mp);
     }
 
-    private void attachMediaController() {
-        if (mMediaPlayer != null && mMediaController != null) {
-            mMediaController.setMediaPlayer(this);
-            View anchorView = this.getParent() instanceof View ?
-                    (View) this.getParent() : this;
-            mMediaController.setAnchorView(anchorView);
-            mMediaController.setEnabled(isInPlaybackState());
-        }
-    }
-
     public IMediaPlayer createPlayer() {
         IMediaPlayer mediaPlayer;
         IjkMediaPlayer ijkMediaPlayer = null;
         if (mUri != null) {
             ijkMediaPlayer = new IjkMediaPlayer();
-            ijkMediaPlayer.native_setLogLevel(IjkMediaPlayer.IJK_LOG_INFO);
+            IjkMediaPlayer.native_setLogLevel(IjkMediaPlayer.IJK_LOG_INFO);
             {
                 // 不开启硬解
                 ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 0);
@@ -564,7 +499,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                 ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "playback", 1);
                 // 播放前的探测Size，默认是1M, 改小一点会出画面更快
                 ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "probesize", 100);
-                // 设置播放前的探测时间 1,达到首屏秒开效果
+                // 设置播放前的探测时间，设置1可达到首屏秒开效果
                 ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "analyzeduration", 100);
                 ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0);
 
@@ -627,7 +562,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     @Override
     public void seekTo(int pos) {
         if (isInPlaybackState()) {
-            mSeekStartTime = System.currentTimeMillis();
             mMediaPlayer.seekTo(pos);
             mSeekWhenPrepared = 0;
         } else {
@@ -650,17 +584,17 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
 
     @Override
     public boolean canPause() {
-        return mCanPause;
+        return true;
     }
 
     @Override
     public boolean canSeekBackward() {
-        return mCanSeekBack;
+        return true;
     }
 
     @Override
     public boolean canSeekForward() {
-        return mCanSeekForward;
+        return true;
     }
 
     @Override
@@ -678,75 +612,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     @Override
     public boolean performClick() {
         return super.performClick();
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        if (isInPlaybackState() && mMediaController != null) {
-            toggleMediaControlsVisibility();
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onTrackballEvent(MotionEvent ev) {
-        if (isInPlaybackState() && mMediaController != null) {
-            toggleMediaControlsVisibility();
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        boolean isKeyCodeSupported = keyCode != KeyEvent.KEYCODE_BACK &&
-                keyCode != KeyEvent.KEYCODE_VOLUME_UP &&
-                keyCode != KeyEvent.KEYCODE_VOLUME_DOWN &&
-                keyCode != KeyEvent.KEYCODE_VOLUME_MUTE &&
-                keyCode != KeyEvent.KEYCODE_MENU &&
-                keyCode != KeyEvent.KEYCODE_CALL &&
-                keyCode != KeyEvent.KEYCODE_ENDCALL;
-        if (isInPlaybackState() && isKeyCodeSupported && mMediaController != null) {
-            if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK ||
-                    keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                if (mMediaPlayer.isPlaying()) {
-                    pause();
-                    mMediaController.show();
-                } else {
-                    start();
-                    mMediaController.hide();
-                }
-                return true;
-            } else if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY) {
-                if (!mMediaPlayer.isPlaying()) {
-                    start();
-                    mMediaController.hide();
-                }
-                return true;
-            } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP
-                    || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE) {
-                if (mMediaPlayer.isPlaying()) {
-                    pause();
-                    mMediaController.show();
-                }
-                return true;
-            } else {
-                toggleMediaControlsVisibility();
-            }
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
-
-    private void toggleMediaControlsVisibility() {
-        if (mMediaController.isShowing()) {
-            mMediaController.hide();
-        } else {
-            mMediaController.show();
-        }
-    }
-
-    public void setIjkPlayerListener(IjkPlayerListener ijkPlayerListener) {
-        this.ijkPlayerListener = ijkPlayerListener;
     }
 
     public void setOnCompletionListener(IMediaPlayer.OnCompletionListener l) {
@@ -785,4 +650,22 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             Objects.requireNonNull(am).abandonAudioFocus(null);
         }
     }
+/*
+    public int startRecord(String recordVideoPath) {
+        return mMediaPlayer.startRecord(recordVideoPath);
+    }
+
+    public int stopRecord() {
+        return mMediaPlayer.stopRecord();
+    }
+
+    public boolean isRecord() {
+        // 如果是在录像中返回的值是 1
+        return mMediaPlayer.isRecord() > 0;
+    }
+
+    public void getTestBitmap(String saveFile) {
+        mMediaPlayer.getCurrentFrame(saveFile);
+    }
+ */
 }
