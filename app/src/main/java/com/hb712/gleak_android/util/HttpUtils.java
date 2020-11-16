@@ -74,7 +74,7 @@ public class HttpUtils {
                 // MediaType.parse() 里面是上传的文件类型。
                 RequestBody body = RequestBody.create(MediaType.parse("image/*"), file);
                 // 参数分别为， 请求key ，文件名称 ， RequestBody
-                builder.addFormDataPart("headImage", fileName, body);
+                builder.addFormDataPart("images", fileName, body);
             }
         }
         postCustom(httpInterface, httpUrl, builder.build(), null, mClass, listener);
