@@ -23,6 +23,7 @@
     <string name="videoIp">视频地址</string>
     <string name="videoStart">播放</string>
     <string name="videoStop">停止</string>
+    <string name="screenshots">截图</string>
     <string name="detect_connect">连接</string>
     <string name="detect_disconnect">断开</string>
     <string name="detect_fire">点火</string>
