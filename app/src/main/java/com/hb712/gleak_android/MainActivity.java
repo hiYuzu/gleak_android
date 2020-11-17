@@ -2,7 +2,6 @@ package com.hb712.gleak_android;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.os.Process;
@@ -10,9 +9,14 @@ import android.os.Process;
 import com.hb712.gleak_android.base.BaseActivity;
 import com.hb712.gleak_android.base.BaseBean;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
+import com.hb712.gleak_android.message.net.LeakDataRequest;
+import com.hb712.gleak_android.message.net.Location;
+import com.hb712.gleak_android.message.net.NewLeakRequest;
 import com.hb712.gleak_android.util.CommonUtils;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.MapUtils;
+
+import java.io.File;
 
 /**
  * @author hiYuzu
@@ -28,8 +32,12 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //TODO 测试http，可屏蔽掉
+        NewLeakRequest newLeakRequest = new NewLeakRequest();
+        newLeakRequest.setType("newleak");
+        newLeakRequest.setName("测试漏点1");
+        newLeakRequest.setLocation(new Location.Builder().lon(234.123).lat(456.123).build());
         HttpUtils.postMultiple(this, "http://114.115.217.241/GeneralMonitorController/getGenaralAreaData",
-                MapUtils.getHttpInstance().put("select", "plst"),null,
+                MapUtils.getHttpInstance().put("select", "plst"), null,
                 BaseBean.class, new OKHttpListener<BaseBean>() {
                     @Override
                     public void onSuccess(BaseBean bean) {
