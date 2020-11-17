@@ -20,4 +20,37 @@ public class Location {
     public void setLat(Double lat) {
         this.lat = lat;
     }
+
+    public static class Builder {
+
+        private Double lon;
+        private Double lat;
+
+        public Builder() {
+        }
+
+        public Builder lon(Double lon) {
+            this.lon = lon;
+            return this;
+        }
+
+        public Builder lat(Double lat) {
+            this.lat = lat;
+            return this;
+        }
+
+        public Location build() {
+            return new Location(this);
+        }
+    }
+
+    private Location(Builder builder) {
+        lon = builder.lon;
+        lat = builder.lat;
+    }
+
+    public Location() {
+        super();
+    }
+
 }
