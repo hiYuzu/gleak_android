@@ -4,7 +4,9 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -53,6 +55,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import tv.danmaku.ijk.media.player.ffmpeg.FFmpegApi;
+
 public class DetectActivity extends AppCompatActivity {
 
     private static final String TAG = DetectActivity.class.getSimpleName();
@@ -71,8 +75,8 @@ public class DetectActivity extends AppCompatActivity {
     //最大值
     private EditText detectMaxvalueET;
     //仪器参数
-    private Button deviceParamB;
-    private ScrollView detectStatus;
+//    private Button deviceParamB;
+//    private ScrollView detectStatus;
 
     private TextView detectParamPower;
     private TextView detectParamVol;
@@ -87,10 +91,9 @@ public class DetectActivity extends AppCompatActivity {
     private TextView detectParamMicroCurrent;
 
     //当前趋势
-    private Button currentTrendB;
-    private LinearLayout detectCurve;
-
-    private LineChart detectCurveChart;
+//    private Button currentTrendB;
+//    private LinearLayout detectCurve;
+//    private LineChart detectCurveChart;
     private LineDataSet lineDataSet;
     private double minValue = Double.MAX_VALUE;
     private double maxValue = Double.MIN_VALUE;
@@ -150,8 +153,8 @@ public class DetectActivity extends AppCompatActivity {
         detectMaxvalueET = findViewById(R.id.detectMaxvalue);
         detectMaxvalueET.setEnabled(false);
 
-        deviceParamB = findViewById(R.id.deviceParam);
-        detectStatus = findViewById(R.id.detectStatus);
+//        deviceParamB = findViewById(R.id.deviceParam);
+//        detectStatus = findViewById(R.id.detectStatus);
         detectParamPower = findViewById(R.id.detectParamPower);
         detectParamVol = findViewById(R.id.detectParamVol);
         detectParamPump = findViewById(R.id.detectParamPump);
@@ -164,9 +167,9 @@ public class DetectActivity extends AppCompatActivity {
         detectParamFireTemp = findViewById(R.id.detectParamFireTemp);
         detectParamMicroCurrent = findViewById(R.id.detectParamMicroCurrent);
 
-        currentTrendB = findViewById(R.id.currentTrend);
-        detectCurve = findViewById(R.id.detectCurve);
-        detectCurveChart = findViewById(R.id.detectCurveChart);
+//        currentTrendB = findViewById(R.id.currentTrend);
+//        detectCurve = findViewById(R.id.detectCurve);
+//        detectCurveChart = findViewById(R.id.detectCurveChart);
     }
 
     /**
@@ -352,6 +355,16 @@ public class DetectActivity extends AppCompatActivity {
         mRtspPlayer.stopPlay();
     }
 
+    public void getScreenshots(View view) {
+
+        if (!mRtspPlayer.isRecording) {
+            mRtspPlayer.startRecord(this);
+        } else {
+            mRtspPlayer.stopRecord(this);
+        }
+        runOnUiThread(() -> mRtspPlayer.getScreenshots(getApplicationContext()));
+    }
+
     public void connectClick(View view) {
         if (GlobalParam.isConnected) {
             mBluetooth.disconnect();
@@ -450,11 +463,7 @@ public class DetectActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * 显示仪器参数
-     *
-     * @param view
-     */
+/*
     public void deviceParamClick(View view) {
         detectCurve.setVisibility(View.GONE);
         currentTrendB.setTextColor(getResources().getColor(R.color.white));
@@ -462,18 +471,13 @@ public class DetectActivity extends AppCompatActivity {
         detectStatus.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * 显示趋势曲线
-     *
-     * @param view
-     */
     public void currentTrendClick(View view) {
         detectStatus.setVisibility(View.GONE);
         deviceParamB.setTextColor(getResources().getColor(R.color.white));
         currentTrendB.setTextColor(getResources().getColor(R.color.black));
         detectCurve.setVisibility(View.VISIBLE);
     }
-
+*/
     private boolean isConnected() {
         if (GlobalParam.isConnected) {
             return true;
@@ -495,13 +499,13 @@ public class DetectActivity extends AppCompatActivity {
         }
 
         //展示仪器参数或当前趋势
-        if (detectStatus.getVisibility() == View.VISIBLE) {
+//        if (detectStatus.getVisibility() == View.VISIBLE) {
             showStatus();
             cacheCurveData(systemCurrent);
-        } else {
-            showCurveData(systemCurrent);
-            return;
-        }
+//        } else {
+//            showCurveData(systemCurrent);
+//            return;
+//        }
         detectValueET.setText(new DecimalFormat("0.0").format(systemCurrent));
         showValueBySeriesLimit(systemCurrent);
         showMax(systemCurrent);
@@ -522,7 +526,7 @@ public class DetectActivity extends AppCompatActivity {
         detectParamMicroCurrent.setText(localDecimalFormat.format(deviceController.getMicroCurrent()));
         detectParamSystemCurrent.setText(localDecimalFormat.format(deviceController.getSystemCurrent()));
     }
-
+/*
     public void showCurveData(double paramFloat) {
         cacheCurveData(paramFloat);
         List<Entry> localList = lineDataSet.getValues();
@@ -532,7 +536,7 @@ public class DetectActivity extends AppCompatActivity {
         setData(localList);
         detectCurveChart.invalidate();
     }
-
+*/
     private void cacheCurveData(double paramFloat) {
         if (minValue > paramFloat) {
             minValue = paramFloat;
@@ -579,7 +583,7 @@ public class DetectActivity extends AppCompatActivity {
         lineDataSet.setFormSize(15.0F);
         lineDataSet.setFillColor(R.color.blue);
     }
-
+/*
     private void setData(List<Entry> paramList2) {
         if ((detectCurveChart.getData() != null) && (detectCurveChart.getData().getDataSetCount() > 0)) {
             ((LineDataSet) detectCurveChart.getLineData().getDataSetByIndex(0)).setValues(paramList2);
@@ -588,7 +592,7 @@ public class DetectActivity extends AppCompatActivity {
         }
         detectCurveChart.setData(new LineData(lineDataSet));
     }
-
+*/
     private void showValueBySeriesLimit(double paramDouble) {
         SeriesLimitInfo seriesLimitInfo = this.seriesLimitInfo;
         if (seriesLimitInfo != null) {

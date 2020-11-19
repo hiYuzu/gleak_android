@@ -10,6 +10,12 @@
         android:id="@+id/videoView"
         android:layout_width="1280px"
         android:layout_height="720px">
+        <TextView
+            android:id="@+id/videoWaterMark"
+            android:text="@string/watermark"
+            android:layout_gravity="bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </com.hb712.gleak_android.rtsp.widget.IjkVideoView>
 
     <LinearLayout
@@ -23,9 +29,9 @@
             android:id="@+id/videoIp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/login_button_background"
-            android:minWidth="@dimen/dimen_50dp"
-            android:minHeight="@dimen/dimen_25dp"
+            android:background="@drawable/button_operation"
+            android:minWidth="65dp"
+            android:minHeight="@dimen/dimen_35dp"
             android:onClick="setVideoIp"
             android:text="@string/videoIp"
             android:textColor="@color/white" />
@@ -35,9 +41,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fab_margin"
-            android:background="@color/login_button_background"
-            android:minWidth="@dimen/dimen_50dp"
-            android:minHeight="@dimen/dimen_25dp"
+            android:background="@drawable/button_operation"
+            android:minWidth="65dp"
+            android:minHeight="@dimen/dimen_35dp"
             android:onClick="videoStartClick"
             android:text="@string/videoStart"
             android:textColor="@color/white" />
@@ -47,12 +53,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fab_margin"
-            android:background="@color/login_button_background"
-            android:minWidth="@dimen/dimen_50dp"
-            android:minHeight="@dimen/dimen_25dp"
+            android:background="@drawable/button_operation"
+            android:minWidth="65dp"
+            android:minHeight="@dimen/dimen_35dp"
             android:onClick="videoStopClick"
             android:text="@string/videoStop"
             android:textColor="@color/white" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:background="@drawable/button_operation"
+            android:minWidth="65dp"
+            android:minHeight="@dimen/dimen_35dp"
+            android:onClick="getScreenshots"
+            android:text="@string/screenshots"
+            android:textColor="@color/white"/>
     </LinearLayout>
 
     <LinearLayout
@@ -66,9 +83,9 @@
             android:id="@+id/detectConnectButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/login_button_background"
+            android:background="@drawable/button_operation"
             android:minWidth="@dimen/dimen_50dp"
-            android:minHeight="@dimen/dimen_25dp"
+            android:minHeight="@dimen/dimen_35dp"
             android:onClick="connectClick"
             android:text="@string/detect_connect"
             android:textColor="@color/white" />
@@ -77,9 +94,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fab_margin"
-            android:background="@color/login_button_background"
+            android:background="@drawable/button_operation"
             android:minWidth="@dimen/dimen_50dp"
-            android:minHeight="@dimen/dimen_25dp"
+            android:minHeight="@dimen/dimen_35dp"
             android:onClick="fireClick"
             android:text="@string/detect_fire"
             android:textColor="@color/white" />
@@ -89,9 +106,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fab_margin"
-            android:background="@color/login_button_background"
+            android:background="@drawable/button_operation"
             android:minWidth="@dimen/dimen_50dp"
-            android:minHeight="@dimen/dimen_25dp"
+            android:minHeight="@dimen/dimen_35dp"
             android:onClick="fireClick2"
             android:text="@string/detect_fire_2"
             android:textColor="@color/white" />
@@ -101,9 +118,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fab_margin"
-            android:background="@color/login_button_background"
+            android:background="@drawable/button_operation"
             android:minWidth="@dimen/dimen_50dp"
-            android:minHeight="@dimen/dimen_25dp"
+            android:minHeight="@dimen/dimen_35dp"
             android:onClick="ceasefireClick"
             android:text="@string/detect_ceasefire"
             android:textColor="@color/white" />
@@ -112,9 +129,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fab_margin"
-            android:background="@color/login_button_background"
+            android:background="@drawable/button_operation"
             android:minWidth="@dimen/dimen_50dp"
-            android:minHeight="@dimen/dimen_25dp"
+            android:minHeight="@dimen/dimen_35dp"
             android:onClick="recordClick"
             android:text="@string/detect_record"
             android:textColor="@color/white" />
@@ -190,7 +207,7 @@
             android:inputType="number"
             android:minWidth="@dimen/dimen_50dp" />
     </LinearLayout>
-
+<!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -217,8 +234,8 @@
             android:text="@string/detect_current_trend"
             android:textColor="@color/white" />
     </LinearLayout>
-
-    <FrameLayout
+-->
+<!--    <FrameLayout
         android:id="@+id/detectFrame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -227,10 +244,11 @@
             android:id="@+id/detectStatus"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
+-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -432,6 +450,7 @@
 
                 </LinearLayout>
             </LinearLayout>
+<!--
         </ScrollView>
 
         <LinearLayout
@@ -448,6 +467,5 @@
                 android:layout_marginEnd="@dimen/dimen_10dp"
                 android:layout_marginBottom="@dimen/dimen_10dp" />
         </LinearLayout>
-    </FrameLayout>
-
+    </FrameLayout>-->
 </LinearLayout>

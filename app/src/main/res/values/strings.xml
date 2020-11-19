@@ -24,6 +24,7 @@
     <string name="videoStart">播放</string>
     <string name="videoStop">停止</string>
     <string name="screenshots">截图</string>
+    <string name="watermark">水印</string>
     <string name="detect_connect">连接</string>
     <string name="detect_disconnect">断开</string>
     <string name="detect_fire">点火</string>
@@ -34,10 +35,10 @@
     <string name="detect_series">工作曲线</string>
     <string name="detect_select_series">选择工作曲线</string>
     <string name="detect_factor">响应因子</string>
-    <string name="detect_value">检测值：</string>
+    <string name="detect_value">检测值:</string>
     <string name="detect_value_unit_ppm">单位：ppm</string>
     <string name="detect_value_unit_mg">单位：mg/m3</string>
-    <string name="max_value">最大值：</string>
+    <string name="max_value">最大值:</string>
     <string name="detect_device_param">仪器参数</string>
     <string name="detect_current_trend">当前趋势</string>
     <string name="detect_param_power">电量：</string>

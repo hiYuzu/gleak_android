@@ -1,10 +1,15 @@
 package com.hb712.gleak_android.rtsp.widget;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -650,7 +655,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             Objects.requireNonNull(am).abandonAudioFocus(null);
         }
     }
-/*
+
     public int startRecord(String recordVideoPath) {
         return mMediaPlayer.startRecord(recordVideoPath);
     }
@@ -659,13 +664,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         return mMediaPlayer.stopRecord();
     }
 
-    public boolean isRecord() {
-        // 如果是在录像中返回的值是 1
-        return mMediaPlayer.isRecord() > 0;
+    public boolean getCurrentFrame(Bitmap bitmap) {
+        return mMediaPlayer.getCurrentFrame(bitmap);
     }
-
-    public void getTestBitmap(String saveFile) {
-        mMediaPlayer.getCurrentFrame(saveFile);
-    }
- */
 }

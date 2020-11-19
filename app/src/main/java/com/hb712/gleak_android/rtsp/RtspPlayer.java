@@ -1,15 +1,27 @@
 package com.hb712.gleak_android.rtsp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
+import android.os.Environment;
 
 import com.hb712.gleak_android.R;
+
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+import tv.danmaku.ijk.media.player.IMediaPlayer;
+
 import com.hb712.gleak_android.rtsp.widget.IjkVideoView;
 import com.hb712.gleak_android.util.GlobalParam;
+import com.hb712.gleak_android.util.LogUtil;
 
-import tv.danmaku.ijk.media.player.IMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author hiYuzu
@@ -21,6 +33,8 @@ public class RtspPlayer {
     private static final String TAG = RtspPlayer.class.getSimpleName();
     private IjkVideoView mVideoView;
     private BaseLoadingView mLoadingView;
+
+    public boolean isRecording = false;
 
     public void init(Activity activity, BaseLoadingView loadingView) {
         mLoadingView = loadingView;
@@ -51,6 +65,75 @@ public class RtspPlayer {
         mVideoView.stopPlayback();
         mVideoView.release(true);
         IjkMediaPlayer.native_profileEnd();
+    }
+
+    public void getScreenshots(Context context) {
+        if (!mVideoView.isPlaying()) {
+            LogUtil.infoOut(context, TAG, null, "无视频信号");
+            return;
+        }
+        int width = 1280;
+        int height = 720;
+        Bitmap srcBitmap = Bitmap.createBitmap(width,
+                height, Bitmap.Config.ARGB_8888);
+        boolean flag = mVideoView.getCurrentFrame(srcBitmap);
+        if (flag) {
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/ijkplayer/snapshot";
+            File fileDir = new File(path);
+            if (!fileDir.exists()) {
+                if (fileDir.mkdirs()) {
+                    LogUtil.infoOut(context, TAG, null, "文件夹创建失败");
+                }
+            }
+
+            @SuppressLint("SimpleDateFormat")
+            File file = new File(
+                    fileDir.getPath()
+                            + "/"
+                            + new SimpleDateFormat("yyyyMMddHHmmss")
+                            .format(new Date()) + ".jpg");
+            try {
+                FileOutputStream out = new FileOutputStream(file);
+                srcBitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                out.flush();
+                out.close();
+                LogUtil.infoOut(context, TAG, null, "截图已保存：" + file.getPath());
+            } catch (FileNotFoundException e) {
+                LogUtil.errorOut(TAG, e, "文件未找到");
+            } catch (IOException ex) {
+                LogUtil.errorOut(TAG, ex, "IO异常");
+            }
+
+        } else {
+            LogUtil.infoOut(context, TAG, null, "截图失败");
+        }
+    }
+
+    public void startRecord(Context context) {
+        if (!mVideoView.isPlaying()) {
+            LogUtil.infoOut(context, TAG, null, "无视频信号");
+            return;
+        }
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/ijkplayer/video";
+        File fileDir = new File(path);
+        if (!fileDir.exists()) {
+            if (fileDir.mkdirs()) {
+                LogUtil.infoOut(context, TAG, null, "文件夹创建失败");
+            }
+        }
+        @SuppressLint("SimpleDateFormat")
+        String filePath = path + "/"
+                + new SimpleDateFormat("yyyyMMddHHmmss")
+                .format(new Date()) + ".mp4";
+        int result = mVideoView.startRecord(filePath);
+        isRecording = true;
+        LogUtil.infoOut(context, TAG, null, "开始录制: " + result);
+    }
+
+    public void stopRecord(Context context) {
+        int result = mVideoView.stopRecord();
+        isRecording = false;
+        LogUtil.infoOut(context, TAG, null, "停止录制: " + result);
     }
 
     public abstract static class BaseLoadingView {
