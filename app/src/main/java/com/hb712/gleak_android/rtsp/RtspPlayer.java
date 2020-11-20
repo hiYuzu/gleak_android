@@ -117,7 +117,7 @@ public class RtspPlayer {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/ijkplayer/video";
         File fileDir = new File(path);
         if (!fileDir.exists()) {
-            if (fileDir.mkdirs()) {
+            if (!fileDir.mkdirs()) {
                 LogUtil.infoOut(context, TAG, null, "文件夹创建失败");
             }
         }
