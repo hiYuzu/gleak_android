@@ -7,7 +7,6 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -33,7 +32,6 @@ import com.hb712.gleak_android.dialog.SeriesDialog;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.message.net.LeakData;
-import com.hb712.gleak_android.message.net.MonitorData;
 import com.hb712.gleak_android.pojo.FactorCoefficientInfo;
 import com.hb712.gleak_android.pojo.SeriesInfo;
 import com.hb712.gleak_android.pojo.SeriesLimitInfo;
@@ -44,7 +42,6 @@ import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.SPUtil;
-import com.hb712.gleak_android.util.ThreadPoolUtil;
 import com.hb712.gleak_android.util.UnitManager;
 
 import org.greenrobot.greendao.query.WhereCondition;
@@ -58,6 +55,10 @@ import java.util.List;
 public class DetectActivity extends BaseActivity implements HttpInterface {
 
     private static final String TAG = DetectActivity.class.getSimpleName();
+
+    private Button startRecordBtn;
+    private Button uploadVideoBtn;
+
     //连接
     private Button detectConnectB;
     //连接的设备名
@@ -72,9 +73,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private EditText detectValueET;
     //最大值
     private EditText detectMaxvalueET;
-    //仪器参数
-//    private Button deviceParamB;
-//    private ScrollView detectStatus;
 
     private TextView detectParamPower;
     private TextView detectParamVol;
@@ -88,10 +86,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private TextView detectParamFireTemp;
     private TextView detectParamMicroCurrent;
 
-    //当前趋势
-//    private Button currentTrendB;
-//    private LinearLayout detectCurve;
-//    private LineChart detectCurveChart;
     private LineDataSet lineDataSet;
     private double minValue = Double.MAX_VALUE;
     private double maxValue = Double.MIN_VALUE;
@@ -141,6 +135,12 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      * 初始化控件
      */
     private void initView() {
+        startRecordBtn = findViewById(R.id.startRecordBtn);
+        startRecordBtn.setOnClickListener((p) -> {
+            Intent intent = new Intent(getApplicationContext(), LeakMapActivity.class);
+            startActivityForResult(intent, GlobalParam.REQUEST_LEAK_DATA);
+        });
+        uploadVideoBtn = findViewById(R.id.uploadVideoBtn);
         detectConnectB = findViewById(R.id.detectConnectButton);
         connDeviceTV = findViewById(R.id.connDevice);
         detectUnit = findViewById(R.id.detectUnit);
@@ -161,8 +161,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         detectMaxvalueET = findViewById(R.id.detectMaxvalue);
         detectMaxvalueET.setEnabled(false);
 
-//        deviceParamB = findViewById(R.id.deviceParam);
-//        detectStatus = findViewById(R.id.detectStatus);
         detectParamPower = findViewById(R.id.detectParamPower);
         detectParamVol = findViewById(R.id.detectParamVol);
         detectParamPump = findViewById(R.id.detectParamPump);
@@ -174,10 +172,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         detectParamCcTemp = findViewById(R.id.detectParamCcTemp);
         detectParamFireTemp = findViewById(R.id.detectParamFireTemp);
         detectParamMicroCurrent = findViewById(R.id.detectParamMicroCurrent);
-
-//        currentTrendB = findViewById(R.id.currentTrend);
-//        detectCurve = findViewById(R.id.detectCurve);
-//        detectCurveChart = findViewById(R.id.detectCurveChart);
     }
 
     /**
@@ -348,32 +342,77 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         mRtspPlayer.stopPlay();
     }
 
-    public void getScreenshots(View view) {
-
-        if (!mRtspPlayer.isRecording) {
-            mRtspPlayer.startRecord(this);
+    public void connectClick(View view) {
+        if (GlobalParam.isConnected) {
+            mBluetooth.disconnect();
         } else {
-            mRtspPlayer.stopRecord(this);
+            Intent intent = new Intent(getApplicationContext(), DeviceActivity.class);
+            startActivityForResult(intent, GlobalParam.REQUEST_CONNECT_DEVICE);
         }
-        Runnable runnable = () -> mRtspPlayer.getScreenshots(getApplicationContext());
-        ThreadPoolUtil.execute(runnable);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GlobalParam.REQUEST_CONNECT_DEVICE) {
+            // 获取蓝牙设备
+            if (resultCode == Activity.RESULT_OK) {
+                mBluetooth.connect(data);
+            }
+        } else if (requestCode == GlobalParam.REQUEST_ENABLE_BT) {
+            // 请求打开蓝牙
+            if (resultCode == Activity.RESULT_OK) {
+                mBluetooth.setupService();
+            } else {
+                finish();
+            }
+        } else if (requestCode == GlobalParam.REQUEST_LEAK_DATA) {
+            // 获取漏点数据
+            if (resultCode == Activity.RESULT_OK && data.getExtras() != null) {
+                startRecord(data.getExtras());
+            } else {
+                ToastUtil.shortInstanceToast("获取漏点信息失败，请重试");
+            }
+        }
+    }
+
+    private void startRecord(Bundle bundle) {
+        if (isConnected()) {
+            if (!mRtspPlayer.isRecording()) {
+                mRtspPlayer.startRecord();
+                startRecordBtn.setText(getResources().getText(R.string.stopRecord));
+            } else {
+                mRtspPlayer.stopRecord();
+                startRecordBtn.setText(getResources().getText(R.string.startRecord));
+                // 保存漏点信息、检测数据、视频信息
+                saveData(bundle);
+
+                if (MainApplication.getInstance().isLogin()) {
+                    uploadVideoBtn.setEnabled(true);
+                }
+            }
+        }
+    }
+
+    private void saveData(Bundle bundle) {
+        LeakData leakData = (LeakData) bundle.get(GlobalParam.LEAK_DATA);
+        // TODO..保存到本地
+    }
 
     public void uploadVideo(View view) {
-        LeakData leakData = new LeakData("1", MainApplication.getInstance().getUserId(), new MonitorData("2020-11-27 11:26:20", 15.6, true));
+        // TODO..从本地数据库中取出最新的一条上传
         /*
         NewLeakRequest newLeakRequest = new NewLeakRequest();
         Double lat = null;
         Double lon = null;
-        GPSUtils gpsUtils = GPSUtils.getInstance(this);
-        if(gpsUtils.isLocationProviderEnabled()){
+        GPSUtil gpsUtil = GPSUtil.getInstance(this);
+        if(gpsUtil.isLocationProviderEnabled()){
             android.location.Location location = null;
-            if (!gpsUtils.isLocationPermission()) {
+            if (!gpsUtil.isLocationPermission()) {
                 //判断是否为android6.0系统版本，如果是，需要动态添加权限
-                ActivityCompat.requestPermissions(this, gpsUtils.permissions,100);
+                ActivityCompat.requestPermissions(this, gpsUtil.permissions,100);
             } else {
-                location = gpsUtils.getLocation();
+                location = gpsUtil.getLocation();
             }
             if(location != null){
                 lon = location.getLongitude();
@@ -382,8 +421,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         }
         newLeakRequest.setLocation(new Location.Builder().lon(lon).lat(lat).build());
          */
-        HttpUtils.post(this, "http://192.168.3.125:3000/video/insert",
-                leakData.toString(), getVideo(), new OKHttpListener() {
+        HttpUtils.post(this, "http://192.168.3.125:3000/video/insert", "", new File(mRtspPlayer.getVideoPath()),
+                new OKHttpListener() {
                     @Override
                     public void onSuccess(Bundle bundle) {
                         ToastUtil.shortInstanceToast("上传成功");
@@ -399,36 +438,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                         ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
                     }
                 });
-    }
-
-    private File getVideo() {
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/ijkplayer/video/20201119152745.mp4";
-        return new File(path);
-    }
-
-    public void connectClick(View view) {
-        if (GlobalParam.isConnected) {
-            mBluetooth.disconnect();
-        } else {
-            Intent intent = new Intent(getApplicationContext(), DeviceActivity.class);
-            startActivityForResult(intent, GlobalParam.REQUEST_CONNECT_DEVICE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == GlobalParam.REQUEST_CONNECT_DEVICE) {
-            if (resultCode == Activity.RESULT_OK) {
-                mBluetooth.connect(data);
-            }
-        } else if (requestCode == GlobalParam.REQUEST_ENABLE_BT) {
-            if (resultCode == Activity.RESULT_OK) {
-                mBluetooth.setupService();
-            } else {
-                finish();
-            }
-        }
     }
 
     private void showSeriesName() {
@@ -467,6 +476,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     public void fireClick(View view) {
         if (isConnected()) {
+            // TODO..
+            // mBluetooth 加工发送(命令);
             System.out.println("点火1");
         }
     }
@@ -493,32 +504,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         }
     }
 
-    /**
-     * 记录
-     *
-     * @param view
-     */
-    public void recordClick(View view) {
-        if (isConnected()) {
-            System.out.println("记录");
-        }
-    }
-
-    /*
-        public void deviceParamClick(View view) {
-            detectCurve.setVisibility(View.GONE);
-            currentTrendB.setTextColor(getResources().getColor(R.color.white));
-            deviceParamB.setTextColor(getResources().getColor(R.color.black));
-            detectStatus.setVisibility(View.VISIBLE);
-        }
-
-        public void currentTrendClick(View view) {
-            detectStatus.setVisibility(View.GONE);
-            deviceParamB.setTextColor(getResources().getColor(R.color.white));
-            currentTrendB.setTextColor(getResources().getColor(R.color.black));
-            detectCurve.setVisibility(View.VISIBLE);
-        }
-    */
     private boolean isConnected() {
         if (GlobalParam.isConnected) {
             return true;
@@ -539,14 +524,9 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             systemCurrent = UnitManager.getMg(systemCurrent);
         }
 
-        //展示仪器参数或当前趋势
-//        if (detectStatus.getVisibility() == View.VISIBLE) {
+        //展示仪器参数
         showStatus();
         cacheCurveData(systemCurrent);
-//        } else {
-//            showCurveData(systemCurrent);
-//            return;
-//        }
         detectValueET.setText(new DecimalFormat("0.0").format(systemCurrent));
         showValueBySeriesLimit(systemCurrent);
         showMax(systemCurrent);
@@ -568,17 +548,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         detectParamSystemCurrent.setText(localDecimalFormat.format(deviceController.getSystemCurrent()));
     }
 
-    /*
-        public void showCurveData(double paramFloat) {
-            cacheCurveData(paramFloat);
-            List<Entry> localList = lineDataSet.getValues();
-            detectCurveChart.getXAxis().setAxisMaximum(200.0F);
-            detectCurveChart.getXAxis().setAxisMinimum(0.0F);
-            detectCurveChart.getAxisLeft().setAxisMaximum((float) (maxValue * 1.1D));
-            setData(localList);
-            detectCurveChart.invalidate();
-        }
-    */
     private void cacheCurveData(double paramFloat) {
         if (minValue > paramFloat) {
             minValue = paramFloat;
@@ -626,16 +595,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         lineDataSet.setFillColor(R.color.blue);
     }
 
-    /*
-        private void setData(List<Entry> paramList2) {
-            if ((detectCurveChart.getData() != null) && (detectCurveChart.getData().getDataSetCount() > 0)) {
-                ((LineDataSet) detectCurveChart.getLineData().getDataSetByIndex(0)).setValues(paramList2);
-                detectCurveChart.notifyDataSetChanged();
-                return;
-            }
-            detectCurveChart.setData(new LineData(lineDataSet));
-        }
-    */
     private void showValueBySeriesLimit(double paramDouble) {
         SeriesLimitInfo seriesLimitInfo = this.seriesLimitInfo;
         if (seriesLimitInfo != null) {

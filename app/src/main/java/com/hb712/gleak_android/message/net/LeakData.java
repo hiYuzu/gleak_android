@@ -6,7 +6,8 @@ public class LeakData {
     private String userId;
     private MonitorData monitorData;
 
-    public LeakData() {}
+    public LeakData() {
+    }
 
     public LeakData(String leakId, String userId, MonitorData monitorData) {
         this.leakId = leakId;
@@ -38,4 +39,8 @@ public class LeakData {
         this.monitorData = monitorData;
     }
 
+    @Override
+    public String toString() {
+        return "leakId:" + leakId + "userId:" + userId + "monitorData:{" + monitorData.toString() + "}";
+    }
 }

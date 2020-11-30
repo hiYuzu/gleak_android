@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
  * @date 2020/10/21 14:23
  */
 public class DBManager {
-    private static final String DB_NAME = "VOC3000.db";
+    private static final String DB_NAME = "LEAK_DATA.db";
     private static final String TAG = DBManager.class.getSimpleName();
     @SuppressLint("StaticFieldLeak")
     private static DBManager instance;

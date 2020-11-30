@@ -4,12 +4,13 @@ public class MonitorData {
 
     private String monitorTime;
     private double monitorValue;
-    private boolean monitorStatus;
+    // 数据状态（正常：1，超标：0）
+    private int monitorStatus;
 
     public MonitorData() {
     }
 
-    public MonitorData(String monitorTime, double monitorValue, boolean monitorStatus) {
+    public MonitorData(String monitorTime, double monitorValue, int monitorStatus) {
         this.monitorTime = monitorTime;
         this.monitorValue = monitorValue;
         this.monitorStatus = monitorStatus;
@@ -31,11 +32,16 @@ public class MonitorData {
         this.monitorValue = monitorValue;
     }
 
-    public boolean isMonitorStatus() {
+    public int getMonitorStatus() {
         return monitorStatus;
     }
 
-    public void setMonitorStatus(boolean monitorStatus) {
+    public void setMonitorStatus(int monitorStatus) {
         this.monitorStatus = monitorStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "monitorTime:" + monitorTime + "monitorValue:" + monitorValue + "monitorStatus:" + monitorStatus;
     }
 }

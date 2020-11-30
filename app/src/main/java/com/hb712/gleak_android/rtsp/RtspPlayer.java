@@ -34,7 +34,9 @@ public class RtspPlayer {
     private IjkVideoView mVideoView;
     private BaseLoadingView mLoadingView;
 
-    public boolean isRecording = false;
+    private String videoPath;
+
+    private boolean recording = false;
 
     public void init(Activity activity, BaseLoadingView loadingView) {
         mLoadingView = loadingView;
@@ -67,7 +69,7 @@ public class RtspPlayer {
         IjkMediaPlayer.native_profileEnd();
     }
 
-    public void getScreenshots(Context context) {
+    public void getScreenshots() {
         if (!mVideoView.isPlaying()) {
             LogUtil.infoOut(TAG, "无视频信号");
             return;
@@ -109,7 +111,8 @@ public class RtspPlayer {
         }
     }
 
-    public void startRecord(Context context) {
+    @SuppressLint("SimpleDateFormat")
+    public synchronized void startRecord() {
         if (!mVideoView.isPlaying()) {
             LogUtil.infoOut(TAG, "无视频信号");
             return;
@@ -121,19 +124,26 @@ public class RtspPlayer {
                 LogUtil.infoOut(TAG, "文件夹创建失败");
             }
         }
-        @SuppressLint("SimpleDateFormat")
-        String filePath = path + "/"
+        videoPath = path + "/"
                 + new SimpleDateFormat("yyyyMMddHHmmss")
                 .format(new Date()) + ".mp4";
-        int result = mVideoView.startRecord(filePath);
-        isRecording = true;
-        LogUtil.infoOut(TAG, "开始录制: " + result);
+        int result = mVideoView.startRecord(videoPath);
+        recording = true;
+        LogUtil.infoOut(TAG, "开始录制:" + result);
     }
 
-    public void stopRecord(Context context) {
+    public void stopRecord() {
         int result = mVideoView.stopRecord();
-        isRecording = false;
-        LogUtil.infoOut(TAG, "停止录制: " + result);
+        recording = false;
+        LogUtil.infoOut(TAG, "结束录制:" + result);
+    }
+
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public boolean isRecording() {
+        return recording;
     }
 
     public abstract static class BaseLoadingView {

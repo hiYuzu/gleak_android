@@ -11,14 +11,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 
-public class GPSUtils {
-    private static final String TAG = GPSUtils.class.getSimpleName();
+public class GPSUtil {
+    private static final String TAG = GPSUtil.class.getSimpleName();
     //权限数组（申请定位）
     public final String[] permissions = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS};
     @SuppressLint("StaticFieldLeak")
-    private static GPSUtils mInstance;
+    private static GPSUtil mInstance;
     private final Context mContext;
     private static final LocationListener mLocationListener = new LocationListener() {
 
@@ -49,13 +49,13 @@ public class GPSUtils {
     };
 
 
-    private GPSUtils(Context context) {
+    private GPSUtil(Context context) {
         this.mContext = context;
     }
 
-    public static GPSUtils getInstance(Context context) {
+    public static GPSUtil getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new GPSUtils(context.getApplicationContext());
+            mInstance = new GPSUtil(context.getApplicationContext());
         }
         return mInstance;
     }

@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.support.v4.content.SharedPreferencesCompat;
 
 /**
+ * 本地缓存工具类
+ *
  * @author hiYuzu
  * @version V1.0
  * @date 2020/10/21 11:31
@@ -12,6 +14,13 @@ import android.support.v4.content.SharedPreferencesCompat;
 public class SPUtil {
     private static final String DESIRED_NAME = "cp_ldar_data";
 
+    /**
+     * 取
+     * @param context context
+     * @param key 键
+     * @param defValue 默认值
+     * @return 存入的值或默认值
+     */
     public static Object get(Context context, String key, Object defValue) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(DESIRED_NAME, Context.MODE_PRIVATE);
         if (defValue instanceof String) {
@@ -27,6 +36,12 @@ public class SPUtil {
         }
     }
 
+    /**
+     * 存
+     * @param context context
+     * @param key 键
+     * @param value 值
+     */
     public static void put(Context context, String key, Object value) {
         SharedPreferences.Editor editor = context.getSharedPreferences("cp_ldar_data", Context.MODE_PRIVATE).edit();
         if (value instanceof String) {
@@ -45,6 +60,11 @@ public class SPUtil {
         editor.apply();
     }
 
+    /**
+     * 删除
+     * @param context context
+     * @param key 键
+     */
     public static void remove(Context context, String key) {
         SharedPreferences.Editor editor = context.getSharedPreferences(DESIRED_NAME, Context.MODE_PRIVATE).edit();
         editor.remove(key);

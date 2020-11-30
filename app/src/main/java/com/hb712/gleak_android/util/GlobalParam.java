@@ -26,13 +26,19 @@ public class GlobalParam {
     public static final int REQUEST_CONNECT_DEVICE = 384;
     public static final int REQUEST_ENABLE_BT = 385;
 
+    public static final int REQUEST_LEAK_DATA = 250;
+
     //其他
     public static final String DEVICE_NAME = "device_name";
     public static final String DEVICE_ADDRESS = "device_address";
     public static final boolean DEVICE_ANDROID = false;
 
+    public static final String LEAK_DATA = "leak_data";
+
     //video
     public static boolean loadFirst = true;
     @SuppressLint("AuthLeak")
     public static String VIDEO_URL = "rtsp://admin:tjtcb712@192.168.1.100:554/h264/ch1/main/av_stream";
+
+    public static final String MAP_KEY = "BpPnFERqEuxQtdvEuPp4eW8ouHv6LeKR";
 }

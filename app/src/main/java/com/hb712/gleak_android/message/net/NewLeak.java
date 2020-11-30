@@ -7,18 +7,10 @@ import com.hb712.gleak_android.base.BaseMessage;
  */
 public class NewLeak extends BaseMessage {
 
-    private String type;
     private String name;
     private Location location;
+    // 巡检周期：天
     private String cycle;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public String getName() {
         return name;

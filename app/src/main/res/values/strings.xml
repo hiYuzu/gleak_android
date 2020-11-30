@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="blank"/>
+    <string name="blank" />
     <string name="app_name">Explorer</string>
     <string name="title_activity_detect">检测</string>
     <string name="title_activity_calibrate">校准</string>
@@ -24,7 +24,8 @@
     <string name="videoIp">视频地址</string>
     <string name="videoStart">播放</string>
     <string name="videoStop">停止</string>
-    <string name="screenshots">截图</string>
+    <string name="startRecord">录制</string>
+    <string name="stopRecord">停录</string>
     <string name="uploadVideo">上传</string>
     <string name="watermark">水印</string>
     <string name="detect_connect">连接</string>
