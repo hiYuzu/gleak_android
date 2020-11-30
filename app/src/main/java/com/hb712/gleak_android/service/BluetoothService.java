@@ -218,7 +218,7 @@ public class BluetoothService {
                         buffer[i] = ((Integer) mmInStream.read()).byteValue();
                     }
                     mHandler.obtainMessage(GlobalParam.MESSAGE_READ, buffer).sendToTarget();
-                    sleep(100);
+                    sleep(10);
                 } catch (IOException e) {
                     LogUtil.warnOut(TAG, e, "收发失败");
                     connectionFailed();
