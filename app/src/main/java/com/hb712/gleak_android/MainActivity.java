@@ -3,19 +3,10 @@ package com.hb712.gleak_android;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.os.Process;
 
 import com.hb712.gleak_android.base.BaseActivity;
-import com.hb712.gleak_android.base.BaseBean;
-import com.hb712.gleak_android.interfaceabs.OKHttpListener;
-import com.hb712.gleak_android.message.net.Location;
-import com.hb712.gleak_android.message.net.NewLeakRequest;
-import com.hb712.gleak_android.util.CommonUtils;
-import com.hb712.gleak_android.util.GPSUtils;
-import com.hb712.gleak_android.util.HttpUtils;
-import com.hb712.gleak_android.util.MapUtils;
 
 /**
  * @author hiYuzu
@@ -30,34 +21,6 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //TODO 测试http，可屏蔽掉
-        NewLeakRequest newLeakRequest = new NewLeakRequest();
-        newLeakRequest.setType("newleak");
-        newLeakRequest.setName("测试漏点1");
-        Double lat = null;
-        Double lon = null;
-        GPSUtils gpsUtils = GPSUtils.getInstance(this);
-        if(gpsUtils.isLocationProviderEnabled()){
-            android.location.Location location = null;
-            if (!gpsUtils.isLocationPermission()) { //判断是否为android6.0系统版本，如果是，需要动态添加权限
-                ActivityCompat.requestPermissions(this, gpsUtils.permissions,100);
-            } else {
-                location = gpsUtils.getLocation();
-            }
-            if(location != null){
-                lon = location.getLongitude();
-                lat = location.getLatitude();
-            }
-        }
-        newLeakRequest.setLocation(new Location.Builder().lon(lon).lat(lat).build());
-        HttpUtils.postMultiple(this, "http://114.115.217.241/GeneralMonitorController/getGenaralAreaData",
-                MapUtils.getHttpInstance().put("select", "plst"), null,
-                BaseBean.class, new OKHttpListener<BaseBean>() {
-                    @Override
-                    public void onSuccess(BaseBean bean) {
-                        CommonUtils.toast(bean.response);
-                    }
-                });
     }
 
     public void detectClick(View view) {

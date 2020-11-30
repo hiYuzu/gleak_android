@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.hb712.gleak_android.service.WebServiceClient;
 import com.hb712.gleak_android.util.GlobalParam;
+import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.WebViewCookiesUtils;
 
 import org.json.JSONException;
@@ -84,12 +85,12 @@ public class LaunchActivity extends Activity {
 
             @Override
             public void onSuccess(JSONObject obj) {
-                Log.d(TAG, "Login onSuccess: " + obj.toString());
+                LogUtil.debugOut(TAG, "登录成功：" + obj.toString());
                 try {
-                    String displayUser = obj.getString("DisplayUsername");
-                    WebViewCookiesUtils.saveCookie(MainApplication.getInstance().baseUrl, "displayUser", displayUser);
+                    MainApplication.getInstance().setUserId(obj.getString("userId"));
+                    MainApplication.getInstance().setToken(obj.getString("token"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    LogUtil.errorOut(TAG, e, "Cookie保存异常");
                 }
                 gotoMainActivity(username, password);
             }
@@ -98,7 +99,7 @@ public class LaunchActivity extends Activity {
             public void onFailed(String errMsg) {
                 gotoLoginActivity();
             }
-        },username, password);
+        }, username, password);
     }
 
     private void gotoMainActivity(String username, String password) {

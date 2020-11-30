@@ -5,7 +5,7 @@ import com.hb712.gleak_android.base.BaseMessage;
 /**
  * 新增漏点
  */
-public class NewLeakRequest extends BaseMessage {
+public class NewLeak extends BaseMessage {
 
     private String type;
     private String name;

@@ -14,6 +14,7 @@
     <string name="password_hint">密码</string>
     <string name="save_username_pwd">自动登录</string>
     <string name="login_button_string">登录</string>
+    <string name="login_without_user">离线登录</string>
     <!--mainActivity-->
     <string name="main_detect">检测</string>
     <string name="main_calibrate">校准</string>
@@ -24,6 +25,7 @@
     <string name="videoStart">播放</string>
     <string name="videoStop">停止</string>
     <string name="screenshots">截图</string>
+    <string name="uploadVideo">上传</string>
     <string name="watermark">水印</string>
     <string name="detect_connect">连接</string>
     <string name="detect_disconnect">断开</string>

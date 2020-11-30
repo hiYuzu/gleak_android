@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.hb712.gleak_android.R;
 import com.hb712.gleak_android.adapter.FactorAdapter;
@@ -18,6 +17,7 @@ import com.hb712.gleak_android.controller.CalibrationInfoController;
 import com.hb712.gleak_android.dao.DBManager;
 import com.hb712.gleak_android.dao.FactorCoefficientInfoDao;
 import com.hb712.gleak_android.pojo.FactorCoefficientInfo;
+import com.hb712.gleak_android.util.ToastUtil;
 
 import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -102,7 +102,7 @@ public class FactorDialog {
                 factorAddSuccessCallback.onSave(null);
             } else {
                 if (selectIndex < 0) {
-                    Toast.makeText(context, "请选择响应因子", Toast.LENGTH_SHORT).show();
+                    ToastUtil.shortInstanceToast("请选择响应因子");
                     return;
                 }
                 if (factorAddSuccessCallback != null) {

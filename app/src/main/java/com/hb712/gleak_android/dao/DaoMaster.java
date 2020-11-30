@@ -2,6 +2,7 @@ package com.hb712.gleak_android.dao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.hb712.gleak_android.util.LogUtil;
 
 import org.greenrobot.greendao.AbstractDaoMaster;
@@ -72,7 +73,7 @@ public class DaoMaster extends AbstractDaoMaster {
         }
 
         public void onUpgrade(Database paramDatabase, int paramInt1, int paramInt2) {
-            LogUtil.infoOut(null, TAG, null, "删除所有表，更新schema版本:" + paramInt1 + " -> " + paramInt2);
+            LogUtil.infoOut(TAG, "删除所有表，更新schema版本:" + paramInt1 + " -> " + paramInt2);
             DaoMaster.dropAllTables(paramDatabase, true);
             onCreate(paramDatabase);
         }
@@ -90,7 +91,7 @@ public class DaoMaster extends AbstractDaoMaster {
         }
 
         public void onCreate(Database paramDatabase) {
-            LogUtil.infoOut(null, TAG, null, "已创建表");
+            LogUtil.infoOut(TAG, "已创建表");
             DaoMaster.createAllTables(paramDatabase, false);
         }
     }

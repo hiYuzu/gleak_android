@@ -6,6 +6,15 @@ public class MonitorData {
     private double monitorValue;
     private boolean monitorStatus;
 
+    public MonitorData() {
+    }
+
+    public MonitorData(String monitorTime, double monitorValue, boolean monitorStatus) {
+        this.monitorTime = monitorTime;
+        this.monitorValue = monitorValue;
+        this.monitorStatus = monitorStatus;
+    }
+
     public String getMonitorTime() {
         return monitorTime;
     }

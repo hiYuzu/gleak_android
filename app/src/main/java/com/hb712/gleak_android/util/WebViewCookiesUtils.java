@@ -22,21 +22,21 @@ public class WebViewCookiesUtils {
     public static void saveCookie(String url, String key, String value) {
         CookieManager cookieManager = CookieManager.getInstance();
         String cookieStr = String.format("%s=%s", key, JavaScriptEscapeUtils.escape(value));
-        Log.d(TAG, "saveCookie: save cookie \"" + cookieStr +"\"" );
+        LogUtil.debugOut(TAG, "saveCookie: 保存cookie \"" + cookieStr +"\"" );
         cookieManager.setCookie(url, cookieStr);
         cookieManager.flush();
     }
 
 
     public static void syncCookieFromHttpClient(String url, AbstractHttpClient hc) {
-        Log.d(TAG, "syncCookieFromHttpClient: " + url);
+        LogUtil.debugOut(TAG, "syncCookieFromHttpClient: " + url);
         CookieManager cookieManager = CookieManager.getInstance() ;
         List<Cookie> cookies = hc.getCookieStore().getCookies();
         if(!cookies.isEmpty())
         {
             for (Cookie cookie : cookies) {
                 String cookieStr = cookie.getName() + "=" + cookie.getValue();
-                Log.d(TAG, "syncCookieFromHttpClient: save cookie \"" + cookieStr +"\"" );
+                LogUtil.debugOut(TAG, "syncCookieFromHttpClient: save cookie \"" + cookieStr +"\"" );
                 cookieManager.setCookie(url, cookieStr);
             }
         }
@@ -45,11 +45,11 @@ public class WebViewCookiesUtils {
 
     public static void clearAllCookies() {
         CookieManager cookieManager = CookieManager.getInstance();
-        Log.d(TAG, "clearAllCookies: ");
+        LogUtil.debugOut(TAG, "clearAllCookies: ");
         cookieManager.removeAllCookies(new ValueCallback<Boolean>() {
             @Override
             public void onReceiveValue(Boolean value) {
-                Log.d(TAG, "Remove Cookie onReceiveValue: " + String.valueOf(value));
+                LogUtil.debugOut(TAG, "Remove Cookie onReceiveValue: " + String.valueOf(value));
             }
         });
         cookieManager.flush();

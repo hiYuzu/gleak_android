@@ -4,32 +4,24 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
+import com.hb712.gleak_android.base.BaseActivity;
 import com.hb712.gleak_android.callback.FactorAddSuccessCallback;
 import com.hb712.gleak_android.controller.CalibrationInfoController;
 import com.hb712.gleak_android.controller.DeviceController;
@@ -38,26 +30,32 @@ import com.hb712.gleak_android.dao.FactorCoefficientInfoDao;
 import com.hb712.gleak_android.dao.SeriesLimitInfoDao;
 import com.hb712.gleak_android.dialog.FactorDialog;
 import com.hb712.gleak_android.dialog.SeriesDialog;
+import com.hb712.gleak_android.interfaceabs.HttpInterface;
+import com.hb712.gleak_android.interfaceabs.OKHttpListener;
+import com.hb712.gleak_android.message.net.LeakData;
+import com.hb712.gleak_android.message.net.MonitorData;
 import com.hb712.gleak_android.pojo.FactorCoefficientInfo;
 import com.hb712.gleak_android.pojo.SeriesInfo;
 import com.hb712.gleak_android.pojo.SeriesLimitInfo;
 import com.hb712.gleak_android.rtsp.RtspPlayer;
 import com.hb712.gleak_android.util.BluetoothUtil;
+import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.GlobalParam;
+import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.SPUtil;
+import com.hb712.gleak_android.util.ThreadPoolUtil;
 import com.hb712.gleak_android.util.UnitManager;
 
 import org.greenrobot.greendao.query.WhereCondition;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import tv.danmaku.ijk.media.player.ffmpeg.FFmpegApi;
-
-public class DetectActivity extends AppCompatActivity {
+public class DetectActivity extends BaseActivity implements HttpInterface {
 
     private static final String TAG = DetectActivity.class.getSimpleName();
     //连接
@@ -122,6 +120,16 @@ public class DetectActivity extends AppCompatActivity {
         runOnUiThread(this::loadRtsp);
     }
 
+    @Override
+    public DetectActivity getActivity() {
+        return this;
+    }
+
+    @Override
+    public boolean isDiscardHttp() {
+        return isFinishing();
+    }
+
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -177,7 +185,7 @@ public class DetectActivity extends AppCompatActivity {
      */
     private void initBluetooth() {
         if (!mBluetooth.isBluetoothAvailable()) {
-            Toast.makeText(this, "蓝牙不可用", Toast.LENGTH_LONG).show();
+            ToastUtil.longInstanceToast("蓝牙不可用");
             finish();
         }
 
@@ -187,8 +195,8 @@ public class DetectActivity extends AppCompatActivity {
                 GlobalParam.isConnected = true;
                 detectConnectB.setText(R.string.detect_disconnect);
                 connDeviceTV.setText(name);
-                //TODO..线程循环请求仪器参数
-                Toast.makeText(DetectActivity.this, "蓝牙已连接", Toast.LENGTH_SHORT).show();
+                //TODO..线程循环请求/接收仪器参数
+                ToastUtil.shortInstanceToast("蓝牙已连接");
             }
 
             @Override
@@ -196,19 +204,18 @@ public class DetectActivity extends AppCompatActivity {
                 GlobalParam.isConnected = false;
                 detectConnectB.setText(R.string.detect_connect);
                 connDeviceTV.setText(R.string.detect_disconnected);
-                //TODO..释放请求仪器参数线程
-                Toast.makeText(DetectActivity.this, "蓝牙已断开", Toast.LENGTH_SHORT).show();
-
+                //TODO..释放线程
+                ToastUtil.shortInstanceToast("蓝牙已断开");
             }
 
             @Override
             public void onDeviceConnectionFailed() {
-                Toast.makeText(DetectActivity.this, "蓝牙连接失败", Toast.LENGTH_SHORT).show();
+                ToastUtil.shortInstanceToast("蓝牙连接失败");
             }
         });
 
         mBluetooth.setOnDataReceivedListener((data, message) -> {
-            System.out.println("接收到蓝牙信息:" + Arrays.toString(data));
+            LogUtil.debugOut(TAG, "接收到蓝牙信息:" + Arrays.toString(data));
             //仪器参数
             showFragmentContent(data);
         });
@@ -286,29 +293,15 @@ public class DetectActivity extends AppCompatActivity {
         mRtspPlayer.release();
     }
 
-    /**
-     * 左上角退出不要destroy activity
-     *
-     * @param item
-     * @return
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                moveTaskToBack(true);
-                return false;
+        if (item.getItemId() == android.R.id.home) {
+            moveTaskToBack(true);
+            return false;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * 手机返回键不要destroy activity
-     *
-     * @param keyCode
-     * @param event
-     * @return
-     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -362,7 +355,55 @@ public class DetectActivity extends AppCompatActivity {
         } else {
             mRtspPlayer.stopRecord(this);
         }
-        runOnUiThread(() -> mRtspPlayer.getScreenshots(getApplicationContext()));
+        Runnable runnable = () -> mRtspPlayer.getScreenshots(getApplicationContext());
+        ThreadPoolUtil.execute(runnable);
+    }
+
+
+    public void uploadVideo(View view) {
+        LeakData leakData = new LeakData("1", MainApplication.getInstance().getUserId(), new MonitorData("2020-11-27 11:26:20", 15.6, true));
+        /*
+        NewLeakRequest newLeakRequest = new NewLeakRequest();
+        Double lat = null;
+        Double lon = null;
+        GPSUtils gpsUtils = GPSUtils.getInstance(this);
+        if(gpsUtils.isLocationProviderEnabled()){
+            android.location.Location location = null;
+            if (!gpsUtils.isLocationPermission()) {
+                //判断是否为android6.0系统版本，如果是，需要动态添加权限
+                ActivityCompat.requestPermissions(this, gpsUtils.permissions,100);
+            } else {
+                location = gpsUtils.getLocation();
+            }
+            if(location != null){
+                lon = location.getLongitude();
+                lat = location.getLatitude();
+            }
+        }
+        newLeakRequest.setLocation(new Location.Builder().lon(lon).lat(lat).build());
+         */
+        HttpUtils.post(this, "http://192.168.3.125:3000/video/insert",
+                leakData.toString(), getVideo(), new OKHttpListener() {
+                    @Override
+                    public void onSuccess(Bundle bundle) {
+                        ToastUtil.shortInstanceToast("上传成功");
+                    }
+
+                    @Override
+                    public void onServiceError(Bundle bundle) {
+                        ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
+                    }
+
+                    @Override
+                    public void onNetworkError(Bundle bundle) {
+                        ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
+                    }
+                });
+    }
+
+    private File getVideo() {
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/ijkplayer/video/20201119152745.mp4";
+        return new File(path);
     }
 
     public void connectClick(View view) {
@@ -463,26 +504,26 @@ public class DetectActivity extends AppCompatActivity {
         }
     }
 
-/*
-    public void deviceParamClick(View view) {
-        detectCurve.setVisibility(View.GONE);
-        currentTrendB.setTextColor(getResources().getColor(R.color.white));
-        deviceParamB.setTextColor(getResources().getColor(R.color.black));
-        detectStatus.setVisibility(View.VISIBLE);
-    }
+    /*
+        public void deviceParamClick(View view) {
+            detectCurve.setVisibility(View.GONE);
+            currentTrendB.setTextColor(getResources().getColor(R.color.white));
+            deviceParamB.setTextColor(getResources().getColor(R.color.black));
+            detectStatus.setVisibility(View.VISIBLE);
+        }
 
-    public void currentTrendClick(View view) {
-        detectStatus.setVisibility(View.GONE);
-        deviceParamB.setTextColor(getResources().getColor(R.color.white));
-        currentTrendB.setTextColor(getResources().getColor(R.color.black));
-        detectCurve.setVisibility(View.VISIBLE);
-    }
-*/
+        public void currentTrendClick(View view) {
+            detectStatus.setVisibility(View.GONE);
+            deviceParamB.setTextColor(getResources().getColor(R.color.white));
+            currentTrendB.setTextColor(getResources().getColor(R.color.black));
+            detectCurve.setVisibility(View.VISIBLE);
+        }
+    */
     private boolean isConnected() {
         if (GlobalParam.isConnected) {
             return true;
         }
-        Toast.makeText(this, "蓝牙未连接", Toast.LENGTH_SHORT).show();
+        ToastUtil.shortInstanceToast("蓝牙未连接");
         return false;
     }
 
@@ -500,8 +541,8 @@ public class DetectActivity extends AppCompatActivity {
 
         //展示仪器参数或当前趋势
 //        if (detectStatus.getVisibility() == View.VISIBLE) {
-            showStatus();
-            cacheCurveData(systemCurrent);
+        showStatus();
+        cacheCurveData(systemCurrent);
 //        } else {
 //            showCurveData(systemCurrent);
 //            return;
@@ -526,17 +567,18 @@ public class DetectActivity extends AppCompatActivity {
         detectParamMicroCurrent.setText(localDecimalFormat.format(deviceController.getMicroCurrent()));
         detectParamSystemCurrent.setText(localDecimalFormat.format(deviceController.getSystemCurrent()));
     }
-/*
-    public void showCurveData(double paramFloat) {
-        cacheCurveData(paramFloat);
-        List<Entry> localList = lineDataSet.getValues();
-        detectCurveChart.getXAxis().setAxisMaximum(200.0F);
-        detectCurveChart.getXAxis().setAxisMinimum(0.0F);
-        detectCurveChart.getAxisLeft().setAxisMaximum((float) (maxValue * 1.1D));
-        setData(localList);
-        detectCurveChart.invalidate();
-    }
-*/
+
+    /*
+        public void showCurveData(double paramFloat) {
+            cacheCurveData(paramFloat);
+            List<Entry> localList = lineDataSet.getValues();
+            detectCurveChart.getXAxis().setAxisMaximum(200.0F);
+            detectCurveChart.getXAxis().setAxisMinimum(0.0F);
+            detectCurveChart.getAxisLeft().setAxisMaximum((float) (maxValue * 1.1D));
+            setData(localList);
+            detectCurveChart.invalidate();
+        }
+    */
     private void cacheCurveData(double paramFloat) {
         if (minValue > paramFloat) {
             minValue = paramFloat;
@@ -583,16 +625,17 @@ public class DetectActivity extends AppCompatActivity {
         lineDataSet.setFormSize(15.0F);
         lineDataSet.setFillColor(R.color.blue);
     }
-/*
-    private void setData(List<Entry> paramList2) {
-        if ((detectCurveChart.getData() != null) && (detectCurveChart.getData().getDataSetCount() > 0)) {
-            ((LineDataSet) detectCurveChart.getLineData().getDataSetByIndex(0)).setValues(paramList2);
-            detectCurveChart.notifyDataSetChanged();
-            return;
+
+    /*
+        private void setData(List<Entry> paramList2) {
+            if ((detectCurveChart.getData() != null) && (detectCurveChart.getData().getDataSetCount() > 0)) {
+                ((LineDataSet) detectCurveChart.getLineData().getDataSetByIndex(0)).setValues(paramList2);
+                detectCurveChart.notifyDataSetChanged();
+                return;
+            }
+            detectCurveChart.setData(new LineData(lineDataSet));
         }
-        detectCurveChart.setData(new LineData(lineDataSet));
-    }
-*/
+    */
     private void showValueBySeriesLimit(double paramDouble) {
         SeriesLimitInfo seriesLimitInfo = this.seriesLimitInfo;
         if (seriesLimitInfo != null) {

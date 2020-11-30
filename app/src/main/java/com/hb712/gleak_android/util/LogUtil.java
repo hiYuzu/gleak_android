@@ -1,10 +1,8 @@
 package com.hb712.gleak_android.util;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * @author hiYuzu
@@ -25,14 +23,21 @@ public class LogUtil {
     /**
      * info
      * @param tag 标签
-     * @param ex 异常类型
+     * @param e 异常类型
      * @param detail 描述
      */
-    public static void infoOut(@Nullable Context context, String tag, @Nullable Exception ex, @NonNull String detail) {
-        Log.i(tag, ex == null ? detail : ex.getMessage() + ", detail: " + detail);
-        if (context != null) {
-            Toast.makeText(context, detail, Toast.LENGTH_SHORT).show();
+    public static void infoOut(String tag, Exception e, String detail) {
+        if (e == null) {
+            infoOut(tag, detail);
+            return;
         }
+        Log.i(tag, e.getMessage() + ", detail: " + detail);
+        ToastUtil.shortInstanceToast(detail);
+    }
+
+    public static void infoOut(String tag, String detail) {
+        Log.i(tag, detail);
+        ToastUtil.shortInstanceToast(detail);
     }
 
     /**

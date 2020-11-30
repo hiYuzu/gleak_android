@@ -69,7 +69,7 @@ public class RtspPlayer {
 
     public void getScreenshots(Context context) {
         if (!mVideoView.isPlaying()) {
-            LogUtil.infoOut(context, TAG, null, "无视频信号");
+            LogUtil.infoOut(TAG, "无视频信号");
             return;
         }
         int width = 1280;
@@ -82,7 +82,7 @@ public class RtspPlayer {
             File fileDir = new File(path);
             if (!fileDir.exists()) {
                 if (fileDir.mkdirs()) {
-                    LogUtil.infoOut(context, TAG, null, "文件夹创建失败");
+                    LogUtil.infoOut(TAG, "文件夹创建失败");
                 }
             }
 
@@ -97,7 +97,7 @@ public class RtspPlayer {
                 srcBitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
                 out.flush();
                 out.close();
-                LogUtil.infoOut(context, TAG, null, "截图已保存：" + file.getPath());
+                LogUtil.infoOut(TAG, "截图已保存：" + file.getPath());
             } catch (FileNotFoundException e) {
                 LogUtil.errorOut(TAG, e, "文件未找到");
             } catch (IOException ex) {
@@ -105,20 +105,20 @@ public class RtspPlayer {
             }
 
         } else {
-            LogUtil.infoOut(context, TAG, null, "截图失败");
+            LogUtil.infoOut(TAG, "截图失败");
         }
     }
 
     public void startRecord(Context context) {
         if (!mVideoView.isPlaying()) {
-            LogUtil.infoOut(context, TAG, null, "无视频信号");
+            LogUtil.infoOut(TAG, "无视频信号");
             return;
         }
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/ijkplayer/video";
         File fileDir = new File(path);
         if (!fileDir.exists()) {
             if (!fileDir.mkdirs()) {
-                LogUtil.infoOut(context, TAG, null, "文件夹创建失败");
+                LogUtil.infoOut(TAG, "文件夹创建失败");
             }
         }
         @SuppressLint("SimpleDateFormat")
@@ -127,13 +127,13 @@ public class RtspPlayer {
                 .format(new Date()) + ".mp4";
         int result = mVideoView.startRecord(filePath);
         isRecording = true;
-        LogUtil.infoOut(context, TAG, null, "开始录制: " + result);
+        LogUtil.infoOut(TAG, "开始录制: " + result);
     }
 
     public void stopRecord(Context context) {
         int result = mVideoView.stopRecord();
         isRecording = false;
-        LogUtil.infoOut(context, TAG, null, "停止录制: " + result);
+        LogUtil.infoOut(TAG, "停止录制: " + result);
     }
 
     public abstract static class BaseLoadingView {

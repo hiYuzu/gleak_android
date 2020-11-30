@@ -1,11 +1,18 @@
 package com.hb712.gleak_android.message.net;
 
-public class Data {
+public class LeakData {
 
     private String leakId;
     private String userId;
     private MonitorData monitorData;
-    private FileData fileData;
+
+    public LeakData() {}
+
+    public LeakData(String leakId, String userId, MonitorData monitorData) {
+        this.leakId = leakId;
+        this.userId = userId;
+        this.monitorData = monitorData;
+    }
 
     public String getLeakId() {
         return leakId;
@@ -31,11 +38,4 @@ public class Data {
         this.monitorData = monitorData;
     }
 
-    public FileData getFileData() {
-        return fileData;
-    }
-
-    public void setFileData(FileData fileData) {
-        this.fileData = fileData;
-    }
 }

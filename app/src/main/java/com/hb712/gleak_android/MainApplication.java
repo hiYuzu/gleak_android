@@ -14,14 +14,16 @@ import com.hb712.gleak_android.util.SPUtil;
 public class MainApplication extends BaseApplication {
 
     private final String TAG = MainApplication.class.getSimpleName();
-    public final String appIP = "127.0.0.1";
-    public final String appPort = "";
-    public final String baseUrl = "http://" + appIP + (appPort.isEmpty() ? "" : ":" + appPort);
+    public final String appIP = "192.168.3.125";
+    public final String appPort = "3000";
+    public final String baseUrl = "http://" + appIP + ":" + appPort;
     public final String SETTINGS_USERNAME = "username";
     public final String SETTINGS_PASSWORD = "password";
 
     private String username;
     private String password;
+    private String userId = "";
+    private String token = "";
 
     private WebServiceClient mWebServiceClient;
 
@@ -78,5 +80,21 @@ public class MainApplication extends BaseApplication {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

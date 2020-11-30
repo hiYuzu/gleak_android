@@ -3,10 +3,12 @@ package com.hb712.gleak_android.service;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 
 import com.hb712.gleak_android.MainApplication;
+import com.hb712.gleak_android.util.LogUtil;
+import com.hb712.gleak_android.util.WebViewCookiesUtils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
@@ -15,10 +17,11 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,8 +39,7 @@ import java.util.List;
 public class WebServiceClient {
 
     private static final String TAG = WebServiceClient.class.getSimpleName();
-    private static final String LOGIN_URL = MainApplication.getInstance().baseUrl + "UserController/validateUser";
-    private AbstractHttpClient mHttpClient;
+    private final AbstractHttpClient mHttpClient;
 
     private static final String RESULT = "result";
     private static final String SUCCESS_ENTITY = "entity";
@@ -60,20 +62,24 @@ public class WebServiceClient {
     }
 
     public void runLoginTask(TaskHandler handler, String username, String password) {
-        (new LoginTask(this, handler)).execute(username, password);
+        new LoginTask(this, handler).execute(username, password);
     }
 
     public void runCheckUpdateTask(TaskHandler handler, String appId) {
-        (new CheckUpdateTask(this, handler)).execute(appId);
+        new CheckUpdateTask(this, handler).execute(appId);
     }
 
+    /**
+     * 抽象类，定义通用接口
+     */
     private static abstract class BaseTask extends AsyncTask<String, String, Bundle> {
-        private TaskHandler mHandler;
-        private WebServiceClient mClient;
+        private final TaskHandler mHandler;
+        private final WebServiceClient mClient;
 
         static class TaskException extends Exception {
-            TaskException(String message) {
+            TaskException(@Nullable Exception e, String message) {
                 super(message);
+                LogUtil.errorOut(TAG, e, message);
             }
         }
 
@@ -85,8 +91,6 @@ public class WebServiceClient {
 
         @Override
         protected void onPostExecute(Bundle bundle) {
-            mHandler.onSuccess(new JSONObject());
-            /*
             super.onPostExecute(bundle);
             boolean result = bundle.getBoolean(RESULT);
             if (result) {
@@ -94,13 +98,14 @@ public class WebServiceClient {
                     JSONObject retObj = new JSONObject(bundle.getString(SUCCESS_ENTITY, ""));
                     mHandler.onSuccess(retObj);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    LogUtil.errorOut(TAG, e, "内部错误：1003");
                     mHandler.onFailed("内部错误：1003");
                 }
             } else {
                 String errMsg = bundle.getString(ERROR_MSG, "");
+                LogUtil.debugOut(TAG, errMsg);
                 mHandler.onFailed(errMsg);
-            }*/
+            }
 
         }
 
@@ -109,48 +114,37 @@ public class WebServiceClient {
         protected Bundle doInBackground(String... strings) {
             Bundle result = new Bundle();
             AbstractHttpClient hc = mClient.getHttpClient();
-            /*
+            HttpConnectionParams.setConnectionTimeout(hc.getParams(), 5000);
             try {
-                HttpPost hp = new HttpPost(getActionUrl());
-                HttpEntity entity = createRequestEntity(strings);
-                Log.d(TAG, "BaseTask: Request Entity: " + EntityUtils.toString(entity));
-                hp.setEntity(entity);
-
-                onPreRequest(hc, hp);
-                HttpResponse hr = hc.execute(hp);
-                onPostedRequest(hc, hp);
+                HttpGet hg = createHttpGet(strings);
+                onPreRequest(hc, hg);
+                HttpResponse hr = hc.execute(hg);
+                onPostedRequest(hc, hg);
 
                 int statusCode = hr.getStatusLine().getStatusCode();
                 if (statusCode != HttpStatus.SC_OK) {
                     result.putBoolean(RESULT, true);
                     result.putString(ERROR_MSG, onResponseFailed(statusCode));
                 } else {
-                    HttpEntity resEntity = hr.getEntity();
-                    String resultStr = EntityUtils.toString(resEntity);
-                    Log.d(TAG, "BaseTask: Response Entity: " + resultStr);
+                    String resultStr = EntityUtils.toString(hr.getEntity());
+                    LogUtil.debugOut(TAG, "BaseTask: Response Entity: " + resultStr);
                     result.putBoolean(RESULT, true);
                     result.putString(SUCCESS_ENTITY, onResponseSuccess(resultStr));
                 }
-
             } catch (ClientProtocolException e) {
-                e.printStackTrace();
+                LogUtil.errorOut(TAG, e, "内部错误: 1001");
                 result.putBoolean(RESULT, false);
                 result.putString(ERROR_MSG, "内部错误: 1001");
             } catch (IOException e) {
-                e.printStackTrace();
+                LogUtil.errorOut(TAG, e, "无法连接到服务器，请检查网络配置");
                 result.putBoolean(RESULT, false);
                 result.putString(ERROR_MSG, "无法连接到服务器，请检查网络配置");
             } catch (TaskException e) {
-                e.printStackTrace();
-                Log.d(TAG, e.getMessage());
                 result.putBoolean(RESULT, false);
                 result.putString(ERROR_MSG, e.getMessage());
-            }*/
-            result.putBoolean(RESULT, true);
-            result.putString(SUCCESS_ENTITY, "success_entity");
+            }
             return result;
         }
-
 
         @Override
         protected void onPreExecute() {
@@ -160,7 +154,7 @@ public class WebServiceClient {
 
         protected abstract HttpEntity createRequestEntity(String... strings) throws TaskException;
 
-        protected abstract String getActionUrl();
+        protected abstract HttpGet createHttpGet(String... strings);
 
         protected void onPreRequest(AbstractHttpClient httpClient, HttpRequest request) throws TaskException {
         }
@@ -173,12 +167,13 @@ public class WebServiceClient {
             return resultStr;
         }
 
-        String onResponseFailed(int responseCode) throws TaskException {
-            return "服务器响应异常 :" + String.valueOf(responseCode);
+        String onResponseFailed(int responseCode) {
+            return "服务器响应异常 :" + responseCode;
         }
     }
 
     private static class LoginTask extends BaseTask {
+        private static final String LOGIN_URL = MainApplication.getInstance().baseUrl + "/api/login";
 
         LoginTask(WebServiceClient serviceClient, TaskHandler handler) {
             super(serviceClient, handler);
@@ -187,18 +182,20 @@ public class WebServiceClient {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            com.hb712.gleak_android.util.WebViewCookiesUtils.clearAllCookies();
+            WebViewCookiesUtils.clearAllCookies();
         }
 
         @Override
         protected HttpEntity createRequestEntity(String... strings) throws TaskException {
-            String username = strings[0];
-            String password = strings[1];
-            return Utils.buildLoginEntity(username, password);
+            return Utils.buildEntity(strings[0], strings[1]);
         }
 
         @Override
-        protected String getActionUrl() {
+        protected HttpGet createHttpGet(String... strings) {
+            return Utils.createHttpGet(strings[0], strings[1], getActionUrl());
+        }
+
+        private String getActionUrl() {
             return LOGIN_URL;
         }
 
@@ -211,7 +208,7 @@ public class WebServiceClient {
         @Override
         protected void onPostedRequest(AbstractHttpClient httpClient, HttpRequest request) throws TaskException {
             super.onPostedRequest(httpClient, request);
-            com.hb712.gleak_android.util.WebViewCookiesUtils.syncCookieFromHttpClient(MainApplication.getInstance().baseUrl, httpClient);
+            WebViewCookiesUtils.syncCookieFromHttpClient(MainApplication.getInstance().baseUrl, httpClient);
         }
 
         @Override
@@ -219,26 +216,21 @@ public class WebServiceClient {
             super.onResponseSuccess(resultStr);
             try {
                 JSONObject responseObj = new JSONObject(resultStr);
-
-                if (!responseObj.getBoolean("result")) {
-                    String errorMsg = responseObj.getString("detail");
-                    throw new TaskException("认证失败:" + errorMsg);
+                if (!responseObj.getBoolean("status")) {
+                    throw new TaskException(null, "认证失败:" + responseObj.getString("msg"));
                 }
-
-                String user = responseObj.getString("detail");
                 JSONObject retObj = new JSONObject();
-                retObj.put("DisplayUsername", user);
-                return retObj.toString();
+                return retObj.put("token", responseObj.getJSONObject("data").getString("token"))
+                        .put("userId", responseObj.getJSONObject("data").getString("userId")).toString();
             } catch (JSONException e) {
-                e.printStackTrace();
-                throw new TaskException("解析认证返回信息失败");
+                throw new TaskException(e, "解析认证返回信息失败");
             }
         }
 
     }
 
     private static class CheckUpdateTask extends BaseTask {
-        private static final String actionUrl = MainApplication.getInstance().baseUrl + "/SystemController/querySystem";
+        private static final String UPDATE_URL = MainApplication.getInstance().baseUrl + "/api/queryUpdate";
 
         CheckUpdateTask(WebServiceClient serviceClient, TaskHandler handler) {
             super(serviceClient, handler);
@@ -246,52 +238,53 @@ public class WebServiceClient {
 
         @Override
         protected HttpEntity createRequestEntity(String... strings) throws TaskException {
-            String appId = strings[0];
-            return Utils.buildCheckUpdateEntity(appId);
+            return Utils.buildEntity(strings[0]);
         }
 
         @Override
-        protected String getActionUrl() {
-            return actionUrl;
+        protected HttpGet createHttpGet(String... strings) {
+            return Utils.createHttpGet(strings[0], getActionUrl());
+        }
+
+        private String getActionUrl() {
+            return UPDATE_URL;
         }
     }
 
+
+
     static class Utils {
-        private static HttpEntity buildLoginEntity(String username, String password) throws BaseTask.TaskException {
+
+        private static HttpGet createHttpGet(String appId, String url) {
+            return new HttpGet(url + "?appId=" + appId);
+        }
+
+        private static HttpGet createHttpGet(String username, String password, String url) {
+            return new HttpGet(url + "?name=" + username + "&password=" + password);
+        }
+
+        private static HttpEntity buildEntity(String username, String password) throws BaseTask.TaskException {
             List<NameValuePair> valuePairs = new ArrayList<>();
-            valuePairs.add(new BasicNameValuePair("userCode", username));
-            valuePairs.add(new BasicNameValuePair("userPassword", password));
+            valuePairs.add(new BasicNameValuePair("name", username));
+            valuePairs.add(new BasicNameValuePair("password", password));
 
             try {
                 return new UrlEncodedFormEntity(valuePairs);
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                throw new BaseTask.TaskException("内部错误：1000");
+                throw new BaseTask.TaskException(e, "内部错误：1000");
             }
         }
 
-        private static HttpEntity buildCheckUpdateEntity(String appId) throws BaseTask.TaskException {
+        private static HttpEntity buildEntity(String appId) throws BaseTask.TaskException {
             List<NameValuePair> valuePairs = new ArrayList<>();
-            valuePairs.add(new BasicNameValuePair("sysCode", appId));
+            valuePairs.add(new BasicNameValuePair("appId", appId));
 
             try {
                 return new UrlEncodedFormEntity(valuePairs);
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                throw new BaseTask.TaskException("内部错误：1000");
+                throw new BaseTask.TaskException(e, "内部错误：1000");
             }
         }
 
-        private static HttpEntity buildAlarmEntity(String alarmId) throws BaseTask.TaskException {
-            List<NameValuePair> valuePairs = new ArrayList<>();
-            valuePairs.add(new BasicNameValuePair("alarmId", alarmId));
-
-            try {
-                return new UrlEncodedFormEntity(valuePairs);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                throw new BaseTask.TaskException("内部错误：1000");
-            }
-        }
     }
 }

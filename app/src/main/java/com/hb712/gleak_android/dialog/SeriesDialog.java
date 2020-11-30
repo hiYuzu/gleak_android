@@ -66,7 +66,7 @@ public class SeriesDialog {
                 try {
                     seriesAddSuccessCallback.onSave(seriesInfoList.get(seriesSp.getSelectedItemPosition()));
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    LogUtil.infoOut(context, TAG, e, "曲线选择失败！");
+                    LogUtil.infoOut(TAG, e, "曲线选择失败！");
                 }
             }
             dialog.dismiss();

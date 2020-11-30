@@ -5,22 +5,16 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
+import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.SPUtil;
 
@@ -86,7 +80,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     private void checkUpdate() {
-        Toast.makeText(this, "检查更新中...", Toast.LENGTH_SHORT).show();
+        ToastUtil.longInstanceToast("检查更新中...");
         //TODO..
     }
 
@@ -143,7 +137,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     SPUtil.put(MainApplication.getInstance(), SERVE_IP, ip);
                     return true;
                 } else {
-                    Toast.makeText(MainApplication.getInstance(), "请输入正确的IP格式", Toast.LENGTH_SHORT).show();
+                    ToastUtil.shortInstanceToast("请输入正确的IP格式");
                     return false;
                 }
             });
@@ -155,7 +149,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     SPUtil.put(MainApplication.getInstance(), SERVE_PORT, port);
                     return true;
                 } else {
-                    Toast.makeText(MainApplication.getInstance(), "请输入正确的Port格式", Toast.LENGTH_SHORT).show();
+                    ToastUtil.shortInstanceToast("请输入正确的Port格式");
                     return false;
                 }
             });

@@ -133,20 +133,20 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(JSONObject obj) {
-                Log.d(TAG, "Login onSuccess: " + obj.toString());
+                LogUtil.debugOut(TAG, "登录成功：" + obj.toString());
                 try {
-                    String displayUser = obj.getString("DisplayUsername");
-                    WebViewCookiesUtils.saveCookie(MainApplication.getInstance().baseUrl, "displayUser", displayUser);
+                    MainApplication.getInstance().setUserId(obj.getString("userId"));
+                    MainApplication.getInstance().setToken(obj.getString("token"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    LogUtil.errorOut(TAG, e, "JSON读取异常");
                 }
+
                 MainApplication.getInstance().saveUserPwd(username, password, mSaveUsernameCheckBox.isChecked());
                 gotoMainActivity(username, password);
             }
 
             @Override
             public void onFailed(String errMsg) {
-                Log.d(TAG, "onLoginResult: Failed :" + errMsg);
                 onLoginFailed(errMsg);
             }
         }, username, password);
@@ -157,6 +157,14 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_USERNAME, username);
         intent.putExtra(MainActivity.EXTRA_PASSWORD, password);
+        startActivity(intent);
+        finish();
+    }
+
+    public void loginWithoutUser(View view) {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_USERNAME, "");
+        intent.putExtra(MainActivity.EXTRA_PASSWORD, "");
         startActivity(intent);
         finish();
     }
