@@ -2,12 +2,19 @@ package com.hb712.gleak_android.util;
 
 import android.annotation.SuppressLint;
 
+import com.hb712.gleak_android.pojo.InitLeakData;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author hiYuzu
  * @version V1.0
  * @date 2020/9/30 13:38
  */
 public class GlobalParam {
+    public static final String KEY_USERTOKEN = "Authorization";
+
     public static boolean rememberPwd = false;
     public static boolean isConnected = false;
     public static boolean isFireOn = false;
@@ -41,4 +48,6 @@ public class GlobalParam {
     public static String VIDEO_URL = "rtsp://admin:tjtcb712@192.168.1.100:554/h264/ch1/main/av_stream";
 
     public static final String MAP_KEY = "BpPnFERqEuxQtdvEuPp4eW8ouHv6LeKR";
+
+    public static List<InitLeakData> initLeakData;
 }

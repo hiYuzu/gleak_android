@@ -23,6 +23,7 @@ import com.baidu.mapapi.map.Projection;
 import com.baidu.mapapi.model.LatLng;
 import com.hb712.gleak_android.base.BaseActivity;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
+import com.hb712.gleak_android.util.ToastUtil;
 
 public class LeakMapActivity extends BaseActivity implements HttpInterface {
 
@@ -46,10 +47,6 @@ public class LeakMapActivity extends BaseActivity implements HttpInterface {
         mMapView = findViewById(R.id.bmapView);
         baiduMap = mMapView.getMap();
         setBaiduMapOption();
-        baiduMap.setOnMarkerClickListener(marker -> {
-            // TODO..Marker点击响应
-            return true;
-        });
     }
 
     private void setBaiduMapOption() {
@@ -100,6 +97,13 @@ public class LeakMapActivity extends BaseActivity implements HttpInterface {
                 mTextView.setText(s);
             }
         });
+
+        baiduMap.setOnMapLoadedCallback(new BaiduMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                initMarker();
+            }
+        });
     }
 
     /**
@@ -139,6 +143,11 @@ public class LeakMapActivity extends BaseActivity implements HttpInterface {
                 .icon(bitmap);
         //在地图上添加Marker，并显示
         baiduMap.addOverlay(option);
+
+        baiduMap.setOnMarkerClickListener(marker -> {
+            ToastUtil.shortInstanceToast(marker.getTitle());
+            return true;
+        });
     }
 
     @Override
@@ -201,7 +210,6 @@ public class LeakMapActivity extends BaseActivity implements HttpInterface {
                 baiduMap.setMapStatus(mMapStatusUpdate);
                 createCenterMarker();
             }
-
         }
     }
 }

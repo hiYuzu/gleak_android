@@ -6,19 +6,20 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.hb712.gleak_android.service.WebServiceClient;
+import com.alibaba.fastjson.JSONObject;
+import com.hb712.gleak_android.base.BaseActivity;
+import com.hb712.gleak_android.interfaceabs.HttpInterface;
+import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.util.GlobalParam;
+import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
-import com.hb712.gleak_android.util.WebViewCookiesUtils;
+import com.hb712.gleak_android.util.ToastUtil;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
-public class LaunchActivity extends Activity {
+public class LaunchActivity extends BaseActivity implements HttpInterface {
 
     private static final String TAG = LaunchActivity.class.getSimpleName();
     private static final int LauncherDelay = 2000;
@@ -76,30 +77,42 @@ public class LaunchActivity extends Activity {
         LaunchActivity.this.finish();
     }
 
-    private void login(final String username, final String password) {
-        MainApplication.getInstance().getWebServiceClient().runLoginTask(new WebServiceClient.TaskHandler() {
+    private void login(String username, String password) {
+        HttpUtils.get(this, MainApplication.getInstance().baseUrl + "/api/login?name=" + username + "&password=" + password, new OKHttpListener() {
             @Override
             public void onStart() {
                 mMessage.setText("正在登录...");
             }
 
             @Override
-            public void onSuccess(JSONObject obj) {
-                LogUtil.debugOut(TAG, "登录成功：" + obj.toString());
-                try {
-                    MainApplication.getInstance().setUserId(obj.getString("userId"));
-                    MainApplication.getInstance().setToken(obj.getString("token"));
-                } catch (JSONException e) {
-                    LogUtil.errorOut(TAG, e, "Cookie保存异常");
+            public void onSuccess(Bundle bundle) {
+                String result = bundle.getString(HttpUtils.MESSAGE);
+                JSONObject json = JSONObject.parseObject(result);
+                if (json.getBoolean("status")) {
+                    LogUtil.debugOut(TAG, "用户" + json.getJSONObject("data").getString("userId") + "登录成功!");
+
+                    MainApplication.getInstance().setUserId(json.getJSONObject("data").getString("userId"));
+                    MainApplication.getInstance().setToken(json.getJSONObject("data").getString("token"));
+
+                    gotoMainActivity(username, password);
+                } else {
+                    LogUtil.debugOut(TAG,"自动登录失败:" + bundle.getString(HttpUtils.MESSAGE));
+                    gotoLoginActivity();
                 }
-                gotoMainActivity(username, password);
             }
 
             @Override
-            public void onFailed(String errMsg) {
+            public void onServiceError(Bundle bundle) {
+                ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
                 gotoLoginActivity();
             }
-        }, username, password);
+
+            @Override
+            public void onNetworkError(Bundle bundle) {
+                ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
+                gotoLoginActivity();
+            }
+        });
     }
 
     private void gotoMainActivity(String username, String password) {
@@ -108,5 +121,15 @@ public class LaunchActivity extends Activity {
         intent.putExtra(MainActivity.EXTRA_PASSWORD, password);
         startActivity(intent);
         LaunchActivity.this.finish();
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public boolean isDiscardHttp() {
+        return isFinishing();
     }
 }

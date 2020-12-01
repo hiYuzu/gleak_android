@@ -139,7 +139,13 @@ public class RtspPlayer {
     }
 
     public String getVideoPath() {
-        return videoPath;
+        if (videoPath != null) {
+            return videoPath;
+        } else {
+            return Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/ijkplayer/video/20201119152745.mp4";
+        }
+        // TODO..
+        // return videoPath;
     }
 
     public boolean isRecording() {

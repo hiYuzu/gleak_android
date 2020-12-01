@@ -3,7 +3,6 @@ package com.hb712.gleak_android;
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
 import com.hb712.gleak_android.base.BaseApplication;
-import com.hb712.gleak_android.service.WebServiceClient;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.SPUtil;
 
@@ -27,8 +26,6 @@ public class MainApplication extends BaseApplication {
     private String userId = "";
     private String token = "";
 
-    private WebServiceClient mWebServiceClient;
-
     public static MainApplication getInstance() {
         return singleton;
     }
@@ -39,7 +36,6 @@ public class MainApplication extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         singleton = this;
-        mWebServiceClient = new WebServiceClient();
         //在使用SDK各组件之前初始化context信息，传入ApplicationContext
         SDKInitializer.initialize(this);
         //自4.3.0起，百度地图SDK所有接口均支持百度坐标和国测局坐标，用此方法设置您使用的坐标类型.
@@ -75,10 +71,6 @@ public class MainApplication extends BaseApplication {
 
     public String getLocPassword() {
         return SPUtil.get(this, SETTINGS_PASSWORD, "").toString();
-    }
-
-    public WebServiceClient getWebServiceClient() {
-        return mWebServiceClient;
     }
 
     public String getUsername() {

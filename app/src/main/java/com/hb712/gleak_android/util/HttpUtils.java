@@ -8,6 +8,8 @@ import com.hb712.gleak_android.MainApplication;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 
+import org.apache.http.params.HttpParams;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +24,6 @@ import okhttp3.Response;
 public class HttpUtils {
     private static final String TAG = HttpUtils.class.getSimpleName();
 
-    public static final String KEY_USERTOKEN = "Authorization";
     public static final String KEY_USERID = "userId";
     public static final String RESULT = "result";
     public static final String CODE = "code";
@@ -30,15 +31,22 @@ public class HttpUtils {
 
     private static final int SUCCESS_CODE = 200;
 
+    private static boolean isSendVideo = false;
+
     public static final OkHttpClient mClient = new OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
             .build();
 
-    public static void post(HttpInterface httpInterface, String httpUrl, String value, File file, @NonNull OKHttpListener listener) {
+    public static void get(HttpInterface httpInterface, String httpUrl, @NonNull OKHttpListener listener) {
+        httpExecute(httpInterface, httpUrl, new Request.Builder().get(), listener);
+    }
+
+    public static void postVideo(HttpInterface httpInterface, String httpUrl, String value, File file, @NonNull OKHttpListener listener) {
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         if (file != null) {
+            isSendVideo = true;
             builder.addPart(MultipartBody.Part.createFormData("video", file.getName(), RequestBody.create(MediaType.parse("multipart/form-data"), file)));
         }
 
@@ -50,6 +58,12 @@ public class HttpUtils {
 
     private static void httpExecute(HttpInterface httpInterface, String httpUrl, Request.Builder builder, OKHttpListener listener) {
         new AsyncTask<Void, Void, Bundle>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                listener.onStart();
+            }
+
             @Override
             protected void onPostExecute(Bundle bundle) {
                 super.onPostExecute(bundle);
@@ -72,9 +86,15 @@ public class HttpUtils {
             @Override
             protected Bundle doInBackground(Void... params) {
                 Bundle result = new Bundle();
-                builder.tag(httpUrl).url(httpUrl)
-                        .addHeader(KEY_USERTOKEN, MainApplication.getInstance().getToken())
-                        .addHeader("Content-Type", "multipart/form-data");
+                builder.tag(httpUrl).url(httpUrl);
+                if (isSendVideo) {
+                    builder.addHeader("Content-Type", "multipart/form-data");
+                    isSendVideo = false;
+                }
+
+                if (MainApplication.getInstance().isLogin()) {
+                    builder.addHeader(GlobalParam.KEY_USERTOKEN, MainApplication.getInstance().getToken());
+                }
                 try {
                     Response response = mClient.newCall(builder.build()).execute();
 
@@ -82,6 +102,8 @@ public class HttpUtils {
                     result.putBoolean(RESULT, true);
                     if (response.code() != SUCCESS_CODE) {
                         result.putString(MESSAGE, "服务器响应异常：" + response.code());
+                    } else {
+                        result.putString(MESSAGE, response.body().string());
                     }
                 } catch (IOException ioe) {
                     LogUtil.errorOut(TAG, ioe, "");

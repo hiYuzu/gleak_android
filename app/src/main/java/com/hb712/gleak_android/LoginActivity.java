@@ -1,6 +1,7 @@
 package com.hb712.gleak_android;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,7 +10,6 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -20,20 +20,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hb712.gleak_android.service.WebServiceClient;
-import com.hb712.gleak_android.util.GlobalParam;
+import com.hb712.gleak_android.base.BaseActivity;
+import com.hb712.gleak_android.interfaceabs.HttpInterface;
+import com.hb712.gleak_android.interfaceabs.OKHttpListener;
+import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
-import com.hb712.gleak_android.util.WebViewCookiesUtils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * @author hiYuzu
  * @version V1.0
  * @date 2020/9/22 10:20
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity implements HttpInterface {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
     private Button mLoginButton;
@@ -118,8 +116,8 @@ public class LoginActivity extends AppCompatActivity {
         mLoadingImage.setVisibility(View.GONE);
     }
 
-    private void startLoginAction(final String username, final String password) {
-        MainApplication.getInstance().getWebServiceClient().runLoginTask(new WebServiceClient.TaskHandler() {
+    private void startLoginAction(String username, String password) {
+        HttpUtils.get(this, MainApplication.getInstance().baseUrl + "/api/login?name=" + username + "&password=" + password, new OKHttpListener() {
             @Override
             public void onStart() {
                 mResultText.setVisibility(View.GONE);
@@ -132,25 +130,31 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onSuccess(JSONObject obj) {
-                LogUtil.debugOut(TAG, "登录成功：" + obj.toString());
-                try {
-                    MainApplication.getInstance().setUserId(obj.getString("userId"));
-                    MainApplication.getInstance().setToken(obj.getString("token"));
-                } catch (JSONException e) {
-                    LogUtil.errorOut(TAG, e, "JSON读取异常");
-                }
+            public void onSuccess(Bundle bundle) {
+                String result = bundle.getString(HttpUtils.MESSAGE);
+                com.alibaba.fastjson.JSONObject json = com.alibaba.fastjson.JSONObject.parseObject(result);
+                if (json.getBoolean("status")) {
+                    LogUtil.debugOut(TAG, "用户" + json.getJSONObject("data").getString("userId") + "登录成功!");
 
-                MainApplication.getInstance().saveUserPwd(username, password, mSaveUsernameCheckBox.isChecked());
-                gotoMainActivity(username, password);
+                    MainApplication.getInstance().setUserId(json.getJSONObject("data").getString("userId"));
+                    MainApplication.getInstance().setToken(json.getJSONObject("data").getString("token"));
+
+                    gotoMainActivity(username, password);
+                } else {
+                    onLoginFailed(json.getString("msg"));
+                }
             }
 
             @Override
-            public void onFailed(String errMsg) {
-                onLoginFailed(errMsg);
+            public void onServiceError(Bundle bundle) {
+                onLoginFailed(bundle.getString(HttpUtils.MESSAGE));
             }
-        }, username, password);
 
+            @Override
+            public void onNetworkError(Bundle bundle) {
+                onLoginFailed(bundle.getString(HttpUtils.MESSAGE));
+            }
+        });
     }
 
     private void gotoMainActivity(String username, String password) {
@@ -167,6 +171,16 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtra(MainActivity.EXTRA_PASSWORD, "");
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public boolean isDiscardHttp() {
+        return isFinishing();
     }
 }
 

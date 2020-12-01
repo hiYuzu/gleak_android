@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 public abstract class OKHttpListener {
 
+    public abstract void onStart();
+
     public abstract void onSuccess(Bundle bundle);
 
     public abstract void onServiceError(Bundle bundle);

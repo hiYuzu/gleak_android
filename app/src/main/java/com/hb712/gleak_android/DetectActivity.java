@@ -32,6 +32,7 @@ import com.hb712.gleak_android.dialog.SeriesDialog;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.message.net.LeakData;
+import com.hb712.gleak_android.message.net.MonitorData;
 import com.hb712.gleak_android.pojo.FactorCoefficientInfo;
 import com.hb712.gleak_android.pojo.SeriesInfo;
 import com.hb712.gleak_android.pojo.SeriesLimitInfo;
@@ -421,8 +422,14 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         }
         newLeakRequest.setLocation(new Location.Builder().lon(lon).lat(lat).build());
          */
-        HttpUtils.post(this, "http://192.168.3.125:3000/video/insert", "", new File(mRtspPlayer.getVideoPath()),
+        LeakData leakData = new LeakData("1", MainApplication.getInstance().getUserId(), new MonitorData("2020-12-01 10:52:51", 100, 1));
+        HttpUtils.postVideo(this, MainApplication.getInstance().baseUrl + "/video/insert", leakData.toString(), new File(mRtspPlayer.getVideoPath()),
                 new OKHttpListener() {
+                    @Override
+                    public void onStart() {
+                        ToastUtil.shortInstanceToast("开始上传...");
+                    }
+
                     @Override
                     public void onSuccess(Bundle bundle) {
                         ToastUtil.shortInstanceToast("上传成功");
