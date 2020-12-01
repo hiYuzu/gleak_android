@@ -210,24 +210,36 @@ public class BluetoothService {
         }
 
         public void run() {
-            byte[] buffer;
+            byte[] buffer = new byte[1024];
+            int bytes;
+            int ch;
             while (true) {
                 try {
-                    buffer = new byte[100];
-                    for (int i = 0; i < buffer.length; i++) {
-                        buffer[i] = ((Integer) mmInStream.read()).byteValue();
+                    bytes = 0;
+                    while ((ch = mmInStream.read()) != '\n') {
+                        if (ch != -1) {
+                            buffer[bytes] = (byte) ch;
+                            bytes++;
+                        }
                     }
-                    mHandler.obtainMessage(GlobalParam.MESSAGE_READ, buffer).sendToTarget();
-                    sleep(100);
+//                    for (int i = 0; i < buffer.length; i++) {
+//                        buffer[i] = ((Integer) mmInStream.read()).byteValue();
+//                    }
+                    buffer[bytes] = (byte) '\n';
+                    bytes++;
+
+                    mHandler.obtainMessage(GlobalParam.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+//                    sleep(10);
                 } catch (IOException e) {
                     LogUtil.warnOut(TAG, e, "收发失败");
                     connectionFailed();
                     break;
-                } catch (InterruptedException e) {
-                    LogUtil.warnOut(TAG, e, "thread sleep异常");
-                    connectionFailed();
-                    break;
                 }
+//                catch (InterruptedException e) {
+//                    LogUtil.warnOut(TAG, e, "thread sleep异常");
+//                    connectionFailed();
+//                    break;
+//                }
             }
         }
 

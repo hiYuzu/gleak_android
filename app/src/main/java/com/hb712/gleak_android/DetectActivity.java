@@ -210,7 +210,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         });
 
         mBluetooth.setOnDataReceivedListener((data, message) -> {
-            LogUtil.debugOut(TAG, "接收到蓝牙信息:" + Arrays.toString(data));
+            System.out.println("接收到蓝牙信息:" + Arrays.toString(data));
             //仪器参数
             showFragmentContent(data);
         });
@@ -485,6 +485,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         if (isConnected()) {
             // TODO..
             // mBluetooth 加工发送(命令);
+            mBluetooth.writeByte(1);
             System.out.println("点火1");
         }
     }
@@ -496,6 +497,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     public void fireClick2(View view) {
         if (isConnected()) {
+//            mBluetooth.writeByte(2);
+            mBluetooth.writeByteRead();
             System.out.println("点火2");
         }
     }
@@ -507,6 +510,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     public void ceasefireClick(View view) {
         if (isConnected()) {
+            mBluetooth.writeByte(0);
             System.out.println("关火");
         }
     }
