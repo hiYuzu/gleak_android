@@ -18,6 +18,9 @@ public class InitLeakData extends BaseBean {
     private String period;
     private String time;
 
+    public InitLeakData() {
+    }
+
     public InitLeakData(String id, String name, String code, Double longitude, Double latitude) {
         this.id = id;
         this.name = name;
