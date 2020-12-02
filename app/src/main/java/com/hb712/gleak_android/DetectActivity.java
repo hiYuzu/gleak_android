@@ -43,6 +43,7 @@ import com.hb712.gleak_android.entity.SeriesLimitInfo;
 import com.hb712.gleak_android.rtsp.RtspPlayer;
 import com.hb712.gleak_android.util.BluetoothUtil;
 import com.hb712.gleak_android.util.DateUtil;
+import com.hb712.gleak_android.util.ByteArrayConvertUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
@@ -227,7 +228,32 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         });
 
         mBluetooth.setOnDataReceivedListener((data, message) -> {
-            System.out.println("接收到蓝牙信息:" + Arrays.toString(data));
+            float measureValue = 0;
+            float electricValue = 0;
+            byte[] byteBit = new byte[8];
+            boolean statusP = false;
+            boolean statusA = false;
+            boolean statusB = false;
+            if (data != null && data.length > 38) {//读取测量值
+                measureValue = ByteArrayConvertUtil.byteToFloat(data, 32);
+                electricValue = ByteArrayConvertUtil.byteToFloat(data, 24);
+                byteBit = ByteArrayConvertUtil.getBooleanArray(data[4]);
+                if (byteBit[0] == 1) {
+                    statusP = true;
+                } else {
+                    statusP = false;
+                }
+                if (byteBit[2] == 1) {
+                    statusA = true;
+                } else {
+                    statusA = false;
+                }
+                if (byteBit[3] == 1) {
+                    statusB = true;
+                } else {
+                    statusB = false;
+                }
+            }
             //仪器参数
             showFragmentContent(data);
         });

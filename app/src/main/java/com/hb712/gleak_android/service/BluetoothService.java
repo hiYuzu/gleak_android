@@ -3,7 +3,6 @@ package com.hb712.gleak_android.service;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,8 +11,6 @@ import android.os.Message;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.LogUtil;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -227,7 +224,10 @@ public class BluetoothService {
 //                    }
                     buffer[bytes] = (byte) '\n';
                     bytes++;
-                    mHandler.obtainMessage(GlobalParam.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+
+                    byte[] buffers = new byte[bytes];
+                    System.arraycopy(buffer, 0, buffers, 0, bytes);
+                    mHandler.obtainMessage(GlobalParam.MESSAGE_READ, bytes, -1, buffers).sendToTarget();
 //                    sleep(10);
                 } catch (IOException e) {
                     LogUtil.warnOut(TAG, e, "收发失败");
