@@ -38,7 +38,7 @@ public class BluetoothService {
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
-    private boolean isAndroid = GlobalParam.DEVICE_ANDROID;
+    private boolean isAndroid = GlobalParam.DEVICE_OTHER;
 
     public BluetoothService(Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -227,7 +227,6 @@ public class BluetoothService {
 //                    }
                     buffer[bytes] = (byte) '\n';
                     bytes++;
-
                     mHandler.obtainMessage(GlobalParam.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
 //                    sleep(10);
                 } catch (IOException e) {

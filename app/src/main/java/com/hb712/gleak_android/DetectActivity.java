@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
 
@@ -33,11 +35,14 @@ import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.message.net.LeakData;
 import com.hb712.gleak_android.message.net.MonitorData;
-import com.hb712.gleak_android.pojo.FactorCoefficientInfo;
-import com.hb712.gleak_android.pojo.SeriesInfo;
-import com.hb712.gleak_android.pojo.SeriesLimitInfo;
+import com.hb712.gleak_android.message.net.NewLeak;
+import com.hb712.gleak_android.entity.FactorCoefficientInfo;
+import com.hb712.gleak_android.message.net.InitLeakData;
+import com.hb712.gleak_android.entity.SeriesInfo;
+import com.hb712.gleak_android.entity.SeriesLimitInfo;
 import com.hb712.gleak_android.rtsp.RtspPlayer;
 import com.hb712.gleak_android.util.BluetoothUtil;
+import com.hb712.gleak_android.util.DateUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
@@ -91,12 +96,20 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private double minValue = Double.MAX_VALUE;
     private double maxValue = Double.MIN_VALUE;
 
+    private double saveMaxValue = 0;
+    private String saveTime;
+    private boolean isSaving = false;
+
+    private String selectedLeakId;
+
+    private LeakData lastedLeakData;
+
     //other
     private BluetoothUtil mBluetooth;
     private DeviceController deviceController;
     private SeriesLimitInfo seriesLimitInfo;
     private boolean unitPPM = true;
-    private boolean detecting = false;
+    private boolean isDetecting = false;
     private double detectMaxvaluePPM = 0;
     private double detectMaxvalueMg = 0;
 
@@ -138,8 +151,12 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private void initView() {
         startRecordBtn = findViewById(R.id.startRecordBtn);
         startRecordBtn.setOnClickListener((p) -> {
-            Intent intent = new Intent(getApplicationContext(), LeakMapActivity.class);
-            startActivityForResult(intent, GlobalParam.REQUEST_LEAK_DATA);
+            if (!isSaving) {
+                Intent intent = new Intent(getApplicationContext(), LeakMapActivity.class);
+                startActivityForResult(intent, GlobalParam.REQUEST_LEAK_DATA);
+            } else {
+                stopRecord();
+            }
         });
         uploadVideoBtn = findViewById(R.id.uploadVideoBtn);
         detectConnectB = findViewById(R.id.detectConnectButton);
@@ -190,7 +207,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 GlobalParam.isConnected = true;
                 detectConnectB.setText(R.string.detect_disconnect);
                 connDeviceTV.setText(name);
-                //TODO..线程循环请求/接收仪器参数
+                // TODO: hiYuzu 2020/12/2  启动线程循环请求/接收仪器参数(?) -> isDetecting = true;
                 ToastUtil.shortInstanceToast("蓝牙已连接");
             }
 
@@ -199,7 +216,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 GlobalParam.isConnected = false;
                 detectConnectB.setText(R.string.detect_connect);
                 connDeviceTV.setText(R.string.detect_disconnected);
-                //TODO..释放线程
+                // TODO: hiYuzu 2020/12/2 释放线程 -> isDetecting = false;
                 ToastUtil.shortInstanceToast("蓝牙已断开");
             }
 
@@ -279,7 +296,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     @Override
     protected void onPause() {
         super.onPause();
-        mRtspPlayer.stopPlay();
     }
 
     @Override
@@ -369,61 +385,99 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             }
         } else if (requestCode == GlobalParam.REQUEST_LEAK_DATA) {
             // 获取漏点数据
-            if (resultCode == Activity.RESULT_OK && data.getExtras() != null) {
-                startRecord(data.getExtras());
+            if (resultCode == Activity.RESULT_FIRST_USER) {
+                addNewLeak(data.getExtras());
+            } else if (resultCode == Activity.RESULT_OK) {
+                startSave(data.getExtras());
             } else {
                 ToastUtil.shortInstanceToast("获取漏点信息失败，请重试");
             }
         }
     }
 
-    private void startRecord(Bundle bundle) {
-        if (isConnected()) {
-            if (!mRtspPlayer.isRecording()) {
-                mRtspPlayer.startRecord();
-                startRecordBtn.setText(getResources().getText(R.string.stopRecord));
-            } else {
-                mRtspPlayer.stopRecord();
-                startRecordBtn.setText(getResources().getText(R.string.startRecord));
-                // 保存漏点信息、检测数据、视频信息
-                saveData(bundle);
+    private void addNewLeak(Bundle bundle) {
+        NewLeak newLeak = (NewLeak) bundle.getSerializable("NewLeak");
+        HttpUtils.post(this, MainApplication.getInstance().baseUrl + "/api/monitor/insert", newLeak.toString(), new OKHttpListener() {
+            @Override
+            public void onStart() {
 
-                if (MainApplication.getInstance().isLogin()) {
-                    uploadVideoBtn.setEnabled(true);
+            }
+
+            @Override
+            public void onSuccess(Bundle bundle) {
+                String result = bundle.getString(HttpUtils.MESSAGE);
+                JSONObject json = JSONObject.parseObject(result);
+                if (json.getBoolean("status")) {
+                    selectedLeakId = json.getString("data");
+                    GlobalParam.initLeakData.add(new InitLeakData(selectedLeakId, newLeak.getName(), newLeak.getCode(), newLeak.getLongitude(), newLeak.getLatitude()));
+                    startSave();
+                } else {
+                    LogUtil.infoOut(TAG, json.getString("msg"));
                 }
             }
+
+            @Override
+            public void onServiceError(Bundle bundle) {
+                ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
+            }
+
+            @Override
+            public void onNetworkError(Bundle bundle) {
+                ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
+            }
+        });
+    }
+
+    private void startSave() {
+        if (isConnected() && isDetecting && startRecord()) {
+            startRecordBtn.setText(R.string.stopRecord);
         }
     }
 
-    private void saveData(Bundle bundle) {
-        LeakData leakData = (LeakData) bundle.get(GlobalParam.LEAK_DATA);
-        // TODO..保存到本地
+    private void startSave(@NonNull Bundle bundle) {
+        if (isConnected() && isDetecting && startRecord()) {
+            selectedLeakId = bundle.getString("leakId");
+            startRecordBtn.setText(R.string.stopRecord);
+        }
+    }
+
+    private boolean startRecord() {
+        if (mRtspPlayer.startRecord() == 0) {
+            isSaving = true;
+            startRecordBtn.setText(R.string.stopRecord);
+        }
+        return isSaving;
+    }
+
+    private void stopRecord() {
+        if (mRtspPlayer.isRecording()) {
+            mRtspPlayer.stopRecord();
+        }
+        isSaving = false;
+        startRecordBtn.setText(getText(R.string.startRecord));
+        // 保存漏点信息、检测数据、视频信息
+        saveData();
+        // 如果已登录，则上传可用
+        if (MainApplication.getInstance().isLogin()) {
+            uploadVideoBtn.setEnabled(true);
+        }
+    }
+
+    private void saveData() {
+        String leakId = selectedLeakId;
+        String userId = MainApplication.getInstance().getUserId();
+        int monitorStatus = saveMaxValue > seriesLimitInfo.getMaxValue() ? 0 : 1;
+        MonitorData monitorData = new MonitorData(saveTime, saveMaxValue, monitorStatus);
+        lastedLeakData = new LeakData(leakId, userId, monitorData);
+        System.out.println(lastedLeakData.toString());
+        System.out.println(mRtspPlayer.getVideoPath());
+
+        // TODO: hiYuzu 2020/12/2 保存到本地数据库 表：leak_data_info
+        // | id | leak_id | monitor_value | monitor_time | monitor_status | video_path | opt_user | opt_time |
     }
 
     public void uploadVideo(View view) {
-        // TODO..从本地数据库中取出最新的一条上传
-        /*
-        NewLeakRequest newLeakRequest = new NewLeakRequest();
-        Double lat = null;
-        Double lon = null;
-        GPSUtil gpsUtil = GPSUtil.getInstance(this);
-        if(gpsUtil.isLocationProviderEnabled()){
-            android.location.Location location = null;
-            if (!gpsUtil.isLocationPermission()) {
-                //判断是否为android6.0系统版本，如果是，需要动态添加权限
-                ActivityCompat.requestPermissions(this, gpsUtil.permissions,100);
-            } else {
-                location = gpsUtil.getLocation();
-            }
-            if(location != null){
-                lon = location.getLongitude();
-                lat = location.getLatitude();
-            }
-        }
-        newLeakRequest.setLocation(new Location.Builder().lon(lon).lat(lat).build());
-         */
-        LeakData leakData = new LeakData("1", MainApplication.getInstance().getUserId(), new MonitorData("2020-12-01 10:52:51", 100, 1));
-        HttpUtils.postVideo(this, MainApplication.getInstance().baseUrl + "/video/insert", leakData.toString(), new File(mRtspPlayer.getVideoPath()),
+        HttpUtils.post(this, MainApplication.getInstance().baseUrl + "/video/insert", lastedLeakData.toString(), new File(mRtspPlayer.getVideoPath()),
                 new OKHttpListener() {
                     @Override
                     public void onStart() {
@@ -433,6 +487,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                     @Override
                     public void onSuccess(Bundle bundle) {
                         ToastUtil.shortInstanceToast("上传成功");
+                        uploadVideoBtn.setEnabled(false);
                     }
 
                     @Override
@@ -523,7 +578,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      * @param paramBytes 接收的数据
      */
     private void showFragmentContent(byte[] paramBytes) {
-        //TODO..数据处理：paramBytes给到deviceController
+        // TODO: hiYuzu 2020/12/2 数据处理：paramBytes 给到 DeviceController 做进一步处理解析
         double systemCurrent = deviceController.getSystemCurrent();
         if (!unitPPM) {
             systemCurrent = UnitManager.getMg(systemCurrent);
@@ -559,6 +614,10 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         }
         if (maxValue < paramFloat) {
             maxValue = paramFloat;
+        }
+        if (isSaving) {
+            saveMaxValue = maxValue;
+            saveTime = DateUtil.getDefaultTime();
         }
         List<Entry> entries;
         if (lineDataSet != null) {
@@ -627,6 +686,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 detectMaxvalueMg = systemCurrent;
             }
         }
+
     }
 
     public void selectSeries(View view) {
