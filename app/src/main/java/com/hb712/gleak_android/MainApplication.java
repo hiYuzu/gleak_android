@@ -13,7 +13,7 @@ import com.hb712.gleak_android.util.SPUtil;
 public class MainApplication extends BaseApplication {
 
     private final String TAG = MainApplication.class.getSimpleName();
-    public final String appIP = "192.168.1.102";
+    public final String appIP = "192.168.3.124";
     public final String appPort = "3000";
     public final String baseUrl = "http://" + appIP + ":" + appPort;
     public final String SETTINGS_USERNAME = "username";

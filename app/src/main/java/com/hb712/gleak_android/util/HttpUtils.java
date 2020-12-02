@@ -104,7 +104,6 @@ public class HttpUtils {
                 }
                 try {
                     Response response = mClient.newCall(builder.build()).execute();
-
                     result.putInt(CODE, response.code());
                     result.putBoolean(RESULT, true);
                     if (response.code() != SUCCESS_CODE) {

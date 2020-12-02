@@ -31,7 +31,7 @@ public class LogUtil {
             infoOut(tag, detail);
             return;
         }
-        Log.i(tag, e.getMessage() + ", detail: " + detail);
+        Log.i(tag, e.getMessage() + " & detail: " + detail);
         ToastUtil.shortInstanceToast(detail);
     }
 
@@ -48,7 +48,7 @@ public class LogUtil {
      */
     public static void warnOut(String tag, @Nullable Exception ex, @NonNull String detail) {
         if (ex != null) {
-            Log.e(tag, ex.getMessage() + ", detail: " + detail);
+            Log.e(tag, ex.getMessage() + " & detail: " + detail);
         }
         Log.w(tag, detail);
     }
@@ -60,6 +60,6 @@ public class LogUtil {
      * @param detail 描述
      */
     public static void errorOut(String tag, @Nullable Exception ex, @NonNull String detail) {
-        Log.e(tag, ex == null ? detail : ex.getMessage() + ", detail: " + detail);
+        Log.e(tag, ex == null ? detail : ex.getMessage() + " & detail: " + detail);
     }
 }
