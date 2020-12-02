@@ -16,7 +16,7 @@ import com.hb712.gleak_android.callback.FactorAddSuccessCallback;
 import com.hb712.gleak_android.controller.CalibrationInfoController;
 import com.hb712.gleak_android.dao.DBManager;
 import com.hb712.gleak_android.dao.FactorCoefficientInfoDao;
-import com.hb712.gleak_android.pojo.FactorCoefficientInfo;
+import com.hb712.gleak_android.entity.FactorCoefficientInfo;
 import com.hb712.gleak_android.util.ToastUtil;
 
 import org.greenrobot.greendao.Property;

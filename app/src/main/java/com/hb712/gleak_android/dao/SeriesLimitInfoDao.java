@@ -3,7 +3,7 @@ package com.hb712.gleak_android.dao;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
-import com.hb712.gleak_android.pojo.SeriesLimitInfo;
+import com.hb712.gleak_android.entity.SeriesLimitInfo;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;

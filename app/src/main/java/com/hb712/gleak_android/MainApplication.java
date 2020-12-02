@@ -1,7 +1,5 @@
 package com.hb712.gleak_android;
 
-import com.baidu.mapapi.CoordType;
-import com.baidu.mapapi.SDKInitializer;
 import com.hb712.gleak_android.base.BaseApplication;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.SPUtil;
@@ -15,7 +13,7 @@ import com.hb712.gleak_android.util.SPUtil;
 public class MainApplication extends BaseApplication {
 
     private final String TAG = MainApplication.class.getSimpleName();
-    public final String appIP = "192.168.3.125";
+    public final String appIP = "192.168.1.102";
     public final String appPort = "3000";
     public final String baseUrl = "http://" + appIP + ":" + appPort;
     public final String SETTINGS_USERNAME = "username";
@@ -36,11 +34,6 @@ public class MainApplication extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         singleton = this;
-        //在使用SDK各组件之前初始化context信息，传入ApplicationContext
-        SDKInitializer.initialize(this);
-        //自4.3.0起，百度地图SDK所有接口均支持百度坐标和国测局坐标，用此方法设置您使用的坐标类型.
-        //包括BD09LL和GCJ02两种坐标，默认是BD09LL坐标。
-        SDKInitializer.setCoordType(CoordType.BD09LL);
     }
 
     public void saveUserPwd(String username, String password, boolean isSave) {

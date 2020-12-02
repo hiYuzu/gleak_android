@@ -1,6 +1,6 @@
 package com.hb712.gleak_android.util;
 
-import com.hb712.gleak_android.pojo.FactorCoefficientInfo;
+import com.hb712.gleak_android.entity.FactorCoefficientInfo;
 
 /**
  * @author hiYuzu

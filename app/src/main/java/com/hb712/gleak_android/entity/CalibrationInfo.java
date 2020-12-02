@@ -1,4 +1,4 @@
-package com.hb712.gleak_android.pojo;
+package com.hb712.gleak_android.entity;
 
 import android.support.annotation.NonNull;
 

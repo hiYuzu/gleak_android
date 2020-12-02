@@ -12,7 +12,7 @@ import android.widget.SpinnerAdapter;
 import com.hb712.gleak_android.R;
 import com.hb712.gleak_android.callback.SeriesAddSuccessCallback;
 import com.hb712.gleak_android.controller.SeriesInfoController;
-import com.hb712.gleak_android.pojo.SeriesInfo;
+import com.hb712.gleak_android.entity.SeriesInfo;
 import com.hb712.gleak_android.util.LogUtil;
 
 import java.util.List;

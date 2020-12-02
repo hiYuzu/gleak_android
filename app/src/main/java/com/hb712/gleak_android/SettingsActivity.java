@@ -81,7 +81,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     private void checkUpdate() {
         ToastUtil.longInstanceToast("检查更新中...");
-        //TODO..
+        // TODO: hiYuzu 2020/12/2 检查更新功能
     }
 
     private void backLogin() {
@@ -98,9 +98,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
-
-        private final String SERVE_IP = "serve_ip";
-        private final String SERVE_PORT = "serve_port";
 
         private SwitchPreference general_remember;
         private EditTextPreference serveIp;
@@ -124,17 +121,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 }
                 return true;
             });
-
-            serveIp = (EditTextPreference) findPreference(SERVE_IP);
-            servePort = (EditTextPreference) findPreference(SERVE_PORT);
-            serveIp.setText(SPUtil.get(MainApplication.getInstance(), SERVE_IP, "127.0.0.1").toString());
-            servePort.setText(SPUtil.get(MainApplication.getInstance(), SERVE_PORT, "").toString());
+            serveIp = (EditTextPreference) findPreference(GlobalParam.SERVE_IP);
+            servePort = (EditTextPreference) findPreference(GlobalParam.SERVE_PORT);
+            serveIp.setText(SPUtil.get(MainApplication.getInstance(), GlobalParam.SERVE_IP, "127.0.0.1").toString());
+            servePort.setText(SPUtil.get(MainApplication.getInstance(), GlobalParam.SERVE_PORT, "").toString());
             serveIp.setOnPreferenceChangeListener((preference, newValue) -> {
                 String ip = (String) newValue;
                 if (isCorrectIp(ip)) {
                     serveIp.setSummary(ip);
                     serveIp.setText(ip);
-                    SPUtil.put(MainApplication.getInstance(), SERVE_IP, ip);
+                    SPUtil.put(MainApplication.getInstance(), GlobalParam.SERVE_IP, ip);
                     return true;
                 } else {
                     ToastUtil.shortInstanceToast("请输入正确的IP格式");
@@ -146,7 +142,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 if (isCorrectPort(port)) {
                     servePort.setSummary(port);
                     serveIp.setText(port);
-                    SPUtil.put(MainApplication.getInstance(), SERVE_PORT, port);
+                    SPUtil.put(MainApplication.getInstance(), GlobalParam.SERVE_PORT, port);
                     return true;
                 } else {
                     ToastUtil.shortInstanceToast("请输入正确的Port格式");

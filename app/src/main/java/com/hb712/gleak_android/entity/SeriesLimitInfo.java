@@ -1,4 +1,4 @@
-package com.hb712.gleak_android.pojo;
+package com.hb712.gleak_android.entity;
 
 import com.hb712.gleak_android.dao.DaoSession;
 import com.hb712.gleak_android.dao.SeriesLimitInfoDao;

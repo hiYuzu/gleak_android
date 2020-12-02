@@ -3,7 +3,6 @@ package com.hb712.gleak_android;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.view.View;
 import android.os.Process;
@@ -12,13 +11,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.hb712.gleak_android.base.BaseActivity;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
-import com.hb712.gleak_android.pojo.InitLeakData;
+import com.hb712.gleak_android.message.net.InitLeakData;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,14 +51,10 @@ public class MainActivity extends BaseActivity implements HttpInterface {
             public void onSuccess(Bundle bundle) {
                 String result = bundle.getString(HttpUtils.MESSAGE);
                 JSONObject json = JSONObject.parseObject(result);
-                String data;
                 if (json.getBoolean("status")) {
-                    data = json.getString("data");
-                    GlobalParam.initLeakData = (List<InitLeakData>) JSONObject.parseArray(data, InitLeakData.class);
+                    GlobalParam.initLeakData = (List<InitLeakData>) JSONObject.parseArray(json.getString("data"), InitLeakData.class);
                 } else {
-                    data = json.getString("msg");
-                    GlobalParam.initLeakData = new ArrayList<>();
-                    LogUtil.infoOut(TAG, data);
+                    LogUtil.infoOut(TAG, json.getString("msg"));
                 }
             }
 

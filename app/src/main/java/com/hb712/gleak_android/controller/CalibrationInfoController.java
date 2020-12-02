@@ -1,15 +1,9 @@
 package com.hb712.gleak_android.controller;
 
-import com.hb712.gleak_android.dao.CalibrationInfoDao;
-import com.hb712.gleak_android.dao.DBManager;
-import com.hb712.gleak_android.dao.SeriesInfoDao;
-import com.hb712.gleak_android.pojo.CalibrationInfo;
-import com.hb712.gleak_android.pojo.FactorCoefficientInfo;
-import com.hb712.gleak_android.pojo.SeriesInfo;
+import com.hb712.gleak_android.entity.CalibrationInfo;
+import com.hb712.gleak_android.entity.FactorCoefficientInfo;
+import com.hb712.gleak_android.entity.SeriesInfo;
 
-import org.greenrobot.greendao.query.WhereCondition;
-
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,7 +41,7 @@ public class CalibrationInfoController {
     }
 
     public void setCurrentSeries(String seriesName) {
-        //TODO..
+        // TODO: hiYuzu 2020/12/2 测试用，待删除
         setCurrentSeries(new SeriesInfo(1L, "测试曲线", true));
         /*
         SeriesInfoController.checkStd();

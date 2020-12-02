@@ -1,9 +1,9 @@
 package com.hb712.gleak_android.dao;
 
-import com.hb712.gleak_android.pojo.CalibrationInfo;
-import com.hb712.gleak_android.pojo.FactorCoefficientInfo;
-import com.hb712.gleak_android.pojo.SeriesInfo;
-import com.hb712.gleak_android.pojo.SeriesLimitInfo;
+import com.hb712.gleak_android.entity.CalibrationInfo;
+import com.hb712.gleak_android.entity.FactorCoefficientInfo;
+import com.hb712.gleak_android.entity.SeriesInfo;
+import com.hb712.gleak_android.entity.SeriesLimitInfo;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.AbstractDaoSession;

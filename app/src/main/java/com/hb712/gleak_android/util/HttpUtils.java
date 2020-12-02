@@ -12,8 +12,10 @@ import org.apache.http.params.HttpParams;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -43,17 +45,22 @@ public class HttpUtils {
         httpExecute(httpInterface, httpUrl, new Request.Builder().get(), listener);
     }
 
-    public static void postVideo(HttpInterface httpInterface, String httpUrl, String value, File file, @NonNull OKHttpListener listener) {
+    public static void post(HttpInterface httpInterface, String httpUrl, String jsonString, File file, @NonNull OKHttpListener listener) {
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         if (file != null) {
             isSendVideo = true;
             builder.addPart(MultipartBody.Part.createFormData("video", file.getName(), RequestBody.create(MediaType.parse("multipart/form-data"), file)));
         }
 
-        if (value != null) {
-            builder.addPart(MultipartBody.Part.createFormData("data", value));
+        if (jsonString != null) {
+            builder.addPart(MultipartBody.Part.createFormData("data", jsonString));
         }
         httpExecute(httpInterface, httpUrl, new Request.Builder().post(builder.build()), listener);
+    }
+
+    public static void post(HttpInterface httpInterface, String httpUrl, String jsonString, @NonNull OKHttpListener listener) {
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), jsonString);
+        httpExecute(httpInterface, httpUrl, new Request.Builder().post(requestBody), listener);
     }
 
     private static void httpExecute(HttpInterface httpInterface, String httpUrl, Request.Builder builder, OKHttpListener listener) {
@@ -74,7 +81,7 @@ public class HttpUtils {
                 if (bundle.getBoolean(RESULT)) {
                     if (bundle.getInt(CODE) == SUCCESS_CODE) {
                         listener.onSuccess(bundle);
-                    } else{
+                    } else {
                         listener.onServiceError(bundle);
                     }
                 } else {

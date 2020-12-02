@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hb712.gleak_android.adapter.HistoryAdapter;
-import com.hb712.gleak_android.pojo.DetectInfo;
+import com.hb712.gleak_android.entity.DetectInfo;
 import com.hb712.gleak_android.util.SPUtil;
 
 import java.util.List;
@@ -45,15 +45,14 @@ public class HistoryActivity extends AppCompatActivity {
         }
     }
 
-    /// 返回destroy activity
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        if (item.getItemId() == android.R.id.home) {
-//            onBackPressed();
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     private void initView() {

@@ -1,4 +1,4 @@
-package com.hb712.gleak_android.pojo;
+package com.hb712.gleak_android.entity;
 
 /**
  * 曲线信息

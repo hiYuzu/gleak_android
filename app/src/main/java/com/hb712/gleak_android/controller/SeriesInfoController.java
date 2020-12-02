@@ -2,7 +2,7 @@ package com.hb712.gleak_android.controller;
 
 import com.hb712.gleak_android.dao.DBManager;
 import com.hb712.gleak_android.dao.SeriesInfoDao;
-import com.hb712.gleak_android.pojo.SeriesInfo;
+import com.hb712.gleak_android.entity.SeriesInfo;
 
 import org.greenrobot.greendao.query.WhereCondition;
 
@@ -37,7 +37,7 @@ public class SeriesInfoController {
     {
         //checkStd();
         //return DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().list();
-        //TODO..删除
+        // TODO: hiYuzu 2020/12/2 测试用，待删除
         List<SeriesInfo> seriesInfoList = new ArrayList<>();
         seriesInfoList.add(new SeriesInfo(1L, "测试曲线", true));
         return seriesInfoList;

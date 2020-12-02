@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -25,6 +26,9 @@ import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author hiYuzu
@@ -51,7 +55,7 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (pm == null) {
-                    throw new Exception("PowerManager为NULL");
+                    LogUtil.warnOut(TAG, null, "PowerManager为NULL");
                 }
                 if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
                     Intent intent = new Intent();

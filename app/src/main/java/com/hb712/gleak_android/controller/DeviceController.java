@@ -1,6 +1,6 @@
 package com.hb712.gleak_android.controller;
 
-import com.hb712.gleak_android.pojo.FactorCoefficientInfo;
+import com.hb712.gleak_android.entity.FactorCoefficientInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class DeviceController {
     private List<Double> pastPpm = new ArrayList<>();
 
     public void parseParam(byte[] paramBytes) {
-        //TODO..解析仪器参数信息
+        // TODO: hiYuzu 2020/12/2 解析蓝牙信息
         setPowerPercent(8D);
     }
 

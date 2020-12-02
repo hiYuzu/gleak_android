@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.hb712.gleak_android.R;
-import com.hb712.gleak_android.pojo.DetectInfo;
+import com.hb712.gleak_android.entity.DetectInfo;
 import com.hb712.gleak_android.util.UnitManager;
 
 import java.text.DecimalFormat;

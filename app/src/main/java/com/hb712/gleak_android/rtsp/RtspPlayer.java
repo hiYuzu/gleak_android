@@ -1,10 +1,6 @@
 package com.hb712.gleak_android.rtsp;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Environment;
 
 import com.hb712.gleak_android.R;
@@ -13,15 +9,11 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 import com.hb712.gleak_android.rtsp.widget.IjkVideoView;
+import com.hb712.gleak_android.util.DateUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.LogUtil;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * @author hiYuzu
@@ -68,7 +60,8 @@ public class RtspPlayer {
         mVideoView.release(true);
         IjkMediaPlayer.native_profileEnd();
     }
-
+    /// 截图暂时弃用
+    /*
     public void getScreenshots() {
         if (!mVideoView.isPlaying()) {
             LogUtil.infoOut(TAG, "无视频信号");
@@ -88,12 +81,11 @@ public class RtspPlayer {
                 }
             }
 
-            @SuppressLint("SimpleDateFormat")
             File file = new File(
                     fileDir.getPath()
                             + "/"
-                            + new SimpleDateFormat("yyyyMMddHHmmss")
-                            .format(new Date()) + ".jpg");
+                            + DateUtil.getCurrentTime(DateUtil.TIME_SERIES)
+                            + ".jpg");
             try {
                 FileOutputStream out = new FileOutputStream(file);
                 srcBitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
@@ -110,12 +102,11 @@ public class RtspPlayer {
             LogUtil.infoOut(TAG, "截图失败");
         }
     }
-
-    @SuppressLint("SimpleDateFormat")
-    public synchronized void startRecord() {
+    */
+    public synchronized int startRecord() {
         if (!mVideoView.isPlaying()) {
             LogUtil.infoOut(TAG, "无视频信号");
-            return;
+            return -1;
         }
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/ijkplayer/video";
         File fileDir = new File(path);
@@ -124,12 +115,17 @@ public class RtspPlayer {
                 LogUtil.infoOut(TAG, "文件夹创建失败");
             }
         }
-        videoPath = path + "/"
-                + new SimpleDateFormat("yyyyMMddHHmmss")
-                .format(new Date()) + ".mp4";
+        videoPath = path
+                + "/"
+                + DateUtil.getCurrentTime(DateUtil.TIME_SERIES)
+                + ".mp4";
         int result = mVideoView.startRecord(videoPath);
-        recording = true;
-        LogUtil.infoOut(TAG, "开始录制:" + result);
+        if (result == 0) {
+            recording = true;
+            LogUtil.infoOut(TAG, "开始录制");
+        }
+        return result;
+
     }
 
     public void stopRecord() {
@@ -139,13 +135,7 @@ public class RtspPlayer {
     }
 
     public String getVideoPath() {
-        if (videoPath != null) {
-            return videoPath;
-        } else {
-            return Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/ijkplayer/video/20201119152745.mp4";
-        }
-        // TODO..
-        // return videoPath;
+         return videoPath;
     }
 
     public boolean isRecording() {

@@ -2,7 +2,7 @@ package com.hb712.gleak_android.util;
 
 import android.annotation.SuppressLint;
 
-import com.hb712.gleak_android.pojo.InitLeakData;
+import com.hb712.gleak_android.message.net.InitLeakData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,9 @@ import java.util.List;
  * @date 2020/9/30 13:38
  */
 public class GlobalParam {
+    public static String SERVE_IP = "serve_ip";
+    public static String SERVE_PORT = "serve_port";
+
     public static final String KEY_USERTOKEN = "Authorization";
 
     public static boolean rememberPwd = false;
@@ -38,9 +41,8 @@ public class GlobalParam {
     //其他
     public static final String DEVICE_NAME = "device_name";
     public static final String DEVICE_ADDRESS = "device_address";
-    public static final boolean DEVICE_ANDROID = false;
-
-    public static final String LEAK_DATA = "leak_data";
+    public static final boolean DEVICE_ANDROID = true;
+    public static final boolean DEVICE_OTHER = false;
 
     //video
     public static boolean loadFirst = true;
@@ -49,5 +51,5 @@ public class GlobalParam {
 
     public static final String MAP_KEY = "BpPnFERqEuxQtdvEuPp4eW8ouHv6LeKR";
 
-    public static List<InitLeakData> initLeakData;
+    public static List<InitLeakData> initLeakData = new ArrayList<>();
 }

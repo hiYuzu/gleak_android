@@ -14,8 +14,8 @@ import android.widget.TextView;
 
 import com.hb712.gleak_android.controller.CalibrationInfoController;
 import com.hb712.gleak_android.controller.SeriesInfoController;
-import com.hb712.gleak_android.pojo.CalibrationInfo;
-import com.hb712.gleak_android.pojo.SeriesInfo;
+import com.hb712.gleak_android.entity.CalibrationInfo;
+import com.hb712.gleak_android.entity.SeriesInfo;
 
 import java.util.List;
 
@@ -62,15 +62,14 @@ public class CalibrateActivity extends AppCompatActivity {
         }
     }
 
-    /// 返回destroy activity
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        if (item.getItemId() == android.R.id.home) {
-//            onBackPressed();
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void initView() {
         seriesInfoSp = findViewById(R.id.caliSeriesSp);

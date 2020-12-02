@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -17,6 +19,8 @@ import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.ToastUtil;
+
+import okhttp3.internal.Util;
 
 
 public class LaunchActivity extends BaseActivity implements HttpInterface {
@@ -96,7 +100,7 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
 
                     gotoMainActivity(username, password);
                 } else {
-                    LogUtil.debugOut(TAG,"自动登录失败:" + bundle.getString(HttpUtils.MESSAGE));
+                    LogUtil.debugOut(TAG, "自动登录失败:" + bundle.getString(HttpUtils.MESSAGE));
                     gotoLoginActivity();
                 }
             }
