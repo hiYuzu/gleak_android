@@ -1,5 +1,7 @@
 package com.hb712.gleak_android.pojo;
 
+import com.hb712.gleak_android.base.BaseBean;
+
 /**
  * 登录时从后台获取所有漏点数据
  *
@@ -7,14 +9,22 @@ package com.hb712.gleak_android.pojo;
  * @version V1.0
  * @date 2020/12/1 8:52
  */
-public class InitLeakData {
+public class InitLeakData extends BaseBean {
     private String id;
     private String name;
     private String code;
-    private String longitude;
-    private String latitude;
+    private Double longitude;
+    private Double latitude;
     private String period;
     private String time;
+
+    public InitLeakData(String id, String name, String code, Double longitude, Double latitude) {
+        this.id = id;
+        this.name = name;
+        this.code = code;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
 
     public String getId() {
         return id;
@@ -40,19 +50,19 @@ public class InitLeakData {
         this.code = code;
     }
 
-    public String getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
-    public String getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
