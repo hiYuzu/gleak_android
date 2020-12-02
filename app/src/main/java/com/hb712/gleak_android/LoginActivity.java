@@ -56,13 +56,12 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (pm == null) {
                     LogUtil.warnOut(TAG, null, "PowerManager为NULL");
-                }
-                if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                } else if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
                     Intent intent = new Intent();
                     String packageName = getPackageName();
                     intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
                     intent.setData(Uri.parse("package:" + packageName));
-                    LoginActivity.this.startActivity(intent);
+                    startActivity(intent);
                 }
             }
         } catch (Exception e) {

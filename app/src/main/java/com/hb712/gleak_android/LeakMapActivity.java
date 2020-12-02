@@ -1,11 +1,23 @@
 package com.hb712.gleak_android;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -24,8 +36,10 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Projection;
 import com.baidu.mapapi.model.LatLng;
 import com.hb712.gleak_android.base.BaseActivity;
+import com.hb712.gleak_android.base.BaseApplication;
 import com.hb712.gleak_android.message.net.InitLeakData;
 import com.hb712.gleak_android.util.GlobalParam;
+import com.hb712.gleak_android.util.ToastUtil;
 
 public class LeakMapActivity extends BaseActivity {
 
@@ -49,7 +63,56 @@ public class LeakMapActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leak_map);
         setResult(Activity.RESULT_CANCELED);
+        requestLocationPower();
         initView();
+    }
+
+    private void requestLocationPower() {
+        LocationManager lm = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        boolean ok = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        // 判断手机的GPS是否开启
+        if (ok) {
+            //判断是否为android6.0系统版本，如果是，需要动态添加权限
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // 没有权限，申请权限
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, GlobalParam.REQUEST_LOCATION_PERMISSION);
+                }
+            }
+        } else {
+            ToastUtil.shortInstanceToast("未开启GPS定位服务");
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResult) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResult);
+        if (requestCode == GlobalParam.REQUEST_LOCATION_PERMISSION) {
+            for (int grant : grantResult) {
+                if (grant != PackageManager.PERMISSION_GRANTED) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("地图需要开启定位功能，请到 “应用信息 -> 权限” 中授予！");
+                    builder.setPositiveButton("去手动授权", (dialog, which) -> {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.addCategory(Intent.CATEGORY_DEFAULT);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                        startActivity(intent);
+                    });
+                    builder.setNegativeButton("取消", null);
+                    builder.show();
+                }
+            }
+        }
     }
 
     private void initView() {
