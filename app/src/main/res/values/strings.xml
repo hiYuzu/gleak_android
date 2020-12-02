@@ -95,6 +95,13 @@
     <!--deviceActivity-->
     <string name="device_bluetooth">蓝牙设备</string>
     <string name="device_search">搜索</string>
+    <!--leakMapActivity-->
+    <string name="confirm">确认</string>
+    <string name="add_new">新增</string>
+    <string name="leak_point">检测点：</string>
+    <string name="open_bracket">(</string>
+    <string name="close_bracket">)</string>
+
     <!--settingsActivity-->
     <string name="settings_general">通用设置</string>
     <string name="settings_general_remember">记住密码</string>
@@ -102,5 +109,8 @@
     <string name="settings_update">检查更新</string>
     <string name="settings_about">关于软件</string>
     <string name="settings_logout">退出登录</string>
+
+    <string name="serve_ip">serve_ip</string>
+    <string name="serve_port">serve_port</string>
 
 </resources>
