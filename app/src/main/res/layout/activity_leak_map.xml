@@ -7,12 +7,75 @@
     android:orientation="vertical"
     tools:context=".LeakMapActivity">
 
-    <TextView
-        android:id="@+id/positionInfo"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="无"
-        android:textSize="25sp" />
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dimen_5dp"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/leak_point" />
+
+            <TextView
+                android:id="@+id/leakCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/open_bracket" />
+
+            <TextView
+                android:id="@+id/leakName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/close_bracket" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_marginBottom="@dimen/dimen_5dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_operation"
+                android:minWidth="@dimen/dimen_50dp"
+                android:minHeight="@dimen/dimen_35dp"
+                android:text="@string/add_new" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dimen_25dp"
+                android:background="@drawable/button_operation"
+                android:minWidth="@dimen/dimen_50dp"
+                android:minHeight="@dimen/dimen_35dp"
+                android:onClick="confirmPoint"
+                android:text="@string/confirm" />
+        </LinearLayout>
+
+    </LinearLayout>
 
     <com.baidu.mapapi.map.MapView
         android:id="@+id/bmapView"

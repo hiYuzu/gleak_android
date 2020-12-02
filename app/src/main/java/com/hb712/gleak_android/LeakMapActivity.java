@@ -1,8 +1,10 @@
 package com.hb712.gleak_android;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.baidu.location.BDAbstractLocationListener;
@@ -22,17 +24,25 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Projection;
 import com.baidu.mapapi.model.LatLng;
 import com.hb712.gleak_android.base.BaseActivity;
-import com.hb712.gleak_android.interfaceabs.HttpInterface;
-import com.hb712.gleak_android.util.ToastUtil;
+import com.hb712.gleak_android.message.net.InitLeakData;
+import com.hb712.gleak_android.util.GlobalParam;
 
-public class LeakMapActivity extends BaseActivity implements HttpInterface {
+public class LeakMapActivity extends BaseActivity {
 
     private MapView mMapView = null;
     private BaiduMap baiduMap = null;
     private LocationClient mLocationClient = null;
     private LatLng myPosition;
+    private LatLng newLeakPosition;
     private boolean firstLoad = true;
-    private TextView mTextView;
+    private TextView leakName;
+    private TextView leakCode;
+
+    // 默认Marker图标
+    private BitmapDescriptor bitmap;
+
+    // 选择的leak点位
+    private String selectedLeakId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +53,8 @@ public class LeakMapActivity extends BaseActivity implements HttpInterface {
     }
 
     private void initView() {
-        mTextView = findViewById(R.id.positionInfo);
+        leakName = findViewById(R.id.leakName);
+        leakCode = findViewById(R.id.leakCode);
         mMapView = findViewById(R.id.bmapView);
         baiduMap = mMapView.getMap();
         setBaiduMapOption();
@@ -93,17 +104,11 @@ public class LeakMapActivity extends BaseActivity implements HttpInterface {
 
             @Override
             public void onMapStatusChangeFinish(MapStatus mapStatus) {
-                String s = mapStatus.target.latitude + "," + mapStatus.target.longitude;
-                mTextView.setText(s);
+                newLeakPosition = mapStatus.target;
             }
         });
 
-        baiduMap.setOnMapLoadedCallback(new BaiduMap.OnMapLoadedCallback() {
-            @Override
-            public void onMapLoaded() {
-                initMarker();
-            }
-        });
+        baiduMap.setOnMapLoadedCallback(this::initMarker);
     }
 
     /**
@@ -132,22 +137,59 @@ public class LeakMapActivity extends BaseActivity implements HttpInterface {
     }
 
     private void initMarker() {
-        //定义Maker坐标点
-        LatLng point = new LatLng(39.963175, 116.400244);
         //构建Marker图标
-        BitmapDescriptor bitmap = BitmapDescriptorFactory
-                .fromResource(R.drawable.icon_gcoding);
+        bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
+
+        for (InitLeakData temp : GlobalParam.initLeakData) {
+            Bundle bundle = new Bundle();
+            bundle.putString("leakId", temp.getId());
+            bundle.putString("leakCode", temp.getCode());
+            bundle.putString("leakName", temp.getName());
+            createMarker(new LatLng(temp.getLatitude(), temp.getLongitude()), bundle);
+        }
+
+        baiduMap.setOnMarkerClickListener(marker -> {
+            Bundle bundle = marker.getExtraInfo();
+            // 显示
+            leakName.setText(bundle.getString("leakName"));
+            leakCode.setText(bundle.getString("leakCode"));
+            // 存储
+            selectedLeakId = bundle.getString("leakId");
+            return true;
+        });
+    }
+
+    public void confirmPoint(View view) {
+        Intent intent = new Intent();
+        intent.putExtra("leakId", selectedLeakId);
+
+        setResult(Activity.RESULT_OK, intent);
+        finish();
+    }
+
+    /*
+    public void addNewPoint(View view) {
+        // 获得新点的信息
+        // 取消：取消；
+        // 确认：得到并返回name，code，period，成员变量newLeakPosition
+        NewLeak newLeak = new NewLeak(name, code, newLeakPosition.longitude, newLeakPosition.latitude, period);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("NewLeak", newLeak);
+        Intent intent = new Intent();
+        intent.putExtras(bundle);
+
+        setResult(Activity.RESULT_FIRST_USER, intent);
+        finish();
+        // 添加到 GlobalParam.initLeakData
+    }
+    */
+    private void createMarker(LatLng point, Bundle bundle) {
         //构建MarkerOption，用于在地图上添加Marker
         OverlayOptions option = new MarkerOptions()
                 .position(point)
+                .extraInfo(bundle)
                 .icon(bitmap);
-        //在地图上添加Marker，并显示
         baiduMap.addOverlay(option);
-
-        baiduMap.setOnMarkerClickListener(marker -> {
-            ToastUtil.shortInstanceToast(marker.getTitle());
-            return true;
-        });
     }
 
     @Override
@@ -169,16 +211,6 @@ public class LeakMapActivity extends BaseActivity implements HttpInterface {
     protected void onResume() {
         mMapView.onResume();
         super.onResume();
-    }
-
-    @Override
-    public Activity getActivity() {
-        return this;
-    }
-
-    @Override
-    public boolean isDiscardHttp() {
-        return isFinishing();
     }
 
     public class MyLocationListener extends BDAbstractLocationListener {
