@@ -5,12 +5,12 @@
         android:key="general_remember"
         android:title="@string/settings_general_remember" />
     <EditTextPreference
-        android:key="serve_ip"
+        android:key="@string/serve_ip"
         android:singleLine="true"
         android:title="服务器ip" />
     <EditTextPreference
-        android:key="serve_port"
-        android:numeric="integer"
+        android:key="@string/serve_port"
+        android:inputType="number"
         android:singleLine="true"
         android:title="服务器port" />
 </PreferenceScreen>
