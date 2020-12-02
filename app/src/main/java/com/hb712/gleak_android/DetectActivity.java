@@ -23,7 +23,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import com.hb712.gleak_android.base.BaseActivity;
-import com.hb712.gleak_android.callback.FactorAddSuccessCallback;
 import com.hb712.gleak_android.controller.CalibrationInfoController;
 import com.hb712.gleak_android.controller.DeviceController;
 import com.hb712.gleak_android.dao.DBManager;
@@ -56,7 +55,6 @@ import org.greenrobot.greendao.query.WhereCondition;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DetectActivity extends BaseActivity implements HttpInterface {
@@ -737,18 +735,15 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             if (CalibrationInfoController.getInstance().getCurrentSeries() != null) {
                 if (CalibrationInfoController.getInstance().getCurrentSeries().isStdSeries()) {
                     FactorDialog factorDialog = new FactorDialog(DetectActivity.this, "选择响应因子");
-                    factorDialog.setFactorAddSuccessCallback(new FactorAddSuccessCallback() {
-                        @Override
-                        public void onSave(FactorCoefficientInfo factorCoefficientInfo) {
-                            UnitManager.changeFactor(factorCoefficientInfo);
-                            deviceController.changeFactor(factorCoefficientInfo);
-                            showFactorName();
-                            if (factorCoefficientInfo == null) {
-                                SPUtil.put(DetectActivity.this, "DetectFactor", -1);
-                                return;
-                            }
-                            SPUtil.put(DetectActivity.this, "DetectFactor", String.valueOf(factorCoefficientInfo.getId()));
+                    factorDialog.setFactorAddSuccessCallback(factorCoefficientInfo -> {
+                        UnitManager.changeFactor(factorCoefficientInfo);
+                        deviceController.changeFactor(factorCoefficientInfo);
+                        showFactorName();
+                        if (factorCoefficientInfo == null) {
+                            SPUtil.put(DetectActivity.this, "DetectFactor", -1);
+                            return;
                         }
+                        SPUtil.put(DetectActivity.this, "DetectFactor", String.valueOf(factorCoefficientInfo.getId()));
                     });
                     factorDialog.showDialog();
                 }

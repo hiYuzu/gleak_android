@@ -12,7 +12,6 @@ import android.widget.ListView;
 
 import com.hb712.gleak_android.R;
 import com.hb712.gleak_android.adapter.FactorAdapter;
-import com.hb712.gleak_android.callback.FactorAddSuccessCallback;
 import com.hb712.gleak_android.controller.CalibrationInfoController;
 import com.hb712.gleak_android.dao.DBManager;
 import com.hb712.gleak_android.dao.FactorCoefficientInfoDao;
@@ -140,5 +139,9 @@ public class FactorDialog {
             return;
         }
         ckbNo.setChecked(false);
+    }
+
+    public interface FactorAddSuccessCallback {
+        void onSave(FactorCoefficientInfo factorCoefficientInfo);
     }
 }
