@@ -227,8 +227,9 @@ public class BluetoothService {
 //                    }
                     buffer[bytes] = (byte) '\n';
                     bytes++;
-
-                    mHandler.obtainMessage(GlobalParam.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                    byte[] buffers = new byte[bytes];
+                    System.arraycopy(buffer, 0, buffers, 0, bytes);
+                    mHandler.obtainMessage(GlobalParam.MESSAGE_READ, bytes, -1, buffers).sendToTarget();
 //                    sleep(10);
                 } catch (IOException e) {
                     LogUtil.warnOut(TAG, e, "收发失败");
