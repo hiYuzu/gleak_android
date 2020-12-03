@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_margin="@dimen/dimen_25dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/dimen_10dp"
+        android:paddingRight="@dimen/dimen_10dp"
+        android:paddingBottom="@dimen/dimen_5dp">
+
+        <TextView
+            style="@style/aboutText"
+            android:layout_width="@dimen/dimen_80dp"
+            android:text="@string/name" />
+
+        <EditText
+            android:id="@+id/factorName"
+            android:layout_width="@dimen/dimen_120dp"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:importantForAutofill="no"
+            tools:targetApi="o"
+            tools:ignore="LabelFor" />
+
+        <Button
+            android:id="@+id/searchBtn"
+            android:layout_width="@dimen/dimen_50dp"
+            android:layout_height="@dimen/dimen_35dp"
+            android:background="@drawable/button_operation"
+            android:gravity="center"
+            android:text="@string/search"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/dimen_10dp"
+        android:paddingRight="@dimen/dimen_10dp"
+        android:paddingBottom="@dimen/dimen_5dp">
+
+        <CheckBox
+            android:id="@+id/ckbNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ckb_no"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/factorList"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/dimen_500dp" />
+</LinearLayout>
