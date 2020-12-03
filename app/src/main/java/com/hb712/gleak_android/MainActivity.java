@@ -13,6 +13,7 @@ import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.message.net.InitLeakData;
+import com.hb712.gleak_android.util.GPSUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
@@ -35,6 +36,7 @@ public class MainActivity extends BaseActivity implements HttpInterface {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        GPSUtil.requestLocationPower(this);
         getAllMonitor();
     }
 

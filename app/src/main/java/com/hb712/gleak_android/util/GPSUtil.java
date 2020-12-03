@@ -2,90 +2,59 @@ package com.hb712.gleak_android.util;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
-import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.CoordinateConverter;
 
 public class GPSUtil {
     private static final String TAG = GPSUtil.class.getSimpleName();
     //权限数组（申请定位）
-    public final String[] permissions = new String[]{
-            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS};
-    @SuppressLint("StaticFieldLeak")
-    private static GPSUtil mInstance;
-    private final Context mContext;
-    private static final LocationListener mLocationListener = new LocationListener() {
+    private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS};
 
-        // Provider的状态在可用、暂时不可用和无服务三个状态直接切换时触发此函数
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            LogUtil.debugOut(TAG, "onStatusChanged");
+    private static LocationManager lm;
+
+    /**
+     * 通过 {@link GPSUtil#getLocation()} 获取GPS坐标，再转换为百度地图坐标
+     *
+     * @return 百度地图坐标
+     * @see LatLng
+     */
+    public static LatLng getBDLocation(Activity mContext) {
+        requestLocationPower(mContext);
+        Location location = getLocation();
+        if (location == null) {
+            ToastUtil.shortInstanceToast("无法获取定位");
+            return null;
         }
-
-        // Provider被enable时触发此函数，比如GPS被打开
-        @Override
-        public void onProviderEnabled(String provider) {
-            LogUtil.debugOut(TAG, "onProviderEnabled");
-
-        }
-
-        // Provider被disable时触发此函数，比如GPS被关闭
-        @Override
-        public void onProviderDisabled(String provider) {
-            LogUtil.debugOut(TAG, "onProviderDisabled");
-
-        }
-
-        //当坐标改变时触发此函数，如果Provider传进相同的坐标，它就不会被触发
-        @Override
-        public void onLocationChanged(Location location) {
-        }
-    };
-
-
-    private GPSUtil(Context context) {
-        this.mContext = context;
-    }
-
-    public static GPSUtil getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new GPSUtil(context.getApplicationContext());
-        }
-        return mInstance;
+        CoordinateConverter cc = new CoordinateConverter();
+        cc.from(CoordinateConverter.CoordType.GPS);
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        cc.coord(latLng);
+        return cc.convert();
     }
 
     /**
      * 获取地理位置，先根据GPS获取，再根据网络获取
      *
-     * @return android.location.Location
+     * @return GPS定位
      * @see Location
      */
     @SuppressLint("MissingPermission")
-    public Location getLocation() {
+    private static Location getLocation() {
         Location location = null;
         try {
-            if (mContext == null) {
-                return null;
-            }
-            LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-            if (locationManager == null) {
-                return null;
-            }
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                //从gps获取经纬度
-                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (location == null) {
-                    //当GPS信号弱没获取到位置的时候再从网络获取
-                    location = getLocationByNetwork();
-                }
-            } else {
-                //从网络获取经纬度
+            location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location == null) {
                 location = getLocationByNetwork();
             }
         } catch (Exception e) {
@@ -95,53 +64,62 @@ public class GPSUtil {
     }
 
     /**
-     * 判断是否开启了GPS或网络定位开关
-     *
-     * @return true: 开启了GPS或网络定位开关
-     *         false: 未开启定位
-     */
-    public boolean isLocationProviderEnabled() {
-        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager == null) {
-            return false;
-        }
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    }
-
-    /**
      * 获取地理位置，先根据GPS获取，再根据网络获取
      *
      * @return android.location.Location
      * @see Location
      */
     @SuppressLint("MissingPermission")
-    private Location getLocationByNetwork() {
-        Location location = null;
-        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+    private static Location getLocationByNetwork() {
         try {
-            if (locationManager != null && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, mLocationListener);
-                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            return lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        } catch (SecurityException se) {
+            String message = "权限不足";
+            ToastUtil.shortInstanceToast(message);
+            LogUtil.errorOut(TAG, se, message);
+        } catch (IllegalArgumentException iae) {
+            String message = "provider 不存在或未实例化";
+            ToastUtil.shortInstanceToast(message);
+            LogUtil.errorOut(TAG, iae, message);
+        }
+        return null;
+    }
+
+    /**
+     * GPS权限请求
+     *
+     * @param context 调用此方法的Activity
+     */
+    public static void requestLocationPower(Activity context) {
+        try {
+            lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            // 判断手机的GPS是否开启
+            if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                //判断是否为android6.0系统版本，如果是，需要动态添加权限
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    boolean isGranted = true;
+                    for (String permission : PERMISSIONS) {
+                        if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                            isGranted = false;
+                            break;
+                        }
+                    }
+                    if (!isGranted) {
+                        ActivityCompat.requestPermissions(context, PERMISSIONS, GlobalParam.REQUEST_LOCATION_PERMISSION);
+                    }
+                }
             } else {
-                LogUtil.warnOut(TAG, new NullPointerException(), "LocationManager对象为null值");
-                return null;
+                ToastUtil.shortInstanceToast("未开启GPS定位服务");
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                context.startActivity(intent);
             }
         } catch (Exception e) {
             LogUtil.errorOut(TAG, e, "");
         }
-        return location;
-    }
-
-    public boolean isLocationPermission() {
-        boolean result;
-        // 判断是否为android6.0系统版本，如果是，需要动态添加权限
-        if (Build.VERSION.SDK_INT >= 23) {
-            // 没有权限，申请权限。
-            result = ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        } else {
-            result = true;
-        }
-        return result;
     }
 
 }
