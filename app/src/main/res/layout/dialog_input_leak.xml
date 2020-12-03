@@ -16,27 +16,17 @@
 
         <TextView
             style="@style/aboutText"
-            android:layout_width="@dimen/dimen_80dp"
-            android:text="@string/name" />
+            android:layout_width="wrap_content"
+            android:text="@string/leak_name" />
 
         <EditText
-            android:id="@+id/factorName"
-            android:layout_width="@dimen/dimen_120dp"
+            android:id="@+id/newLeakName"
+            android:layout_width="@dimen/dimen_150dp"
             android:layout_height="wrap_content"
             android:inputType="text"
             android:importantForAutofill="no"
             tools:targetApi="o"
             tools:ignore="LabelFor" />
-
-        <Button
-            android:id="@+id/searchBtn"
-            android:layout_width="@dimen/dimen_50dp"
-            android:layout_height="@dimen/dimen_35dp"
-            android:background="@drawable/button_operation"
-            android:gravity="center"
-            android:text="@string/search"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -47,16 +37,46 @@
         android:paddingRight="@dimen/dimen_10dp"
         android:paddingBottom="@dimen/dimen_5dp">
 
-        <CheckBox
-            android:id="@+id/ckbNo"
+        <TextView
+            style="@style/aboutText"
             android:layout_width="wrap_content"
+            android:text="@string/leak_code" />
+
+        <EditText
+            android:id="@+id/newLeakCode"
+            android:layout_width="@dimen/dimen_150dp"
             android:layout_height="wrap_content"
-            android:text="@string/ckb_no"
-            android:textSize="20sp" />
+            android:inputType="text"
+            android:importantForAutofill="no"
+            tools:targetApi="o"
+            tools:ignore="LabelFor" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/factorList"
+    <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/dimen_500dp" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/dimen_10dp"
+        android:paddingRight="@dimen/dimen_10dp"
+        android:paddingBottom="@dimen/dimen_5dp">
+
+        <TextView
+            style="@style/aboutText"
+            android:layout_width="wrap_content"
+            android:text="@string/leak_period" />
+
+        <EditText
+            android:id="@+id/newLeakPeriod"
+            android:layout_width="@dimen/dimen_150dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:importantForAutofill="no"
+            tools:targetApi="o"
+            tools:ignore="LabelFor" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            style="@style/aboutText"
+            android:text="@string/leak_period_unit"/>
+    </LinearLayout>
 </LinearLayout>
