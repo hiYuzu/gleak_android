@@ -426,7 +426,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                 message = "视频信号连接失败";
             }
 
-            new CommonDialog(getContext(), null, message, null, "重连", "取消", () -> {
+            CommonDialog.getDialog(getContext(), null, message, null, "重连", "取消", () -> {
                 if (mOnCompletionListener != null) {
                     mOnCompletionListener.onCompletion(mMediaPlayer);
                 }

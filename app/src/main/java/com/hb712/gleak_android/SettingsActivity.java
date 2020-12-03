@@ -86,7 +86,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     private void backLogin() {
-        new CommonDialog(this, "提示", "确定登出？", () -> {
+        CommonDialog.getDialog(this, "提示", "确定登出？", () -> {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

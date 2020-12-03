@@ -47,7 +47,7 @@ public class SeriesDialog {
     public void showDialog() {
         @SuppressLint("InflateParams")
         View seriesDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_select_series, null);
-        CommonDialog commonDialog = new CommonDialog(context, title, null, seriesDialogView, () -> {
+        AlertDialog dialog = CommonDialog.getDialog(context, title, null, seriesDialogView, () -> {
             if (seriesAddSuccessCallback != null) {
                 try {
                     seriesAddSuccessCallback.onSave(seriesInfoList.get(seriesSp.getSelectedItemPosition()));
@@ -57,6 +57,7 @@ public class SeriesDialog {
             }
         });
         seriesSp = seriesDialogView.findViewById(R.id.seriesSp);
+        System.out.println(seriesSp);
         seriesInfoList = SeriesInfoController.getAll();
         String[] seriesSize = new String[seriesInfoList.size()];
         int i = 0;
@@ -66,7 +67,7 @@ public class SeriesDialog {
         }
         SpinnerAdapter spinnerAdapter = new ArrayAdapter<>(context, R.layout.item_spinner_normal, seriesSize);
         seriesSp.setAdapter(spinnerAdapter);
-        commonDialog.show();
+        dialog.show();
     }
 
     public interface SeriesAddSuccessCallback {

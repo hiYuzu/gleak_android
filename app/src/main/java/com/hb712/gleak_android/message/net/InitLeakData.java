@@ -1,5 +1,7 @@
 package com.hb712.gleak_android.message.net;
 
+import android.annotation.SuppressLint;
+
 import com.hb712.gleak_android.base.BaseBean;
 
 /**
@@ -13,15 +15,15 @@ public class InitLeakData extends BaseBean {
     private String id;
     private String name;
     private String code;
-    private Double longitude;
-    private Double latitude;
+    private double longitude;
+    private double latitude;
     private String period;
     private String time;
 
     public InitLeakData() {
     }
 
-    public InitLeakData(String id, String name, String code, Double longitude, Double latitude) {
+    public InitLeakData(String id, String name, String code, double longitude, double latitude) {
         this.id = id;
         this.name = name;
         this.code = code;
@@ -53,19 +55,19 @@ public class InitLeakData extends BaseBean {
         this.code = code;
     }
 
-    public Double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
-    public Double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
@@ -85,14 +87,15 @@ public class InitLeakData extends BaseBean {
         this.time = time;
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public String toString() {
         return "InitLeakData{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", code='" + code + '\'' +
-                ", longitude='" + longitude + '\'' +
-                ", latitude='" + latitude + '\'' +
+                ", longitude='" + String.format("%.6f", longitude) + '\'' +
+                ", latitude='" + String.format("%.6f", latitude) + '\'' +
                 ", period='" + period + '\'' +
                 ", time='" + time + '\'' +
                 '}';

@@ -151,6 +151,9 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private void initView() {
         startRecordBtn = findViewById(R.id.startRecordBtn);
         startRecordBtn.setOnClickListener((p) -> {
+            if (!MainApplication.getInstance().isLogin()) {
+                return;
+            }
             if (!isSaving) {
                 Intent intent = new Intent(getApplicationContext(), LeakMapActivity.class);
                 startActivityForResult(intent, GlobalParam.REQUEST_LEAK_DATA);
@@ -363,7 +366,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         EditText ipEdit = new EditText(this);
         ipEdit.setText(GlobalParam.VIDEO_URL);
 
-        new CommonDialog(this, "视频ip地址", null, ipEdit, () -> GlobalParam.VIDEO_URL = ipEdit.getText().toString()).show();
+        CommonDialog.getDialog(this, "视频ip地址", null, ipEdit, () -> GlobalParam.VIDEO_URL = ipEdit.getText().toString()).show();
     }
 
     public void videoStartClick(View view) {

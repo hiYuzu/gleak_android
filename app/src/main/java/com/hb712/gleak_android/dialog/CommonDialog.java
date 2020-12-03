@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.view.View;
 
+import com.hb712.gleak_android.MainApplication;
+
 /**
  * 弹出框生成工具
  * @author hiYuzu
@@ -12,52 +14,57 @@ import android.view.View;
  */
 public class CommonDialog {
 
-    private final Context context;
-    private final String title;
-    private String message;
-    private View view;
-    private String positiveBtn = "确认";
-    private String negativeBtn = "取消";
-    private final SuccessCallback successCallback;
-
-    public CommonDialog(Context context, String title, SuccessCallback successCallback) {
-        this.context = context;
-        this.title = title;
-        this.successCallback = successCallback;
+    public static AlertDialog getDialog(Context context, String title, SuccessCallback successCallback) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setPositiveButton("确认", (dialog, which) -> successCallback.onConfirm())
+                .create();
+        return alertDialog;
     }
 
-    public CommonDialog(Context context, String title, String message, SuccessCallback successCallback) {
-        this.context = context;
-        this.title = title;
-        this.message = message;
-        this.successCallback = successCallback;
+    public static AlertDialog getDialog(Context context, String title, String message, SuccessCallback successCallback) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("确认", (dialog, which) -> successCallback.onConfirm())
+                .create();
+        return alertDialog;
     }
 
-    public CommonDialog(Context context, String title, String message, View view, SuccessCallback successCallback) {
-        this.context = context;
-        this.title = title;
-        this.message = message;
-        this.view = view;
-        this.successCallback = successCallback;
+    public static AlertDialog getDialog(Context context, String title, String message, View view, SuccessCallback successCallback) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setView(view)
+                .setPositiveButton("确认", (dialog, which) -> successCallback.onConfirm())
+                .create();
+        return alertDialog;
     }
 
-    public CommonDialog(Context context, String title, String message, View view, String positiveBtn, String negativeBtn, SuccessCallback successCallback) {
-        this.context = context;
-        this.title = title;
-        this.message = message;
-        this.view = view;
-        this.positiveBtn = positiveBtn;
-        this.negativeBtn = negativeBtn;
-        this.successCallback = successCallback;
-    }
-
-    public void show() {
-        new AlertDialog.Builder(context)
+    public static AlertDialog getDialog(Context context, String title, String message, View view, String positiveBtn, String negativeBtn, SuccessCallback successCallback) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(message)
                 .setView(view)
                 .setPositiveButton(positiveBtn, (dialog, which) -> successCallback.onConfirm())
                 .setNegativeButton(negativeBtn, (dialog, which) -> dialog.dismiss())
+                .create();
+        return alertDialog;
+    }
+
+    public static void infoDialog(String message) {
+        new AlertDialog.Builder(MainApplication.getInstance())
+                .setTitle("提示")
+                .setMessage(message)
+                .setPositiveButton("确定", null)
+                .show();
+    }
+
+    public static void warnDialog(String message) {
+        new AlertDialog.Builder(MainApplication.getInstance())
+                .setTitle("警告")
+                .setMessage(message)
+                .setPositiveButton("确定", null)
                 .show();
     }
 

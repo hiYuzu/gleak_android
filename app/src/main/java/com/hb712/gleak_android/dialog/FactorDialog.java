@@ -73,8 +73,8 @@ public class FactorDialog {
         factorCoefficientInfoList = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().loadAll();
         adapter = new FactorAdapter(context, factorCoefficientInfoList);
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener((paramAnonymousAdapterView, paramAnonymousView, paramAnonymousInt, paramAnonymousLong) -> {
-            selectIndex = paramAnonymousInt;
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            selectIndex = position;
             ckbNo.setChecked(false);
             adapter.setSelectItem(selectIndex);
             adapter.notifyDataSetChanged();
@@ -93,7 +93,7 @@ public class FactorDialog {
             setSelectedValue();
             adapter.notifyDataSetChanged();
         });
-        CommonDialog commonDialog = new CommonDialog(context, title, null, factorDialogView, () -> {
+        AlertDialog dialog = CommonDialog.getDialog(context, title, null, factorDialogView, () -> {
             if (ckbNo.isChecked()) {
                 factorAddSuccessCallback.onSave(null);
             } else {
@@ -107,7 +107,7 @@ public class FactorDialog {
             }
         });
         setSelectedValue();
-        commonDialog.show();
+        dialog.show();
     }
 
     private void setSelectedValue() {

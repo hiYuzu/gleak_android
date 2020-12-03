@@ -102,6 +102,12 @@
     <string name="open_bracket">(</string>
     <string name="close_bracket">)</string>
 
+    <string name="leak_name">漏点名称：</string>
+    <string name="leak_code">漏点编号：</string>
+    <string name="leak_period">巡检周期：</string>
+    <string name="leak_period_unit">天</string>
+    <string name="leak_position">漏点坐标：</string>
+
     <!--settingsActivity-->
     <string name="settings_general">通用设置</string>
     <string name="settings_general_remember">记住密码</string>

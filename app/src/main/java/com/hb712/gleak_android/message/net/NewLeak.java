@@ -1,5 +1,7 @@
 package com.hb712.gleak_android.message.net;
 
+import android.annotation.SuppressLint;
+
 import com.hb712.gleak_android.base.BaseMessage;
 
 /**
@@ -12,12 +14,12 @@ public class NewLeak extends BaseMessage {
     private double longitude;
     private double latitude;
     // 巡检周期(天)
-    private String period;
+    private int period;
 
     public NewLeak() {
     }
 
-    public NewLeak(String name, String code, double longitude, double latitude, String period) {
+    public NewLeak(String name, String code, double longitude, double latitude, int period) {
         this.name = name;
         this.code = code;
         this.longitude = longitude;
@@ -57,16 +59,17 @@ public class NewLeak extends BaseMessage {
         this.latitude = latitude;
     }
 
-    public String getPeriod() {
+    public int getPeriod() {
         return period;
     }
 
-    public void setPeriod(String period) {
+    public void setPeriod(int period) {
         this.period = period;
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public String toString() {
-        return "{name:" + name + ", code:" + code + ", longitude:" + longitude + ", latitude:" + latitude + ", period:" + period + "}";
+        return "{name:" + name + ", code:" + code + ", longitude:" + String.format("%.6f", longitude) + ", latitude:" + String.format("%.6f", latitude) + ", period:" + period + "}";
     }
 }

@@ -92,7 +92,7 @@ public class MainActivity extends BaseActivity implements HttpInterface {
     }
 
     public void onBackPressed() {
-        new CommonDialog(this, "提示", "确定退出？", () -> Process.killProcess(Process.myPid())).show();
+        CommonDialog.getDialog(this, "提示", "确定退出？", () -> Process.killProcess(Process.myPid())).show();
     }
 
     @Override
