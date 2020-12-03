@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.view.MenuItem;
 
+import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.SPUtil;
@@ -85,8 +86,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     private void backLogin() {
-        new AlertDialog.Builder(this).setTitle("提示").setMessage("确定登出？").setNegativeButton("取消", (paramAnonymousDialogInterface, paramAnonymousInt) -> paramAnonymousDialogInterface.dismiss()).setPositiveButton("确认", (paramAnonymousDialogInterface, paramAnonymousInt) -> {
-            paramAnonymousDialogInterface.dismiss();
+        new CommonDialog(this, "提示", "确定登出？", () -> {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

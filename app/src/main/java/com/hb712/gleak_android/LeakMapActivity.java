@@ -37,6 +37,7 @@ import com.baidu.mapapi.map.Projection;
 import com.baidu.mapapi.model.LatLng;
 import com.hb712.gleak_android.base.BaseActivity;
 import com.hb712.gleak_android.base.BaseApplication;
+import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.message.net.InitLeakData;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.ToastUtil;
@@ -96,9 +97,7 @@ public class LeakMapActivity extends BaseActivity {
         if (requestCode == GlobalParam.REQUEST_LOCATION_PERMISSION) {
             for (int grant : grantResult) {
                 if (grant != PackageManager.PERMISSION_GRANTED) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("地图需要开启定位功能，请到 “应用信息 -> 权限” 中授予！");
-                    builder.setPositiveButton("去手动授权", (dialog, which) -> {
+                    new CommonDialog(this, "", "地图需要开启定位功能，请到 “应用信息 -> 权限” 中授予！", () -> {
                         Intent intent = new Intent();
                         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                         intent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -107,9 +106,7 @@ public class LeakMapActivity extends BaseActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                         intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                         startActivity(intent);
-                    });
-                    builder.setNegativeButton("取消", null);
-                    builder.show();
+                    }).show();
                 }
             }
         }

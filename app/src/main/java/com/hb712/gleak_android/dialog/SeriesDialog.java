@@ -17,7 +17,7 @@ import com.hb712.gleak_android.util.LogUtil;
 import java.util.List;
 
 /**
- * 工作曲线弹出框
+ * 工作曲线dialog
  *
  * @author hiYuzu
  * @version V1.0
@@ -27,8 +27,7 @@ public class SeriesDialog {
     private static final String TAG = SeriesDialog.class.getSimpleName();
     private List<SeriesInfo> seriesInfoList = null;
     private SeriesAddSuccessCallback seriesAddSuccessCallback;
-    private Context context;
-    private AlertDialog dialog;
+    private final Context context;
     private String title;
     private Spinner seriesSp;
 
@@ -47,9 +46,17 @@ public class SeriesDialog {
 
     public void showDialog() {
         @SuppressLint("InflateParams")
-        View seriesDialog = LayoutInflater.from(context).inflate(R.layout.dialog_select_series, null);
-        dialog = new AlertDialog.Builder(context).setTitle(title).setView(seriesDialog).setPositiveButton("确定", null).setNegativeButton("取消", (paramAnonymousDialogInterface, paramAnonymousInt) -> paramAnonymousDialogInterface.dismiss()).create();
-        seriesSp = seriesDialog.findViewById(R.id.seriesSp);
+        View seriesDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_select_series, null);
+        CommonDialog commonDialog = new CommonDialog(context, title, null, seriesDialogView, () -> {
+            if (seriesAddSuccessCallback != null) {
+                try {
+                    seriesAddSuccessCallback.onSave(seriesInfoList.get(seriesSp.getSelectedItemPosition()));
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    LogUtil.infoOut(TAG, e, "曲线选择失败！");
+                }
+            }
+        });
+        seriesSp = seriesDialogView.findViewById(R.id.seriesSp);
         seriesInfoList = SeriesInfoController.getAll();
         String[] seriesSize = new String[seriesInfoList.size()];
         int i = 0;
@@ -59,17 +66,7 @@ public class SeriesDialog {
         }
         SpinnerAdapter spinnerAdapter = new ArrayAdapter<>(context, R.layout.item_spinner_normal, seriesSize);
         seriesSp.setAdapter(spinnerAdapter);
-        dialog.show();
-        dialog.getButton(-1).setOnClickListener(paramAnonymousView -> {
-            if (seriesAddSuccessCallback != null) {
-                try {
-                    seriesAddSuccessCallback.onSave(seriesInfoList.get(seriesSp.getSelectedItemPosition()));
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    LogUtil.infoOut(TAG, e, "曲线选择失败！");
-                }
-            }
-            dialog.dismiss();
-        });
+        commonDialog.show();
     }
 
     public interface SeriesAddSuccessCallback {

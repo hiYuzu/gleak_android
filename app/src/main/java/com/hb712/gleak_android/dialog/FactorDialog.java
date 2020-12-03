@@ -25,6 +25,8 @@ import org.greenrobot.greendao.query.WhereCondition;
 import java.util.List;
 
 /**
+ * 响应因子dialog
+ *
  * @author hiYuzu
  * @version V1.0
  * @date 2020/10/21 11:43
@@ -35,12 +37,10 @@ public class FactorDialog {
     private List<FactorCoefficientInfo> factorCoefficientInfoList = null;
     private FactorAddSuccessCallback factorAddSuccessCallback;
     private FactorAdapter adapter;
-    private Button btnSearch;
     private CheckBox ckbNo;
     private EditText factorNameET;
     private ListView listView;
-    private Context context;
-    private AlertDialog dialog;
+    private final Context context;
     private String title;
 
     public FactorDialog(Context context) {
@@ -58,10 +58,10 @@ public class FactorDialog {
 
     public void showDialog() {
         @SuppressLint("InflateParams")
-        View factorDialog = LayoutInflater.from(context).inflate(R.layout.dialog_select_factor, null);
-        ckbNo = factorDialog.findViewById(R.id.ckbNo);
-        ckbNo.setOnCheckedChangeListener((paramAnonymousCompoundButton, paramAnonymousBoolean) -> {
-            if (paramAnonymousBoolean) {
+        View factorDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_select_factor, null);
+        ckbNo = factorDialogView.findViewById(R.id.ckbNo);
+        ckbNo.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
                 selectIndex = -1;
                 if (adapter != null) {
                     adapter.setSelectItem(selectIndex);
@@ -69,7 +69,7 @@ public class FactorDialog {
                 }
             }
         });
-        listView = factorDialog.findViewById(R.id.factorList);
+        listView = factorDialogView.findViewById(R.id.factorList);
         factorCoefficientInfoList = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().loadAll();
         adapter = new FactorAdapter(context, factorCoefficientInfoList);
         listView.setAdapter(adapter);
@@ -79,9 +79,9 @@ public class FactorDialog {
             adapter.setSelectItem(selectIndex);
             adapter.notifyDataSetChanged();
         });
-        factorNameET = factorDialog.findViewById(R.id.factorName);
-        btnSearch = factorDialog.findViewById(R.id.searchBtn);
-        btnSearch.setOnClickListener(paramAnonymousView -> {
+        factorNameET = factorDialogView.findViewById(R.id.factorName);
+        Button btnSearch = factorDialogView.findViewById(R.id.searchBtn);
+        btnSearch.setOnClickListener(view -> {
             QueryBuilder<FactorCoefficientInfo> queryBuilder = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().queryBuilder();
             Property localProperty = FactorCoefficientInfoDao.Properties.factorName;
             String likeSearch = "%" +
@@ -93,10 +93,7 @@ public class FactorDialog {
             setSelectedValue();
             adapter.notifyDataSetChanged();
         });
-        dialog = new AlertDialog.Builder(context).setTitle(title).setView(factorDialog).setPositiveButton("确定", null).setNegativeButton("取消", (paramAnonymousDialogInterface, paramAnonymousInt) -> paramAnonymousDialogInterface.dismiss()).create();
-        dialog.show();
-        setSelectedValue();
-        dialog.getButton(-1).setOnClickListener(paramAnonymousView -> {
+        CommonDialog commonDialog = new CommonDialog(context, title, null, factorDialogView, () -> {
             if (ckbNo.isChecked()) {
                 factorAddSuccessCallback.onSave(null);
             } else {
@@ -108,16 +105,16 @@ public class FactorDialog {
                     factorAddSuccessCallback.onSave(factorCoefficientInfoList.get(selectIndex));
                 }
             }
-            dialog.dismiss();
         });
+        setSelectedValue();
+        commonDialog.show();
     }
 
     private void setSelectedValue() {
         selectIndex = -1;
         FactorCoefficientInfo localFactorCoefficientInfo = CalibrationInfoController.getInstance().getFactor();
         if (localFactorCoefficientInfo != null) {
-            List localList = factorCoefficientInfoList;
-            if ((localList != null) && (localList.size() > 0)) {
+            if (factorCoefficientInfoList != null && factorCoefficientInfoList.size() > 0) {
                 int i = 0;
                 while (i < factorCoefficientInfoList.size()) {
                     if (factorCoefficientInfoList.get(i).getId().equals(localFactorCoefficientInfo.getId())) {

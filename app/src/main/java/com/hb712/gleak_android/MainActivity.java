@@ -9,6 +9,7 @@ import android.os.Process;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hb712.gleak_android.base.BaseActivity;
+import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.message.net.InitLeakData;
@@ -91,10 +92,7 @@ public class MainActivity extends BaseActivity implements HttpInterface {
     }
 
     public void onBackPressed() {
-        new AlertDialog.Builder(this).setTitle("提示").setMessage("确定退出？").setNegativeButton("取消", (paramAnonymousDialogInterface, paramAnonymousInt) -> paramAnonymousDialogInterface.dismiss()).setPositiveButton("确认", (paramAnonymousDialogInterface, paramAnonymousInt) -> {
-            paramAnonymousDialogInterface.dismiss();
-            Process.killProcess(Process.myPid());
-        }).show();
+        new CommonDialog(this, "提示", "确定退出？", () -> Process.killProcess(Process.myPid())).show();
     }
 
     @Override

@@ -28,6 +28,7 @@ import com.hb712.gleak_android.controller.DeviceController;
 import com.hb712.gleak_android.dao.DBManager;
 import com.hb712.gleak_android.dao.FactorCoefficientInfoDao;
 import com.hb712.gleak_android.dao.SeriesLimitInfoDao;
+import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.dialog.FactorDialog;
 import com.hb712.gleak_android.dialog.SeriesDialog;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
@@ -362,17 +363,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         EditText ipEdit = new EditText(this);
         ipEdit.setText(GlobalParam.VIDEO_URL);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("视频ip地址");
-        builder.setView(ipEdit);
-        builder.setPositiveButton("确定",
-                (dialog, which) -> {
-                    GlobalParam.VIDEO_URL = ipEdit.getText().toString();
-                })
-                .setNegativeButton("取消", (dialog, which) -> {
-                })
-                .setCancelable(true)
-                .show();
+        new CommonDialog(this, "视频ip地址", null, ipEdit, () -> GlobalParam.VIDEO_URL = ipEdit.getText().toString()).show();
     }
 
     public void videoStartClick(View view) {

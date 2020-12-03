@@ -24,6 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.MediaController;
 import android.widget.TextView;
 
+import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.rtsp.listener.IjkPlayerListener;
 import com.hb712.gleak_android.util.LogUtil;
 
@@ -425,20 +426,11 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                 message = "视频信号连接失败";
             }
 
-            new AlertDialog.Builder(getContext())
-                    .setMessage(message)
-                    .setPositiveButton("重连",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    if (mOnCompletionListener != null) {
-                                        mOnCompletionListener.onCompletion(mMediaPlayer);
-                                    }
-                                }
-                            })
-                    .setNegativeButton("取消", (dialog, which) -> {
-                    })
-                    .setCancelable(true)
-                    .show();
+            new CommonDialog(getContext(), null, message, null, "重连", "取消", () -> {
+                if (mOnCompletionListener != null) {
+                    mOnCompletionListener.onCompletion(mMediaPlayer);
+                }
+            }).show();
         }
         return true;
     };
