@@ -1,11 +1,13 @@
 package com.hb712.gleak_android;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.view.View;
-import android.os.Process;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hb712.gleak_android.base.BaseActivity;
@@ -13,12 +15,12 @@ import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.message.net.InitLeakData;
+import com.hb712.gleak_android.service.UploadPositionService;
 import com.hb712.gleak_android.util.GPSUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.ToastUtil;
-
 import java.util.List;
 
 /**
@@ -38,6 +40,28 @@ public class MainActivity extends BaseActivity implements HttpInterface {
         setContentView(R.layout.activity_main);
         GPSUtil.requestLocationPower(this);
         getAllMonitor();
+        UploadPositionService.getInstance().uploadPosition();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResult) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResult);
+        if (requestCode == GlobalParam.REQUEST_LOCATION_PERMISSION) {
+            for (int grant : grantResult) {
+                if (grant != PackageManager.PERMISSION_GRANTED) {
+                    CommonDialog.getDialog(this, "", "地图需要开启定位功能，请到 “应用信息 -> 权限” 中授予！", () -> {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.addCategory(Intent.CATEGORY_DEFAULT);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                        startActivity(intent);
+                    }).show();
+                }
+            }
+        }
     }
 
     private void getAllMonitor() {
@@ -93,8 +117,12 @@ public class MainActivity extends BaseActivity implements HttpInterface {
         startActivity(intent);
     }
 
+    @Override
     public void onBackPressed() {
-        CommonDialog.getDialog(this, "提示", "确定退出？", () -> Process.killProcess(Process.myPid())).show();
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
     }
 
     @Override

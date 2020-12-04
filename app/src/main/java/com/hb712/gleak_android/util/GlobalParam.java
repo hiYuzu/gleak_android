@@ -1,9 +1,11 @@
 package com.hb712.gleak_android.util;
 
 import android.annotation.SuppressLint;
+import android.os.Environment;
 
 import com.hb712.gleak_android.message.net.InitLeakData;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,16 +18,26 @@ public class GlobalParam {
     public static String SERVE_IP = "serve_ip";
     public static String SERVE_PORT = "serve_port";
 
+    public static String DEFAULT_IP = "192.168.3.108";
+    public static String DEFAULT_PORT = "3000";
+
     public static final String KEY_USERTOKEN = "Authorization";
 
+    public static final String DEVICE_ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "EnpromiLDAR";
+    public static final String VIDEO_RECORD_PATH = DEVICE_ROOT_PATH + File.separator + "ijkplayer" + File.separator + "video";
+    public static final String SNAPSHOT_PATH = DEVICE_ROOT_PATH + File.separator + "ijkplayer" + File.separator + "snapshot";
+    public static final String LOG_PATH = DEVICE_ROOT_PATH + File.separator + "log";
+
     public static boolean rememberPwd = false;
+    public static boolean isUploadPosition = true;
+    public static int uploadDelay = 10000;
     public static boolean isConnected = false;
     public static boolean isFireOn = false;
 
     // 蓝牙状态
-    public static final int STATE_NONE = 0;       	// 无动作
-    public static final int STATE_CONNECTING = 1; 	// 正在连接
-    public static final int STATE_CONNECTED = 2;  	// 已连接
+    public static final int STATE_NONE = 0;        // 无动作
+    public static final int STATE_CONNECTING = 1;    // 正在连接
+    public static final int STATE_CONNECTED = 2;    // 已连接
 
     //message what
     public static final int MESSAGE_STATE_CHANGE = 1;

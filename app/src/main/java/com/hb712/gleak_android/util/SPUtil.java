@@ -12,7 +12,7 @@ import android.support.v4.content.SharedPreferencesCompat;
  * @date 2020/10/21 11:31
  */
 public class SPUtil {
-    private static final String DESIRED_NAME = "cp_ldar_data";
+    private static final String SP_NAME = "enpromi_ldar";
 
     /**
      * 取
@@ -22,7 +22,7 @@ public class SPUtil {
      * @return 存入的值或默认值
      */
     public static Object get(Context context, String key, Object defValue) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(DESIRED_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         if (defValue instanceof String) {
             return sharedPreferences.getString(key, (String) defValue);
         } else if (defValue instanceof Integer) {
@@ -43,7 +43,7 @@ public class SPUtil {
      * @param value 值
      */
     public static void put(Context context, String key, Object value) {
-        SharedPreferences.Editor editor = context.getSharedPreferences("cp_ldar_data", Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).edit();
         if (value instanceof String) {
             editor.putString(key, (String) value);
         } else if (value instanceof Integer) {
@@ -66,7 +66,7 @@ public class SPUtil {
      * @param key 键
      */
     public static void remove(Context context, String key) {
-        SharedPreferences.Editor editor = context.getSharedPreferences(DESIRED_NAME, Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).edit();
         editor.remove(key);
         editor.apply();
     }

@@ -4,6 +4,10 @@
         android:defaultValue="true"
         android:key="general_remember"
         android:title="@string/settings_general_remember" />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="upload_position"
+        android:title="@string/settings_upload_position" />
     <EditTextPreference
         android:key="@string/serve_ip"
         android:singleLine="true"

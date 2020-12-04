@@ -4,7 +4,6 @@ import com.hb712.gleak_android.base.BaseApplication;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.SPUtil;
 
-
 /**
  * @author hiYuzu
  * @version V1.0
@@ -12,13 +11,9 @@ import com.hb712.gleak_android.util.SPUtil;
  */
 public class MainApplication extends BaseApplication {
 
-    private final String TAG = MainApplication.class.getSimpleName();
-    public final String appIP = "192.168.3.124";
-    public final String appPort = "3000";
-    public final String baseUrl = "http://" + appIP + ":" + appPort;
+    public String baseUrl;
     public final String SETTINGS_USERNAME = "username";
     public final String SETTINGS_PASSWORD = "password";
-
     private String username;
     private String password;
     private String userId = "";
@@ -34,6 +29,10 @@ public class MainApplication extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         singleton = this;
+        String appIP = (String) SPUtil.get(this, GlobalParam.SERVE_IP, GlobalParam.DEFAULT_IP);
+        String appPort = (String) SPUtil.get(this, GlobalParam.SERVE_PORT, GlobalParam.DEFAULT_PORT);
+        baseUrl = "http://" + appIP + (appPort.isEmpty() ? "" : ":" + appPort);
+
     }
 
     public void saveUserPwd(String username, String password, boolean isSave) {

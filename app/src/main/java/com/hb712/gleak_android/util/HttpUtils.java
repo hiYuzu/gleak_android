@@ -12,6 +12,9 @@ import org.apache.http.params.HttpParams;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -58,8 +61,12 @@ public class HttpUtils {
         httpExecute(httpInterface, httpUrl, new Request.Builder().post(builder.build()), listener);
     }
 
-    public static void post(HttpInterface httpInterface, String httpUrl, String jsonString, @NonNull OKHttpListener listener) {
-        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), jsonString);
+    public static void post(HttpInterface httpInterface, String httpUrl, Map<String, String> map, @NonNull OKHttpListener listener) {
+        FormBody.Builder builder = new FormBody.Builder();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            builder.add(entry.getKey(), entry.getValue());
+        }
+        RequestBody requestBody = builder.build();
         httpExecute(httpInterface, httpUrl, new Request.Builder().post(requestBody), listener);
     }
 
@@ -93,23 +100,27 @@ public class HttpUtils {
             @Override
             protected Bundle doInBackground(Void... params) {
                 Bundle result = new Bundle();
-                builder.tag(httpUrl).url(httpUrl);
-                if (isSendVideo) {
-                    builder.addHeader("Content-Type", "multipart/form-data");
-                    isSendVideo = false;
-                }
-
-                if (MainApplication.getInstance().isLogin()) {
-                    builder.addHeader(GlobalParam.KEY_USERTOKEN, MainApplication.getInstance().getToken());
-                }
                 try {
-                    Response response = mClient.newCall(builder.build()).execute();
+                    builder.tag(httpUrl).url(httpUrl);
+                    if (isSendVideo) {
+                        builder.addHeader("Content-Type", "multipart/form-data");
+                        isSendVideo = false;
+                    }
+
+                    if (MainApplication.getInstance().isLogin()) {
+                        builder.addHeader(GlobalParam.KEY_USERTOKEN, MainApplication.getInstance().getToken());
+                    }
+                    Request request = builder.build();
+                    LogUtil.debugOut(TAG, request.toString());
+                    Response response = mClient.newCall(request).execute();
                     result.putInt(CODE, response.code());
                     result.putBoolean(RESULT, true);
                     if (response.code() != SUCCESS_CODE) {
                         result.putString(MESSAGE, "服务器响应异常：" + response.code());
                     } else {
-                        result.putString(MESSAGE, response.body().string());
+                        if (response.body() != null) {
+                            result.putString(MESSAGE, response.body().string());
+                        }
                     }
                 } catch (IOException ioe) {
                     LogUtil.errorOut(TAG, ioe, "");

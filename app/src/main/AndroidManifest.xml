@@ -50,7 +50,10 @@
         <activity
             android:name=".DeviceActivity"
             android:label="@string/device_bluetooth" />
-        <activity android:name=".LeakMapActivity" />
+        <activity
+            android:name=".LeakMapActivity"
+            android:label="@string/select_leak" />
+
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="BpPnFERqEuxQtdvEuPp4eW8ouHv6LeKR" />
@@ -79,5 +82,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- 这个权限用于访问GPS定位 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!--  允许访问额外的位置提供命令  -->
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
 
 </manifest>

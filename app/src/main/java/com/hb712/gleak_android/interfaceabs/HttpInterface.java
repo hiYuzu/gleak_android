@@ -10,6 +10,4 @@ public interface HttpInterface {
 
     //是否丢弃http请求的数据数据
     boolean isDiscardHttp();
-
-    default void test(){};
 }

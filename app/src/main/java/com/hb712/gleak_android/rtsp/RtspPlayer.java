@@ -73,7 +73,7 @@ public class RtspPlayer {
                 height, Bitmap.Config.ARGB_8888);
         boolean flag = mVideoView.getCurrentFrame(srcBitmap);
         if (flag) {
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/ijkplayer/snapshot";
+            String path = GlobalParam.SNAPSHOT_PATH;
             File fileDir = new File(path);
             if (!fileDir.exists()) {
                 if (fileDir.mkdirs()) {
@@ -108,7 +108,7 @@ public class RtspPlayer {
             LogUtil.infoOut(TAG, "无视频信号");
             return -1;
         }
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/ijkplayer/video";
+        String path = GlobalParam.VIDEO_RECORD_PATH;
         File fileDir = new File(path);
         if (!fileDir.exists()) {
             if (!fileDir.mkdirs()) {
@@ -116,7 +116,7 @@ public class RtspPlayer {
             }
         }
         videoPath = path
-                + "/"
+                + File.separator
                 + DateUtil.getCurrentTime(DateUtil.TIME_SERIES)
                 + ".mp4";
         int result = mVideoView.startRecord(videoPath);

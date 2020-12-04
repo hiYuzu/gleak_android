@@ -3,7 +3,6 @@ package com.hb712.gleak_android;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -109,7 +108,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private DeviceController deviceController;
     private SeriesLimitInfo seriesLimitInfo;
     private boolean unitPPM = true;
-    private boolean isDetecting = false;
+    private boolean isDetecting = true;
     private double detectMaxvaluePPM = 0;
     private double detectMaxvalueMg = 0;
 
@@ -402,6 +401,11 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 finish();
             }
         } else if (requestCode == GlobalParam.REQUEST_LEAK_DATA) {
+            Bundle bundle = data.getExtras();
+            if (bundle == null) {
+                ToastUtil.shortInstanceToast("获取漏点信息失败，请重试");
+                return;
+            }
             // 获取漏点数据
             if (resultCode == Activity.RESULT_FIRST_USER) {
                 addNewLeak(data.getExtras());
@@ -415,7 +419,10 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
     private void addNewLeak(Bundle bundle) {
         NewLeak newLeak = (NewLeak) bundle.getSerializable("NewLeak");
-        HttpUtils.post(this, MainApplication.getInstance().baseUrl + "/api/monitor/insert", newLeak.toString(), new OKHttpListener() {
+        if (newLeak == null) {
+            return;
+        }
+        HttpUtils.post(this, MainApplication.getInstance().baseUrl + "/api/monitor/insert", newLeak.toMap(), new OKHttpListener() {
             @Override
             public void onStart() {
 
@@ -475,16 +482,26 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         startRecordBtn.setText(getText(R.string.startRecord));
         // 保存漏点信息、检测数据、视频信息
         saveData();
+    }
+
+    private void saveData() {
+        // TODO: hiYuzu 2020/12/4 取消注释 
+//        if (seriesLimitInfo == null) {
+//            LogUtil.warnOut(TAG, null, "曲线信息为空");
+//            return;
+//        }
+
         // 如果已登录，则上传可用
         if (MainApplication.getInstance().isLogin()) {
             uploadVideoBtn.setEnabled(true);
         }
-    }
 
-    private void saveData() {
+
         String leakId = selectedLeakId;
         String userId = MainApplication.getInstance().getUserId();
-        int monitorStatus = saveMaxValue > seriesLimitInfo.getMaxValue() ? 0 : 1;
+        // TODO: hiYuzu 2020/12/4 超标状态由当前选择的限值决定
+//        int monitorStatus = saveMaxValue > seriesLimitInfo.getMaxValue() ? 0 : 1;
+        int monitorStatus = 1;
         MonitorData monitorData = new MonitorData(saveTime, saveMaxValue, monitorStatus);
         lastedLeakData = new LeakData(leakId, userId, monitorData);
         System.out.println(lastedLeakData.toString());

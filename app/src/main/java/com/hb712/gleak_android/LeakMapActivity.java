@@ -1,23 +1,15 @@
 package com.hb712.gleak_android;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.location.LocationManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -36,80 +28,41 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Projection;
 import com.baidu.mapapi.model.LatLng;
 import com.hb712.gleak_android.base.BaseActivity;
-import com.hb712.gleak_android.base.BaseApplication;
 import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.message.net.InitLeakData;
+import com.hb712.gleak_android.message.net.NewLeak;
 import com.hb712.gleak_android.util.GlobalParam;
+import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 
 public class LeakMapActivity extends BaseActivity {
+
+    private static final String TAG = LeakMapActivity.class.getSimpleName();
 
     private MapView mMapView = null;
     private BaiduMap baiduMap = null;
     private LocationClient mLocationClient = null;
     private LatLng myPosition;
-    private LatLng newLeakPosition;
+    private double newLeakLon;
+    private double newLeakLat;
     private boolean firstLoad = true;
     private TextView leakName;
     private TextView leakCode;
-
     // 默认Marker图标
     private BitmapDescriptor bitmap;
-
     // 选择的leak点位
     private String selectedLeakId;
+    // new leak data
+    private EditText newLeakName;
+    private EditText newLeakCode;
+    private EditText newLeakPeriod;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leak_map);
         setResult(Activity.RESULT_CANCELED);
-        requestLocationPower();
         initView();
-    }
-
-    private void requestLocationPower() {
-        LocationManager lm = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        boolean ok = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        // 判断手机的GPS是否开启
-        if (ok) {
-            //判断是否为android6.0系统版本，如果是，需要动态添加权限
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                // 没有权限，申请权限
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, GlobalParam.REQUEST_LOCATION_PERMISSION);
-                }
-            }
-        } else {
-            ToastUtil.shortInstanceToast("未开启GPS定位服务");
-            Intent intent = new Intent();
-            intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-            startActivity(intent);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResult) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResult);
-        if (requestCode == GlobalParam.REQUEST_LOCATION_PERMISSION) {
-            for (int grant : grantResult) {
-                if (grant != PackageManager.PERMISSION_GRANTED) {
-                    new CommonDialog(this, "", "地图需要开启定位功能，请到 “应用信息 -> 权限” 中授予！", () -> {
-                        Intent intent = new Intent();
-                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        intent.addCategory(Intent.CATEGORY_DEFAULT);
-                        intent.setData(Uri.parse("package:" + getPackageName()));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                        startActivity(intent);
-                    }).show();
-                }
-            }
-        }
     }
 
     private void initView() {
@@ -164,7 +117,8 @@ public class LeakMapActivity extends BaseActivity {
 
             @Override
             public void onMapStatusChangeFinish(MapStatus mapStatus) {
-                newLeakPosition = mapStatus.target;
+                newLeakLon = mapStatus.target.longitude;
+                newLeakLat = mapStatus.target.latitude;
             }
         });
 
@@ -227,22 +181,43 @@ public class LeakMapActivity extends BaseActivity {
         finish();
     }
 
-    /*
+    @SuppressLint({"SetTextI18n", "InflateParams", "DefaultLocale"})
     public void addNewPoint(View view) {
-        // 获得新点的信息
-        // 取消：取消；
-        // 确认：得到并返回name，code，period，成员变量newLeakPosition
-        NewLeak newLeak = new NewLeak(name, code, newLeakPosition.longitude, newLeakPosition.latitude, period);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("NewLeak", newLeak);
-        Intent intent = new Intent();
-        intent.putExtras(bundle);
+        if (newLeakLat == 0 || newLeakLon == 0) {
+            CommonDialog.infoDialog("请移动地图确认新增漏点位置！");
+            return;
+        }
+        System.out.println("Lon:" + newLeakLon + "Lat:" + newLeakLat);
 
-        setResult(Activity.RESULT_FIRST_USER, intent);
-        finish();
-        // 添加到 GlobalParam.initLeakData
+        View newLeakDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_input_leak, null);
+
+        newLeakName = newLeakDialogView.findViewById(R.id.newLeakName);
+        newLeakCode = newLeakDialogView.findViewById(R.id.newLeakCode);
+        newLeakPeriod = newLeakDialogView.findViewById(R.id.newLeakPeriod);
+
+        AlertDialog dialog = CommonDialog.getDialog(this, "新增漏点", null, newLeakDialogView, () -> {
+            try {
+                String name = newLeakName.getText().toString().trim();
+                String code = newLeakCode.getText().toString().trim();
+                int period = Integer.parseInt(newLeakPeriod.getText().toString().trim());
+                if ("".equals(name) || "".equals(code)) {
+                    throw new Exception("新增漏点名称与编号不得为空");
+                }
+                NewLeak newLeak = new NewLeak(name, code, newLeakLon, newLeakLat, period);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("NewLeak", newLeak);
+                Intent intent = new Intent();
+                intent.putExtras(bundle);
+                setResult(Activity.RESULT_FIRST_USER, intent);
+                finish();
+            } catch (Exception e) {
+                ToastUtil.shortInstanceToast("非法输入，请重试！");
+                LogUtil.errorOut(TAG, e, "非法输入");
+            }
+        });
+        dialog.show();
     }
-    */
+
     private void createMarker(LatLng point, Bundle bundle) {
         //构建MarkerOption，用于在地图上添加Marker
         OverlayOptions option = new MarkerOptions()
@@ -273,7 +248,7 @@ public class LeakMapActivity extends BaseActivity {
         super.onResume();
     }
 
-    public class MyLocationListener extends BDAbstractLocationListener {
+    private class MyLocationListener extends BDAbstractLocationListener {
         public void onReceiveLocation(BDLocation bdLocation) {
             // mapView 销毁后不在处理新接收的位置
             if (bdLocation == null || mMapView == null) {
