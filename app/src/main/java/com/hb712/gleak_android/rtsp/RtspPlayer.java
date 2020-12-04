@@ -77,7 +77,7 @@ public class RtspPlayer {
             File fileDir = new File(path);
             if (!fileDir.exists()) {
                 if (fileDir.mkdirs()) {
-                    LogUtil.infoOut(TAG, "文件夹创建失败");
+                    LogUtil.debugOut(TAG, "截图文件夹创建失败");
                 }
             }
 
@@ -112,7 +112,7 @@ public class RtspPlayer {
         File fileDir = new File(path);
         if (!fileDir.exists()) {
             if (!fileDir.mkdirs()) {
-                LogUtil.infoOut(TAG, "文件夹创建失败");
+                LogUtil.debugOut(TAG, "视频文件夹创建失败");
             }
         }
         videoPath = path
