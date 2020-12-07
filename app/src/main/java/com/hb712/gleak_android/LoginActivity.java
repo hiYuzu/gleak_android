@@ -8,10 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.os.Process;
 import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -22,14 +19,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hb712.gleak_android.base.BaseActivity;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author hiYuzu
@@ -136,12 +131,11 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
             @Override
             public void onSuccess(Bundle bundle) {
                 String result = bundle.getString(HttpUtils.MESSAGE);
-                com.alibaba.fastjson.JSONObject json = com.alibaba.fastjson.JSONObject.parseObject(result);
+                JSONObject json = JSONObject.parseObject(result);
                 if (json.getBoolean("status")) {
                     LogUtil.debugOut(TAG, "用户" + json.getJSONObject("data").getString("userId") + "登录成功!");
 
-                    MainApplication.getInstance().setUserId(json.getJSONObject("data").getString("userId"));
-                    MainApplication.getInstance().setToken(json.getJSONObject("data").getString("token"));
+                    MainApplication.getInstance().saveUserPwd(json.getJSONObject("data").getString("userId"), json.getJSONObject("data").getString("token"), mSaveUsernameCheckBox.isChecked());
 
                     gotoMainActivity(username, password);
                 } else {

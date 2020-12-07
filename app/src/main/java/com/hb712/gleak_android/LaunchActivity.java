@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -20,17 +18,14 @@ import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 
-import okhttp3.internal.Util;
-
-
 public class LaunchActivity extends BaseActivity implements HttpInterface {
 
     private static final String TAG = LaunchActivity.class.getSimpleName();
     private static final int LauncherDelay = 2000;
     private TextView mMessage;
 
-    private Handler mLoginHandle = new Handler();
-    private Runnable mLoginAction = () -> {
+    private final Handler mLoginHandle = new Handler();
+    private final Runnable mLoginAction = () -> {
 
         String username = MainApplication.getInstance().getLocUsername();
         String password = MainApplication.getInstance().getLocPassword();
