@@ -1,8 +1,14 @@
 package com.hb712.gleak_android;
 
+import android.util.Log;
+
 import com.hb712.gleak_android.base.BaseApplication;
+import com.hb712.gleak_android.util.DateUtil;
 import com.hb712.gleak_android.util.GlobalParam;
+import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.SPUtil;
+
+import java.io.File;
 
 /**
  * @author hiYuzu
@@ -10,6 +16,7 @@ import com.hb712.gleak_android.util.SPUtil;
  * @date 2020/9/22 9:57
  */
 public class MainApplication extends BaseApplication {
+    private final String TAG = MainApplication.class.getSimpleName();
 
     public String baseUrl;
     public final String SETTINGS_USERNAME = "username";
@@ -32,7 +39,7 @@ public class MainApplication extends BaseApplication {
         String appIP = (String) SPUtil.get(this, GlobalParam.SERVE_IP, GlobalParam.DEFAULT_IP);
         String appPort = (String) SPUtil.get(this, GlobalParam.SERVE_PORT, GlobalParam.DEFAULT_PORT);
         baseUrl = "http://" + appIP + (appPort.isEmpty() ? "" : ":" + appPort);
-
+        LogUtil.initDirectory();
     }
 
     public void saveUserPwd(String username, String password, boolean isSave) {
@@ -91,6 +98,6 @@ public class MainApplication extends BaseApplication {
 
 
     public boolean isLogin() {
-        return !"".equals(userId) && !"".equals(token);
+        return !userId.isEmpty() && !token.isEmpty();
     }
 }

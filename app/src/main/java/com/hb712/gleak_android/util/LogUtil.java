@@ -1,8 +1,14 @@
 package com.hb712.gleak_android.util;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author hiYuzu
@@ -10,56 +16,125 @@ import android.util.Log;
  * @date 2020/10/19 10:56
  */
 public class LogUtil {
+    private static final String TAG = LogUtil.class.getSimpleName();
+    public static String logFilePath;
+
+    private static final char DEBUG = 'D';
+    private static final char INFO = 'I';
+    private static final char WARN = 'W';
+    private static final char ERROR = 'E';
+
+    private static boolean isSave = false;
+
+    public static void initDirectory() {
+        logFilePath = GlobalParam.LOG_PATH + File.separator + "log-" + DateUtil.getCurrentTime(DateUtil.DATE_SERIES) + "-.txt";
+        File logFile = new File(logFilePath);
+        if (logFile.exists()) {
+            isSave = true;
+            return;
+        }
+        if (!logFile.mkdirs()) {
+            LogUtil.debugOut(TAG, "日志文件夹创建失败");
+        } else {
+            try {
+                if (logFile.createNewFile()) {
+                    isSave = true;
+                }
+            } catch (IOException ioe) {
+                Log.e(TAG, "创建日志文件失败", ioe);
+            }
+        }
+    }
 
     /**
      * debug
-     * @param tag 标签
+     *
+     * @param tag    标签
      * @param detail 描述
      */
     public static void debugOut(String tag, @NonNull String detail) {
         Log.d(tag, detail);
+        if (isSave) {
+            writeToFile(DEBUG, tag, detail);
+        }
     }
 
     /**
      * info
-     * @param tag 标签
-     * @param e 异常类型
+     *
+     * @param tag    标签
      * @param detail 描述
      */
-    public static void infoOut(String tag, Exception e, String detail) {
-        if (e == null) {
-            infoOut(tag, detail);
-            return;
-        }
-        Log.i(tag, e.getMessage() + " & detail: " + detail);
-        ToastUtil.shortInstanceToast(detail);
-    }
-
     public static void infoOut(String tag, String detail) {
         Log.i(tag, detail);
         ToastUtil.shortInstanceToast(detail);
+        if (isSave) {
+            writeToFile(INFO, tag, detail);
+        }
     }
 
     /**
      * warn
-     * @param tag 标签
-     * @param ex 异常类型
+     *
+     * @param tag    标签
+     * @param e     异常类型
      * @param detail 描述
      */
-    public static void warnOut(String tag, @Nullable Exception ex, @NonNull String detail) {
-        if (ex != null) {
-            Log.e(tag, ex.getMessage() + " & detail: " + detail);
+    public static void warnOut(String tag, Exception e, String detail) {
+        StringBuilder sb = new StringBuilder();
+        if (e != null) {
+            sb.append(e.getMessage());
         }
-        Log.w(tag, detail);
+        if (detail != null && !detail.isEmpty()) {
+            sb.append(", detail: ").append(detail);
+        }
+        String msg = sb.toString();
+        Log.w(tag, msg);
+        if (isSave) {
+            writeToFile(WARN, tag, msg);
+        }
     }
 
     /**
      * error
-     * @param tag 标签
-     * @param ex 异常类型
+     *
+     * @param tag    标签
+     * @param e     异常类型
      * @param detail 描述
      */
-    public static void errorOut(String tag, @Nullable Exception ex, @NonNull String detail) {
-        Log.e(tag, ex == null ? detail : ex.getMessage() + " & detail: " + detail);
+    public static void errorOut(String tag, Exception e, String detail) {
+        StringBuilder sb = new StringBuilder();
+        if (e != null) {
+            sb.append(e.getMessage());
+        }
+        if (detail != null && !detail.isEmpty()) {
+            sb.append(", detail: ").append(detail);
+        }
+        String msg = sb.toString();
+        Log.e(tag, msg);
+        if (isSave) {
+            writeToFile(ERROR, tag, msg);
+        }
+    }
+
+    private static void writeToFile(Character type, String tag, String msg) {
+        String log = DateUtil.getCurrentTime(DateUtil.HP_TIME) + " " + type + "/" + TAG + ": " + msg;
+        FileOutputStream fos = null;
+        BufferedWriter bw = null;
+        try {
+            fos = new FileOutputStream(logFilePath, true);
+            bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
+            bw.write(log);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            try {
+                if (bw != null) {
+                    bw.close();
+                }
+            } catch (IOException ioe) {
+                Log.e(TAG, "buffered writer 关闭失败", ioe);
+            }
+        }
     }
 }

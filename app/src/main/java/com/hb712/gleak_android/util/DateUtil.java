@@ -14,7 +14,10 @@ import java.util.Date;
  */
 public class DateUtil {
     public static final String DEFAULT_TIME = "yyyy-MM-dd HH:mm:ss";
+    public static final String HP_TIME = "yyyy-MM-dd HH:mm:ss.SSS";
+    public static final String LP_TIME = "yyyy-MM-dd";
     public static final String TIME_SERIES = "yyyyMMddHHmmss";
+    public static final String DATE_SERIES = "yyyyMMdd";
 
     /**
      * 获取通用格式的当前时间
