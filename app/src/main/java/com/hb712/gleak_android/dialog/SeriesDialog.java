@@ -13,6 +13,7 @@ import com.hb712.gleak_android.R;
 import com.hb712.gleak_android.controller.SeriesInfoController;
 import com.hb712.gleak_android.entity.SeriesInfo;
 import com.hb712.gleak_android.util.LogUtil;
+import com.hb712.gleak_android.util.ToastUtil;
 
 import java.util.List;
 
@@ -52,7 +53,9 @@ public class SeriesDialog {
                 try {
                     seriesAddSuccessCallback.onSave(seriesInfoList.get(seriesSp.getSelectedItemPosition()));
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    LogUtil.infoOut(TAG, e, "曲线选择失败！");
+                    String msg = "曲线选择失败！";
+                    LogUtil.errorOut(TAG, e, msg);
+                    ToastUtil.shortInstanceToast(msg);
                 }
             }
         });
