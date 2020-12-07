@@ -35,6 +35,8 @@ public class GlobalParam {
     public static final String UPLOAD_DELAY_KEY = "upload_delay";
     public static final int UPLOAD_DELAY = 10;
 
+    public static final double MIN_DISTANCE = 5.0;
+
     public static boolean isConnected = false;
     public static boolean isFireOn = false;
 

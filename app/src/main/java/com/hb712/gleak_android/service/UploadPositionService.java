@@ -5,6 +5,8 @@ import android.os.Bundle;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.DistanceUtil;
 import com.hb712.gleak_android.MainApplication;
 import com.hb712.gleak_android.base.BaseActivity;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
@@ -44,10 +46,16 @@ public class UploadPositionService {
     }
 
     private final BDAbstractLocationListener locationListener = new BDAbstractLocationListener() {
+        private LatLng oldLocation = null;
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
             if (bdLocation != null) {
-                MyPosition myPosition = new MyPosition(mainApp.getUserId(), bdLocation.getLongitude(), bdLocation.getLatitude());
+                double lng = bdLocation.getLongitude();
+                double lat = bdLocation.getLatitude();
+                if (!isOverMinDistance(lng, lat)) {
+                    return;
+                }
+                MyPosition myPosition = new MyPosition(mainApp.getUserId(), lng, lat);
                 HttpUtils.post(null, mainApp.baseUrl + "/api/location/insert", myPosition.toMap(), new OKHttpListener() {
                     @Override
                     public void onStart() {
@@ -70,6 +78,15 @@ public class UploadPositionService {
                     }
                 });
             }
+        }
+
+        private boolean isOverMinDistance(double lng, double lat) {
+            if (oldLocation == null) {
+                oldLocation = new LatLng(lat, lng);
+                return true;
+            }
+            double distance = DistanceUtil.getDistance(new LatLng(lat, lng), oldLocation);
+            return distance > GlobalParam.MIN_DISTANCE;
         }
     };
 
