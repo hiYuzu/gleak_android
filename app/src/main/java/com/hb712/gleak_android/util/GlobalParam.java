@@ -18,8 +18,8 @@ public class GlobalParam {
     public static String SERVE_IP = "serve_ip";
     public static String SERVE_PORT = "serve_port";
 
-    public static String DEFAULT_IP = "192.168.3.108";
-    public static String DEFAULT_PORT = "3000";
+    public static final String DEFAULT_IP = "192.168.3.108";
+    public static final String DEFAULT_PORT = "3000";
 
     public static final String KEY_USERTOKEN = "Authorization";
 
@@ -29,8 +29,12 @@ public class GlobalParam {
     public static final String LOG_PATH = DEVICE_ROOT_PATH + File.separator + "log";
 
     public static boolean rememberPwd = false;
-    public static boolean isUploadPosition = true;
-    public static int uploadDelay = 10000;
+
+    public static final boolean IS_UPLOAD_POSITION = true;
+    public static final String UPLOAD_POSITION_KEY = "is_upload_position";
+    public static final String UPLOAD_DELAY_KEY = "upload_delay";
+    public static final int UPLOAD_DELAY = 10;
+
     public static boolean isConnected = false;
     public static boolean isFireOn = false;
 
@@ -57,11 +61,8 @@ public class GlobalParam {
     public static final boolean DEVICE_OTHER = false;
 
     //video
-    public static boolean loadFirst = true;
     @SuppressLint("AuthLeak")
     public static String VIDEO_URL = "rtsp://admin:tjtcb712@192.168.3.100:554/h264/ch1/main/av_stream";
-
-    public static final String MAP_KEY = "BpPnFERqEuxQtdvEuPp4eW8ouHv6LeKR";
 
     public static List<InitLeakData> initLeakData = new ArrayList<>();
 }

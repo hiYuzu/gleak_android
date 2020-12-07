@@ -8,12 +8,14 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.hb712.gleak_android.MainApplication;
 import com.hb712.gleak_android.base.BaseActivity;
 
 public class GPSUtil {
@@ -62,17 +64,14 @@ public class GPSUtil {
         }
     }
 
-    public static void getBDLocation(LocationClient mLocationClient, BDAbstractLocationListener listener) {
-        if (mLocationClient == null) {
-            mLocationClient = new LocationClient(BaseActivity.baseActivity);
-        }
+    public static void getBDLocation(@NonNull LocationClient mLocationClient, BDAbstractLocationListener listener) {
         //通过LocationClientOption设置LocationClient相关参数
         LocationClientOption option = new LocationClientOption();
         // 打开gps
         option.setOpenGps(true);
         // 设置坐标类型
         option.setCoorType("bd09ll");
-        option.setScanSpan(GlobalParam.uploadDelay);
+        option.setScanSpan(1000 * ((int) SPUtil.get(MainApplication.getInstance(), GlobalParam.UPLOAD_DELAY_KEY, GlobalParam.UPLOAD_DELAY)));
         //设置locationClientOption
         mLocationClient.setLocOption(option);
         //注册LocationListener监听器

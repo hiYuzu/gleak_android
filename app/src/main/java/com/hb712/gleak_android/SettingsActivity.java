@@ -2,6 +2,7 @@ package com.hb712.gleak_android;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import com.hb712.gleak_android.base.BaseActivity;
 import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.service.UploadPositionService;
+import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.SPUtil;
@@ -101,7 +103,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
-
+        private static final String TAG = GeneralPreferenceFragment.class.getSimpleName();
+        private final MainApplication mainApp = MainApplication.getInstance();
         private EditTextPreference serveIp;
         private EditTextPreference servePort;
 
@@ -114,53 +117,95 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             SwitchPreference general_remember = (SwitchPreference) findPreference("general_remember");
             general_remember.setChecked(GlobalParam.rememberPwd);
             general_remember.setOnPreferenceChangeListener((preference, newValue) -> {
-                MainApplication context = MainApplication.getInstance();
-                if ((boolean) newValue) {
-                    context.saveUserPwd();
-                } else {
-                    context.removeUserPwd();
+                try {
+                    if ((boolean) newValue) {
+                        mainApp.saveUserPwd();
+                    } else {
+                        mainApp.removeUserPwd();
+                    }
+                    return true;
+                } catch (Exception e) {
+                    LogUtil.errorOut(TAG, e, null);
+                    ToastUtil.shortInstanceToast("设置失败！");
                 }
-                return true;
+                return false;
+
+            });
+
+            EditTextPreference uploadPositionPeriod = (EditTextPreference) findPreference("upload_position_period");
+            uploadPositionPeriod.setEnabled((boolean) SPUtil.get(mainApp, GlobalParam.UPLOAD_POSITION_KEY, GlobalParam.IS_UPLOAD_POSITION));
+            uploadPositionPeriod.setText(String.valueOf(SPUtil.get(mainApp, GlobalParam.UPLOAD_DELAY_KEY, GlobalParam.UPLOAD_DELAY)));
+            uploadPositionPeriod.setOnPreferenceChangeListener((preference, newValue) -> {
+                try {
+                    int period = Integer.parseInt((String) newValue);
+                    SPUtil.put(mainApp, GlobalParam.UPLOAD_DELAY_KEY, period);
+                    UploadPositionService.getInstance().restartUploadPosition();
+                    return true;
+                } catch (NumberFormatException nfe) {
+                    String msg = "请输入正确合理的数字！";
+                    LogUtil.warnOut(TAG, nfe, msg);
+                    ToastUtil.shortInstanceToast(msg);
+                } catch (Exception e) {
+                    LogUtil.errorOut(TAG, e, null);
+                    ToastUtil.shortInstanceToast("设置失败！");
+                }
+                return false;
             });
 
             SwitchPreference uploadPosition = (SwitchPreference) findPreference("upload_position");
-            uploadPosition.setChecked(GlobalParam.isUploadPosition);
+            uploadPosition.setChecked((boolean) SPUtil.get(mainApp, GlobalParam.UPLOAD_POSITION_KEY, GlobalParam.IS_UPLOAD_POSITION));
             uploadPosition.setOnPreferenceChangeListener((preference, newValue) -> {
-                GlobalParam.isUploadPosition = (boolean) newValue;
-                UploadPositionService.getInstance().uploadPosition();
-                return true;
+                try {
+                    boolean isUpload = (boolean) newValue;
+                    SPUtil.put(mainApp, GlobalParam.UPLOAD_POSITION_KEY, isUpload);
+                    uploadPositionPeriod.setEnabled(isUpload);
+                    UploadPositionService.getInstance().uploadPosition();
+                    return true;
+                } catch (Exception e) {
+                    LogUtil.errorOut(TAG, e, null);
+                    ToastUtil.shortInstanceToast("设置失败！");
+                }
+                return false;
             });
 
 
             serveIp = (EditTextPreference) findPreference(GlobalParam.SERVE_IP);
             servePort = (EditTextPreference) findPreference(GlobalParam.SERVE_PORT);
-            serveIp.setText(SPUtil.get(MainApplication.getInstance(), GlobalParam.SERVE_IP, GlobalParam.DEFAULT_IP).toString());
-            servePort.setText(SPUtil.get(MainApplication.getInstance(), GlobalParam.SERVE_PORT, GlobalParam.DEFAULT_PORT).toString());
+            serveIp.setText(SPUtil.get(mainApp, GlobalParam.SERVE_IP, GlobalParam.DEFAULT_IP).toString());
+            servePort.setText(SPUtil.get(mainApp, GlobalParam.SERVE_PORT, GlobalParam.DEFAULT_PORT).toString());
             serveIp.setOnPreferenceChangeListener((preference, newValue) -> {
-                String ip = (String) newValue;
-                if (isCorrectIp(ip)) {
-                    serveIp.setSummary(ip);
-                    serveIp.setText(ip);
-                    SPUtil.put(MainApplication.getInstance(), GlobalParam.SERVE_IP, ip);
-                    ToastUtil.shortInstanceToast("服务器地址已更改，重启应用生效");
-                    return true;
-                } else {
-                    ToastUtil.shortInstanceToast("请输入正确的IP格式");
-                    return false;
+                try {
+                    String ip = (String) newValue;
+                    if (isCorrectIp(ip)) {
+                        serveIp.setSummary(ip);
+                        SPUtil.put(mainApp, GlobalParam.SERVE_IP, ip);
+                        ToastUtil.shortInstanceToast("服务器地址已更改，重启应用生效");
+                        return true;
+                    } else {
+                        ToastUtil.shortInstanceToast("请输入正确的IP格式");
+                    }
+                } catch (Exception e) {
+                    LogUtil.errorOut(TAG, e, null);
+                    ToastUtil.shortInstanceToast("设置失败！");
                 }
+                return false;
             });
             servePort.setOnPreferenceChangeListener((preference, newValue) -> {
-                String port = (String) newValue;
-                if (isCorrectPort(port)) {
-                    servePort.setSummary(port);
-                    serveIp.setText(port);
-                    SPUtil.put(MainApplication.getInstance(), GlobalParam.SERVE_PORT, port);
-                    ToastUtil.shortInstanceToast("服务器地址已更改，重启应用生效");
-                    return true;
-                } else {
-                    ToastUtil.shortInstanceToast("请输入正确的Port格式");
-                    return false;
+                try {
+                    String port = (String) newValue;
+                    if (isCorrectPort(port)) {
+                        servePort.setSummary(port);
+                        SPUtil.put(mainApp, GlobalParam.SERVE_PORT, port);
+                        ToastUtil.shortInstanceToast("服务器地址已更改，重启应用生效");
+                        return true;
+                    } else {
+                        ToastUtil.shortInstanceToast("请输入正确的Port格式");
+                    }
+                } catch (Exception e) {
+                    LogUtil.errorOut(TAG, e, null);
+                    ToastUtil.shortInstanceToast("设置失败！");
                 }
+                return false;
             });
         }
 

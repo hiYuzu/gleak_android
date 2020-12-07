@@ -9,6 +9,13 @@
         android:key="upload_position"
         android:title="@string/settings_upload_position" />
     <EditTextPreference
+        android:key="upload_position_period"
+        android:singleLine="true"
+        android:inputType="number"
+        android:enabled="true"
+        android:summary="@string/settings_upload_position_period_summary"
+        android:title="@string/settings_upload_position_period" />
+    <EditTextPreference
         android:key="@string/serve_ip"
         android:singleLine="true"
         android:title="服务器ip" />
