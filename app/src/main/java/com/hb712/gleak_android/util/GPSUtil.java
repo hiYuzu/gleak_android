@@ -1,30 +1,19 @@
 package com.hb712.gleak_android.util;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.baidu.location.BDAbstractLocationListener;
-import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.baidu.mapapi.map.MapStatus;
-import com.baidu.mapapi.map.MapStatusUpdate;
-import com.baidu.mapapi.map.MapStatusUpdateFactory;
-import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.utils.CoordinateConverter;
 import com.hb712.gleak_android.base.BaseActivity;
 
 public class GPSUtil {
@@ -83,7 +72,7 @@ public class GPSUtil {
         option.setOpenGps(true);
         // 设置坐标类型
         option.setCoorType("bd09ll");
-        option.setScanSpan(5000);
+        option.setScanSpan(GlobalParam.uploadDelay);
         //设置locationClientOption
         mLocationClient.setLocOption(option);
         //注册LocationListener监听器
