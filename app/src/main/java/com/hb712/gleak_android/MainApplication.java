@@ -3,6 +3,7 @@ package com.hb712.gleak_android;
 import android.util.Log;
 
 import com.hb712.gleak_android.base.BaseApplication;
+import com.hb712.gleak_android.util.BluetoothUtil;
 import com.hb712.gleak_android.util.DateUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.LogUtil;
@@ -17,6 +18,8 @@ import java.io.File;
  */
 public class MainApplication extends BaseApplication {
     private final String TAG = MainApplication.class.getSimpleName();
+
+    public BluetoothUtil mBluetooth;
 
     public String baseUrl;
     public final String SETTINGS_USERNAME = "username";
@@ -39,6 +42,7 @@ public class MainApplication extends BaseApplication {
         String appIP = (String) SPUtil.get(this, GlobalParam.SERVE_IP, GlobalParam.DEFAULT_IP);
         String appPort = (String) SPUtil.get(this, GlobalParam.SERVE_PORT, GlobalParam.DEFAULT_PORT);
         baseUrl = "http://" + appIP + (appPort.isEmpty() ? "" : ":" + appPort);
+        mBluetooth = BluetoothUtil.getInstance();
         LogUtil.initDirectory();
     }
 

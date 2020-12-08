@@ -108,7 +108,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private DeviceController deviceController;
     private SeriesLimitInfo seriesLimitInfo;
     private boolean unitPPM = true;
-    private boolean isDetecting = true;
     private double detectMaxvaluePPM = 0;
     private double detectMaxvalueMg = 0;
 
@@ -119,7 +118,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detect);
         setupActionBar();
-        mBluetooth = BluetoothUtil.getInstance();
+        mBluetooth = MainApplication.getInstance().mBluetooth;
         initView();
         initBluetooth();
         initClass();
@@ -203,13 +202,12 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             finish();
         }
 
-        mBluetooth.setBluetoothConnectionListener(new BluetoothUtil.BluetoothConnectionListener() {
+        mBluetooth.addBluetoothListener("", new BluetoothUtil.BluetoothListener() {
             @Override
             public void onDeviceConnected(String name, String address) {
                 GlobalParam.isConnected = true;
                 detectConnectB.setText(R.string.detect_disconnect);
                 connDeviceTV.setText(name);
-                // TODO: hiYuzu 2020/12/2  启动线程循环请求/接收仪器参数(?) -> isDetecting = true;
                 ToastUtil.shortInstanceToast("蓝牙已连接");
             }
 
@@ -218,46 +216,15 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 GlobalParam.isConnected = false;
                 detectConnectB.setText(R.string.detect_connect);
                 connDeviceTV.setText(R.string.detect_disconnected);
-                // TODO: hiYuzu 2020/12/2 释放线程 -> isDetecting = false;
                 ToastUtil.shortInstanceToast("蓝牙已断开");
             }
 
             @Override
-            public void onDeviceConnectionFailed() {
-                ToastUtil.shortInstanceToast("蓝牙连接失败");
+            public void onDataReceived(byte[] data) {
+                mBluetooth.analysisCommand(data);
+                //仪器参数
+//                showFragmentContent(data);
             }
-        });
-
-        mBluetooth.setOnDataReceivedListener((data, message) -> {
-            mBluetooth.analysisCommand(data);
-            float measureValue = 0;
-            float electricValue = 0;
-            byte[] byteBit = new byte[8];
-            boolean statusP = false;
-            boolean statusA = false;
-            boolean statusB = false;
-            if (data != null && data.length > 38) {//读取测量值
-                measureValue = ByteArrayConvertUtil.byteToFloat(data, 32);
-                electricValue = ByteArrayConvertUtil.byteToFloat(data, 24);
-                byteBit = ByteArrayConvertUtil.getBooleanArray(data[4]);
-                if (byteBit[0] == 1) {
-                    statusP = true;
-                } else {
-                    statusP = false;
-                }
-                if (byteBit[2] == 1) {
-                    statusA = true;
-                } else {
-                    statusA = false;
-                }
-                if (byteBit[3] == 1) {
-                    statusB = true;
-                } else {
-                    statusB = false;
-                }
-            }
-            //仪器参数
-            showFragmentContent(data);
         });
     }
 
@@ -455,13 +422,13 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private void startSave() {
-        if (isConnected() && isDetecting && startRecord()) {
+        if (isConnected() && startRecord()) {
             startRecordBtn.setText(R.string.stopRecord);
         }
     }
 
     private void startSave(@NonNull Bundle bundle) {
-        if (isConnected() && isDetecting && startRecord()) {
+        if (isConnected() && startRecord()) {
             selectedLeakId = bundle.getString("leakId");
             startRecordBtn.setText(R.string.stopRecord);
         }
@@ -574,7 +541,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     public void fireClick(View view) {
         if (isConnected()) {
-            mBluetooth.openFire2();
+            mBluetooth.openFire();
         }
     }
 

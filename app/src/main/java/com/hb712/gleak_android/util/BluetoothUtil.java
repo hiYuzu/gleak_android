@@ -13,7 +13,9 @@ import com.hb712.gleak_android.service.BluetoothService;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hiYuzu
@@ -23,8 +25,6 @@ import java.util.List;
 public class BluetoothUtil {
     private final String TAG = BluetoothUtil.class.getSimpleName();
 
-    private OnDataReceivedListener mDataReceivedListener = null;
-    private BluetoothConnectionListener mBluetoothConnectionListener = null;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothService mBluetoothService = null;
     private boolean isConnected = false;
@@ -71,16 +71,20 @@ public class BluetoothUtil {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
-    public interface OnDataReceivedListener {
-        void onDataReceived(byte[] data, String message);
-    }
+    public interface BluetoothListener {
+        default void onDeviceConnected(String name, String address) {
+            ToastUtil.shortInstanceToast("蓝牙已连接");
+        }
 
-    public interface BluetoothConnectionListener {
-        void onDeviceConnected(String name, String address);
+        default void onDeviceDisconnected() {
+            ToastUtil.shortInstanceToast("蓝牙已断开");
+        }
 
-        void onDeviceDisconnected();
+        default void onDeviceConnectionFailed() {
+            ToastUtil.shortInstanceToast("蓝牙连接失败");
+        }
 
-        void onDeviceConnectionFailed();
+        void onDataReceived(byte[] data);
     }
 
     @SuppressLint("HardwareIds")
@@ -111,33 +115,27 @@ public class BluetoothUtil {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case GlobalParam.MESSAGE_READ:
-                    String message = "";
                     byte[] readBuf = (byte[]) msg.obj;
                     if (readBuf != null && readBuf.length > 0) {
-                        if (mDataReceivedListener != null)
-                            mDataReceivedListener.onDataReceived(readBuf, message);
+                        onDataReceived(readBuf);
                     }
                     break;
                 case GlobalParam.MESSAGE_DEVICE_NAME:
                     String mDeviceName = msg.getData().getString(GlobalParam.DEVICE_NAME);
                     String mDeviceAddress = msg.getData().getString(GlobalParam.DEVICE_ADDRESS);
-                    if (mBluetoothConnectionListener != null)
-                        mBluetoothConnectionListener.onDeviceConnected(mDeviceName, mDeviceAddress);
+                    onDeviceConnected(mDeviceName, mDeviceAddress);
                     isConnected = true;
                     break;
                 case GlobalParam.MESSAGE_STATE_CHANGE:
                     if (isConnected && msg.arg1 != GlobalParam.STATE_CONNECTED) {
-                        if (mBluetoothConnectionListener != null) {
-                            mBluetoothConnectionListener.onDeviceDisconnected();
-                        }
+                        onDeviceDisconnected();
                         isConnected = false;
                     }
                     if (!isConnecting && msg.arg1 == GlobalParam.STATE_CONNECTING) {
                         isConnecting = true;
                     } else if (isConnecting) {
                         if (msg.arg1 != GlobalParam.STATE_CONNECTED) {
-                            if (mBluetoothConnectionListener != null)
-                                mBluetoothConnectionListener.onDeviceConnectionFailed();
+                            onDeviceConnectionFailed();
                         }
                         isConnecting = false;
                     }
@@ -163,25 +161,41 @@ public class BluetoothUtil {
         }
     }
 
-    public void setOnDataReceivedListener(OnDataReceivedListener listener) {
-        mDataReceivedListener = listener;
+
+    Map<String, BluetoothListener> listenerMap = new HashMap<>();
+
+    public void addBluetoothListener(String name, BluetoothListener listener) {
+        if (!listenerMap.containsKey(name)) {
+            listenerMap.put(name, listener);
+        }
     }
 
-    public void setBluetoothConnectionListener(BluetoothConnectionListener listener) {
-        mBluetoothConnectionListener = listener;
+    public void removeBlueListener(String name) {
+        listenerMap.remove(name);
     }
 
-    public void writeByteRead() {
-        //设置1
-//        byte[] byteArraySet1 = new byte[]{(byte) 90, (byte) 5, (byte) 4, (byte) 3, (byte) 71};
-//        //设置2
-//        byte[] byteArraySet2 = new byte[]{(byte) 90, (byte) 11, (byte) 12, (byte) 0, (byte) 1, (byte) 7, (byte) 80, (byte) 195, (byte) 50, (byte) 0, (byte) 157};
-//        //设置3
-//        byte[] byteArraySet3 = new byte[]{(byte) 0x5a, (byte) 0x09, (byte) 0x1e, (byte) 0x01, (byte) 0x96, (byte) 0x00, (byte) 0x64, (byte) 0x00, (byte) 0x14};
-//        //设置4
-//        byte[] byteArraySet4 = new byte[]{(byte) 90, (byte) 25, (byte) 36, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 184, (byte) 11, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 72, (byte) 244, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255, (byte) 255};
-//        //读取数据
-//        byte[] byteArrayRead = new byte[]{(byte) 0x5a, (byte) 0x04, (byte) 0x25, (byte) 0x41};
+    private void onDataReceived(byte[] data) {
+        for (Map.Entry<String, BluetoothListener> entry : listenerMap.entrySet()) {
+            entry.getValue().onDataReceived(data);
+        }
+    }
+
+    private void onDeviceConnected(String name, String address) {
+        for (Map.Entry<String, BluetoothListener> entry : listenerMap.entrySet()) {
+            entry.getValue().onDeviceConnected(name, address);
+        }
+    }
+
+    void onDeviceDisconnected() {
+        for (Map.Entry<String, BluetoothListener> entry : listenerMap.entrySet()) {
+            entry.getValue().onDeviceDisconnected();
+        }
+    }
+
+    void onDeviceConnectionFailed() {
+        for (Map.Entry<String, BluetoothListener> entry : listenerMap.entrySet()) {
+            entry.getValue().onDeviceConnectionFailed();
+        }
     }
 
     public void readData() {
@@ -264,7 +278,7 @@ public class BluetoothUtil {
     }
 
     private void SetDeadHeadParams() {
-        writeByte(new byte[]{90, 9, 30, 1, (byte)150, 0, 100, 0, 20});
+        writeByte(new byte[]{90, 9, 30, 1, (byte) 150, 0, 100, 0, 20});
     }
 
     private void SetCalH2PressureCompensation() {

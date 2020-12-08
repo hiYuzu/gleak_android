@@ -93,6 +93,7 @@
                     <Button
                         android:id="@+id/caliBtn1"
                         style="@style/toolButtonStyle"
+                        android:onClick="onCaliBtnClick"
                         android:text="@string/cali_cali_1" />
                 </LinearLayout>
 
@@ -117,6 +118,7 @@
                     <Button
                         android:id="@+id/caliBtn2"
                         style="@style/toolButtonStyle"
+                        android:onClick="onCaliBtnClick"
                         android:text="@string/cali_cali_2" />
                 </LinearLayout>
 
@@ -141,6 +143,7 @@
                     <Button
                         android:id="@+id/caliBtn3"
                         style="@style/toolButtonStyle"
+                        android:onClick="onCaliBtnClick"
                         android:text="@string/cali_cali_3" />
                 </LinearLayout>
 
@@ -165,6 +168,7 @@
                     <Button
                         android:id="@+id/caliBtn4"
                         style="@style/toolButtonStyle"
+                        android:onClick="onCaliBtnClick"
                         android:text="@string/cali_cali_4" />
                 </LinearLayout>
 
@@ -189,6 +193,7 @@
                     <Button
                         android:id="@+id/caliBtn5"
                         style="@style/toolButtonStyle"
+                        android:onClick="onCaliBtnClick"
                         android:text="@string/cali_cali_5" />
                 </LinearLayout>
 
@@ -213,22 +218,9 @@
                     <Button
                         android:id="@+id/caliBtn6"
                         style="@style/toolButtonStyle"
+                        android:onClick="onCaliBtnClick"
                         android:text="@string/cali_cali_6" />
                 </LinearLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingTop="@dimen/dimen_5dp">
-
-                    <Button
-                        android:id="@+id/caliToDetect"
-                        style="@style/toolButtonStyle"
-                        android:layout_centerInParent="true"
-                        android:layout_marginTop="@dimen/dimen_10dp"
-                        android:text="@string/cali_to_detect" />
-                </RelativeLayout>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

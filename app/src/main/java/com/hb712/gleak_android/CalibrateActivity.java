@@ -16,12 +16,20 @@ import com.hb712.gleak_android.controller.CalibrationInfoController;
 import com.hb712.gleak_android.controller.SeriesInfoController;
 import com.hb712.gleak_android.entity.CalibrationInfo;
 import com.hb712.gleak_android.entity.SeriesInfo;
+import com.hb712.gleak_android.message.blue.Phx21Status;
+import com.hb712.gleak_android.util.LogUtil;
+import com.hb712.gleak_android.util.ThreadPoolUtil;
+import com.hb712.gleak_android.util.ToastUtil;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class CalibrateActivity extends AppCompatActivity {
-
     private static final String TAG = CalibrateActivity.class.getSimpleName();
+    private int calibrateIndex = -1;
+    private MainApplication mainApp;
+    private boolean ifexit = false;
+
     private Spinner seriesInfoSp;
     private TextView currentSignal;
     private TextView currentPpm;
@@ -37,9 +45,8 @@ public class CalibrateActivity extends AppCompatActivity {
     private Button caliBtn4;
     private Button caliBtn5;
     private Button caliBtn6;
-    private Button caliToDetect;
 
-    private Button[] caliBtns;
+    private Button[] caliButtons;
     private List<SeriesInfo> seriesInfoList;
     private String[] seriesNames;
 
@@ -47,12 +54,12 @@ public class CalibrateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calibrate);
+        mainApp = MainApplication.getInstance();
         setupActionBar();
         initView();
         if (seriesInfoList != null && seriesInfoList.size() > 0) {
             initCalibrateInfo(seriesInfoList.get(0).getSeriesName());
         }
-
     }
 
     private void setupActionBar() {
@@ -65,6 +72,10 @@ public class CalibrateActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            if (calibrateIndex > -1) {
+                ToastUtil.shortInstanceToast("校准中，请等待结束...");
+                return true;
+            }
             onBackPressed();
             return true;
         }
@@ -87,9 +98,7 @@ public class CalibrateActivity extends AppCompatActivity {
         caliBtn4 = findViewById(R.id.caliBtn4);
         caliBtn5 = findViewById(R.id.caliBtn5);
         caliBtn6 = findViewById(R.id.caliBtn6);
-        caliToDetect = findViewById(R.id.caliToDetect);
-
-        caliBtns = new Button[]{caliBtn1, caliBtn2, caliBtn3, caliBtn4, caliBtn5, caliBtn6};
+        caliButtons = new Button[]{caliBtn1, caliBtn2, caliBtn3, caliBtn4, caliBtn5, caliBtn6};
         seriesInfoList = SeriesInfoController.getAll();
         seriesNames = new String[seriesInfoList.size()];
         for (int i = 0; i < seriesInfoList.size(); i++) {
@@ -132,4 +141,62 @@ public class CalibrateActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ifexit = true;
+        // TODO: hiYuzu 2020/12/8
+//        mainApp.deviceController.setIfCalibrating(false);
+        mainApp.mBluetooth.removeBlueListener("calibrateBT");
+    }
+/*
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mainApp.mBluetooth.addBluetoothListener("calibrateBT", this::analysisData);
+        ifexit = false;
+        ThreadPoolUtil.scheduledCommonExecute(this::showSystemCurrentStatus, 500, TimeUnit.MILLISECONDS);
+    }
+
+    private void analysisData(byte[] data) {
+
+    }
+/*
+    public void onCaliBtnClick(View view) {
+        switch (view.getId()) {
+            case R.id.caliBtn1:
+            case R.id.caliBtn2:
+            case R.id.caliBtn3:
+            case R.id.caliBtn4:
+            case R.id.caliBtn5:
+            case R.id.caliBtn6:
+                break;
+            default:
+                break;
+        }
+    }
+    private class InnerThread extends Thread {
+        @Override
+        public void run() {
+            while (!ifexit) {
+                mainApp.deviceController.sendReadDataCommand();
+                try {
+                    Thread.sleep(500L);
+                } catch (InterruptedException ie) {
+                    LogUtil.errorOut(TAG, ie, null);
+                }
+                runOnUiThread(CalibrateActivity.this::showSystemCurrentStatus);
+            }
+        }
+    }
+
+    private void showSystemCurrentStatus() {
+        Phx21Status localPhx21Status = mainApp.deviceController.getStatus();
+        if (localPhx21Status != null) {
+            currentSignal.setText(NumPointDealer.getString(mainApp.deviceController.getSystemCurrent()));
+            doCalibrateRecord(localPhx21Status);
+        }
+        currentPpm.setText(NumPointDealer.getString(mainApp.deviceController.getPpm()));
+    }*/
 }
