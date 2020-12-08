@@ -18,9 +18,6 @@ import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.SPUtil;
 
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * @author hiYuzu
