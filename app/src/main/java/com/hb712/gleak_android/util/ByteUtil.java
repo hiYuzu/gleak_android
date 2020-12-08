@@ -4,30 +4,36 @@ public class ByteUtil {
 
     protected static final char[] hexArray = "0123456789ABCDEF".toCharArray();
 
-    public static int BytesToDword(byte paramByte1, byte paramByte2, byte paramByte3, byte paramByte4) {
-        if (paramByte1 < 0) {
-            paramByte1 += 256;
+    public static int BytesToDword(byte b3, byte b2, byte b1, byte b0) {
+        int bb3 = b3;
+        int bb2 = b2;
+        int bb1 = b1;
+        int bb0 = b0;
+        if (bb3 < 0) {
+            bb3 += 256;
         }
-        if (paramByte2 < 0) {
-            paramByte2 += 256;
+        if (bb2 < 0) {
+            bb2 += 256;
         }
-        if (paramByte3 < 0) {
-            paramByte3 += 256;
+        if (bb1 < 0) {
+            bb1 += 256;
         }
-        if (paramByte4 < 0) {
-            paramByte4 += 256;
+        if (bb0 < 0) {
+            bb0 += 256;
         }
-        return (paramByte1 << 24 | paramByte2 << 16 | paramByte3 << 8 | paramByte4) & 0xFFFFFFFF;
+        return (int) (0x00FFFFFFFF & ((bb3 << 24) | (bb2 << 16) | (bb1 << 8) | bb0));
     }
 
-    public static int BytesToWord(byte paramByte1, byte paramByte2) {
-        if (paramByte1 < 0) {
-            paramByte1 += 256;
+    public static int BytesToWord(byte b1, byte b0) {
+        int bb1 = b1;
+        int bb0 = b0;
+        if (bb1 < 0) {
+            bb1 += 256;
         }
-        if (paramByte2 < 0) {
-            paramByte2 += 256;
+        if (bb0 < 0) {
+            bb0 += 256;
         }
-        return 0xFFFF & (paramByte1 << 8 | paramByte2);
+        return 0xFFFF & ((bb1 << 8) | bb0);
     }
 
     public static float ConvertKelvinToFahrenheit(float paramFloat) {

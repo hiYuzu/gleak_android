@@ -218,7 +218,6 @@ public class BluetoothService {
                     bytes = 0;
                     while (bytes < 100) {
                         ch = mmInStream.read();
-                        System.out.println(ch);
                         if (ch == 165) {
                             bytes = 0;
                         }

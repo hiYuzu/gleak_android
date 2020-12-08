@@ -581,15 +581,18 @@ public class BluetoothUtil {
         return false;
     }
 
-    private double getBatteryPercent(double paramDouble) {
-        if (paramDouble > 8.2D) {
-            return 100.0D;
+    private double getBatteryPercent(double battery) {
+        double min = 6.1;
+        double max = 8.2;
+        if (battery > max) {
+            return 100;
+        } else if (battery < min) {
+            return 0;
+        } else {
+            double k = (100 / (max - min));
+            double b = 0 - min * k;
+            return k * battery + b;
         }
-        if (paramDouble < 6.1D) {
-            return 0.0D;
-        }
-        double d = 100.0D / (8.2D - 6.1D);
-        return d * paramDouble + (0.0D - 6.1D * d);
     }
 
     private double getH2Percent(double paramDouble) {
