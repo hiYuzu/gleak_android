@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.hb712.gleak_android.util.ByteUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.LogUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -207,27 +209,38 @@ public class BluetoothService {
         }
 
         public void run() {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[100];
             int bytes;
+            int count = 0;
             int ch;
             while (true) {
                 try {
                     bytes = 0;
-                    while ((ch = mmInStream.read()) != '\n') {
-                        if (ch != -1) {
-                            buffer[bytes] = (byte) ch;
-                            bytes++;
+                    while (bytes < 100) {
+                        ch = mmInStream.read();
+                        System.out.println(ch);
+                        if (ch == 165) {
+                            bytes = 0;
+                        }
+                        if (bytes == 1) {
+                            count = ch;
+                        }
+                        buffer[bytes] = (byte) ch;
+                        bytes++;
+                        if (bytes > 1 && bytes > (count - 1)) {
+                            break;
                         }
                     }
 //                    for (int i = 0; i < buffer.length; i++) {
-//                        buffer[i] = ((Integer) mmInStream.read()).byteValue();
+//                        buffer[i] = ((Integer) mmInStream.read()).byteValue();+
 //                    }
-                    buffer[bytes] = (byte) '\n';
-                    bytes++;
+//                    buffer[bytes] = (byte) '\n';
+//                    bytes++;
 
                     byte[] buffers = new byte[bytes];
                     System.arraycopy(buffer, 0, buffers, 0, bytes);
                     mHandler.obtainMessage(GlobalParam.MESSAGE_READ, bytes, -1, buffers).sendToTarget();
+                    System.out.println(Arrays.toString(buffer));
 //                    sleep(10);
                 } catch (IOException e) {
                     LogUtil.warnOut(TAG, e, "收发失败");

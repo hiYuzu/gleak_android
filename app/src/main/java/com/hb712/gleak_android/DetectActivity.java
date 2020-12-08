@@ -229,6 +229,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         });
 
         mBluetooth.setOnDataReceivedListener((data, message) -> {
+            mBluetooth.analysisCommand(data);
             float measureValue = 0;
             float electricValue = 0;
             byte[] byteBit = new byte[8];
@@ -573,7 +574,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     public void fireClick(View view) {
         if (isConnected()) {
-            mBluetooth.writeByte(1);
+            mBluetooth.openFire2();
         }
     }
 
@@ -584,7 +585,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     public void fireClick2(View view) {
         if (isConnected()) {
-            mBluetooth.writeByteRead();
+//            mBluetooth.openFire2();
+            mBluetooth.readData();
         }
     }
 
@@ -595,7 +597,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     public void ceasefireClick(View view) {
         if (isConnected()) {
-            mBluetooth.writeByte(0);
+            mBluetooth.closeFire();
         }
     }
 
