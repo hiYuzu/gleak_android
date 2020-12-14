@@ -1,13 +1,10 @@
 package com.hb712.gleak_android;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -42,7 +39,6 @@ import com.hb712.gleak_android.entity.SeriesLimitInfo;
 import com.hb712.gleak_android.rtsp.RtspPlayer;
 import com.hb712.gleak_android.util.BluetoothUtil;
 import com.hb712.gleak_android.util.DateUtil;
-import com.hb712.gleak_android.util.ByteArrayConvertUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
@@ -222,8 +218,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             @Override
             public void onDataReceived(byte[] data) {
                 mBluetooth.analysisCommand(data);
-                //仪器参数
-//                showFragmentContent(data);
             }
         });
     }
@@ -259,15 +253,11 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             showSeriesName();
             showFactorName();
         } catch (Exception e) {
-            LogUtil.warnOut(TAG, e, "");
+            LogUtil.warnOut(TAG, e, null);
         }
     }
 
     private void loadRtsp() {
-        String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (ActivityCompat.checkSelfPermission(this, permissions[0]) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, permissions, 1234);
-        }
         mRtspPlayer = new RtspPlayer();
         mRtspPlayer.init(DetectActivity.this, new RtspPlayer.BaseLoadingView() {
             @Override
@@ -438,6 +428,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         if (mRtspPlayer.startRecord() == 0) {
             isSaving = true;
             startRecordBtn.setText(R.string.stopRecord);
+        } else {
+            ToastUtil.shortInstanceToast("无法开启录制");
         }
         return isSaving;
     }
@@ -454,10 +446,10 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
     private void saveData() {
         // TODO: hiYuzu 2020/12/4 取消注释 
-//        if (seriesLimitInfo == null) {
-//            LogUtil.warnOut(TAG, null, "曲线信息为空");
-//            return;
-//        }
+        if (seriesLimitInfo == null) {
+            LogUtil.warnOut(TAG, null, "曲线信息为空");
+            return;
+        }
 
         // 如果已登录，则上传可用
         if (MainApplication.getInstance().isLogin()) {
