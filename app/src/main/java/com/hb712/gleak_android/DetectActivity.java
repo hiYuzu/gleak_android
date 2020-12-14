@@ -624,17 +624,17 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private void showFragmentContent(byte[] paramBytes) {
         mBluetooth.analysisCommand(paramBytes);
         // TODO: hiYuzu 2020/12/2 数据处理：paramBytes 给到 DeviceController 做进一步处理解析
-        double systemCurrent = deviceController.getSystemCurrent();
+        double currentPpm = deviceController.getCurrentPpm();
         if (!unitPPM) {
-            systemCurrent = UnitManager.getMg(systemCurrent);
+            currentPpm = UnitManager.getMg(currentPpm);
         }
 
         //展示仪器参数
         showStatus();
-        cacheCurveData(systemCurrent);
-        detectValueET.setText(new DecimalFormat("0.0").format(systemCurrent));
-        showValueBySeriesLimit(systemCurrent);
-        showMax(systemCurrent);
+        cacheCurveData(currentPpm);
+        detectValueET.setText(new DecimalFormat("0.0").format(currentPpm));
+        showValueBySeriesLimit(currentPpm);
+        showMax(currentPpm);
     }
 
     @SuppressLint("SetTextI18n")
@@ -718,20 +718,19 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     /**
      * 最大值
      *
-     * @param systemCurrent 系统电流
+     * @param currentPpm 系统检测值
      */
-    private void showMax(double systemCurrent) {
-        detectMaxvalueET.setText(new DecimalFormat("0.0").format(systemCurrent));
+    private void showMax(double currentPpm) {
         if (unitPPM) {
-            if (systemCurrent > detectMaxvaluePPM) {
-                detectMaxvaluePPM = systemCurrent;
+            if (currentPpm > detectMaxvaluePPM) {
+                detectMaxvaluePPM = currentPpm;
             }
         } else {
-            if (systemCurrent > detectMaxvalueMg) {
-                detectMaxvalueMg = systemCurrent;
+            if (currentPpm > detectMaxvalueMg) {
+                detectMaxvalueMg = currentPpm;
             }
         }
-
+        detectMaxvalueET.setText(new DecimalFormat("0.0").format(detectMaxvaluePPM));
     }
 
     public void selectSeries(View view) {
