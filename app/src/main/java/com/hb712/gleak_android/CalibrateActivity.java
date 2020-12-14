@@ -16,13 +16,9 @@ import com.hb712.gleak_android.controller.CalibrationInfoController;
 import com.hb712.gleak_android.controller.SeriesInfoController;
 import com.hb712.gleak_android.entity.CalibrationInfo;
 import com.hb712.gleak_android.entity.SeriesInfo;
-import com.hb712.gleak_android.message.blue.Phx21Status;
-import com.hb712.gleak_android.util.LogUtil;
-import com.hb712.gleak_android.util.ThreadPoolUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class CalibrateActivity extends AppCompatActivity {
     private static final String TAG = CalibrateActivity.class.getSimpleName();

@@ -8,7 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-import com.hb712.gleak_android.message.blue.Phx21Status;
+import com.hb712.gleak_android.controller.DeviceController;
+import com.hb712.gleak_android.message.blue.Voc3000Status;
 import com.hb712.gleak_android.service.BluetoothService;
 
 import java.math.BigDecimal;
@@ -43,7 +44,7 @@ public class BluetoothUtil {
     private int LongAverageCount = 25;
     private int ShortAverageCount = 5;
     private int UseAvgPerc = 10;
-    Phx21Status _currentStatus = null;
+    Voc3000Status _currentStatus = null;
     private double currentValue = 0.0D;
     private double h2pressure = 0.0D;
     private double h2pressurePercent = 0.0D;
@@ -203,16 +204,25 @@ public class BluetoothUtil {
         writeByte(new byte[]{90, 4, 37, 65});
     }
 
+    /**
+     * 点火1
+     */
     public void openFire() {
         writeByte(new byte[]{90, 27, 32, 1, -81, 0, 5, 0, 10, 0, 16, 39, -120, 19, -24, 3, -120, 19, -120, 19, 0, 0, 0, 0, 0, 0, 115});
         this.fireOn = true;
     }
 
+    /**
+     * 点火2
+     */
     public void openFire2() {
         writeByte(new byte[]{90, 27, 32, 1, -81, 0, 5, 0, 10, 0, 16, 39, -120, 19, -24, 3, -120, 19, -120, 19, 0, 0, 0, 0, 1, 0, 117});
         this.fireOn = true;
     }
 
+    /**
+     * 关火
+     */
     public void closeFire() {
         openFire();
         try {
@@ -224,6 +234,11 @@ public class BluetoothUtil {
         this.fireOn = false;
     }
 
+    /**
+     * 发送
+     *
+     * @param paramArrayOfByte
+     */
     public void writeByte(byte[] paramArrayOfByte) {
         if (paramArrayOfByte != null) {
             try {
@@ -237,6 +252,9 @@ public class BluetoothUtil {
         }
     }
 
+    /**
+     * 第一次读取数据发送
+     */
     private void init() {
         if (!this.isInit) {
             SetSampleParameters(0);
@@ -248,6 +266,11 @@ public class BluetoothUtil {
         }
     }
 
+    /**
+     * 设置采样参数
+     *
+     * @param paramInt
+     */
     private void SetSampleParameters(int paramInt) {
         byte[] arrayOfByte = new byte[5];
         arrayOfByte[0] = 90;
@@ -259,6 +282,11 @@ public class BluetoothUtil {
         writeByte(arrayOfByte);
     }
 
+    /**
+     * 设置控制参数
+     *
+     * @param paramInt
+     */
     public void SetIntegrationControlParams(int paramInt) {
         this.currentHardwareAvg = ((byte) paramInt);
         byte[] arrayOfByte = new byte[11];
@@ -285,6 +313,11 @@ public class BluetoothUtil {
         writeByte(new byte[]{90, 25, 36, 0, 0, 0, 0, 0, -72, 11, 0, 0, 0, 0, 0, 0, 72, -12, -1, -1, -1, -1, -1, -1});
     }
 
+    /**
+     * 解析接收的检测数据
+     *
+     * @param paramArrayOfByte
+     */
     public void analysisCommand(byte[] paramArrayOfByte) {
         if ((paramArrayOfByte != null) && (paramArrayOfByte.length > 2)) {
             int i = paramArrayOfByte[2];
@@ -295,38 +328,45 @@ public class BluetoothUtil {
                 }
                 processData(paramArrayOfByte);
                 return;
+            } else {
+                processGetPpmCalibration(paramArrayOfByte);
             }
-            processGETPPMCALIBRATION(paramArrayOfByte);
             return;
         }
     }
 
     private void processData(byte[] paramArrayOfByte) {
-        Phx21Status phx21Status = parseStatus(paramArrayOfByte);
-        if (phx21Status != null) {
-            this.picoAmps = phx21Status.PicoAmps;
-            this.pumpPower = phx21Status.PumpPower;
-            this.h2pressure = phx21Status.TankPressure;
-            this.BatteryVoltage = phx21Status.BatteryVoltage;
+        Voc3000Status voc3000Status = parseStatus(paramArrayOfByte);
+        if (voc3000Status != null) {
+            DeviceController.getInstance().setMicroCurrent(voc3000Status.PicoAmps);
+            DeviceController.getInstance().setPump(voc3000Status.PumpPower);
+            DeviceController.getInstance().setHydrogenPress(voc3000Status.TankPressure);
+            this.BatteryVoltage = voc3000Status.BatteryVoltage;
             this.BatteryVoltagePercent = getBatteryPercent(this.BatteryVoltage);
             if (this.BatteryVoltagePercent > 100.0D) {
                 this.BatteryVoltagePercent = 100.0D;
             }
+            DeviceController.getInstance().setPowerPercent(this.BatteryVoltagePercent);
             this.h2pressurePercent = getH2Percent(this.h2pressure);
             if (this.h2pressurePercent > 100.0D) {
                 this.h2pressurePercent = 100.0D;
             }
-            this.fireOn = phx21Status.IsIgnited;
+            DeviceController.getInstance().setHydrogenPressPercent(this.h2pressurePercent);
+            this.fireOn = voc3000Status.IsIgnited;
+            DeviceController.getInstance().setFireOn(fireOn);
+            DeviceController.getInstance().setFireTemp(voc3000Status.thermoCouple);
+            DeviceController.getInstance().setCcTemp(voc3000Status.ChamberOuterTemp);
             if (this.fireOn) {
-                this.currentValue = phx21Status.Ppm;
-                return;
+                this.currentValue = voc3000Status.Ppm;
+            } else {
+                this.currentValue = 0.0D;
             }
-            this.currentValue = 0.0D;
+            DeviceController.getInstance().setCurrentPpm(this.currentValue);
             return;
         }
     }
 
-    private void processGETPPMCALIBRATION(byte[] paramArrayOfByte) {
+    private void processGetPpmCalibration(byte[] paramArrayOfByte) {
         if ((paramArrayOfByte != null) && (paramArrayOfByte.length > 42) && (paramArrayOfByte[2] == 35)) {
             PpmCalibrationInfo localPpmCalibrationInfo = new PpmCalibrationInfo();
             localPpmCalibrationInfo.Index = paramArrayOfByte[31];
@@ -354,12 +394,12 @@ public class BluetoothUtil {
         }
     }
 
-    private Phx21Status parseStatus(byte[] paramArrayOfByte) {
+    private Voc3000Status parseStatus(byte[] paramArrayOfByte) {
         boolean bool = false;
-        Phx21Status localPhx21Status = null;
+        Voc3000Status localVoc3000Status = null;
         if ((paramArrayOfByte != null) && (paramArrayOfByte.length > 38)) {
             if (paramArrayOfByte[2] == 37) {
-                localPhx21Status = new Phx21Status();
+                localVoc3000Status = new Voc3000Status();
                 double d = ByteUtil.BytesToDword(paramArrayOfByte[35], paramArrayOfByte[34], paramArrayOfByte[33], paramArrayOfByte[32]);
                 Double.isNaN(d);
                 d *= 0.1D;
@@ -384,33 +424,33 @@ public class BluetoothUtil {
                 } else {
                     bool = false;
                 }
-                localPhx21Status.IsPumpAOn = bool;
-                localPhx21Status.AirPressure = (ByteUtil.BytesToWord(paramArrayOfByte[16], paramArrayOfByte[15]) * 0.01F);
-                localPhx21Status.BatteryVoltage = (ByteUtil.BytesToWord(paramArrayOfByte[10], paramArrayOfByte[9]) * 0.001F);
-                localPhx21Status.ChamberOuterTemp = ConvertKelvinToFahrenheit1(ByteUtil.BytesToWord(paramArrayOfByte[12], paramArrayOfByte[11]) * 0.1F);
-                localPhx21Status.RawPpm = d;
-                localPhx21Status.SamplePressure = (ByteUtil.BytesToWord(paramArrayOfByte[14], paramArrayOfByte[13]) * 0.01F);
-                localPhx21Status.TankPressure = (ByteUtil.BytesToWord(paramArrayOfByte[18], paramArrayOfByte[17]) * 1.0F);
-                localPhx21Status.ThermoCouple = ConvertKelvinToFahrenheit(ByteUtil.BytesToWord(paramArrayOfByte[8], paramArrayOfByte[7]) * 0.1F);
+                localVoc3000Status.IsPumpAOn = bool;
+                localVoc3000Status.AirPressure = (ByteUtil.BytesToWord(paramArrayOfByte[16], paramArrayOfByte[15]) * 0.01F);
+                localVoc3000Status.BatteryVoltage = (ByteUtil.BytesToWord(paramArrayOfByte[10], paramArrayOfByte[9]) * 0.001F);
+                localVoc3000Status.ChamberOuterTemp = ConvertKelvinToFahrenheit1(ByteUtil.BytesToWord(paramArrayOfByte[12], paramArrayOfByte[11]) * 0.1F);
+                localVoc3000Status.RawPpm = d;
+                localVoc3000Status.SamplePressure = (ByteUtil.BytesToWord(paramArrayOfByte[14], paramArrayOfByte[13]) * 0.01F);
+                localVoc3000Status.TankPressure = (ByteUtil.BytesToWord(paramArrayOfByte[18], paramArrayOfByte[17]) * 1.0F);
+                localVoc3000Status.thermoCouple = ConvertKelvinToFahrenheit(ByteUtil.BytesToWord(paramArrayOfByte[8], paramArrayOfByte[7]) * 0.1F);
                 d = ByteUtil.BytesToDword(paramArrayOfByte[27], paramArrayOfByte[26], paramArrayOfByte[25], paramArrayOfByte[24]);
                 Double.isNaN(d);
-                localPhx21Status.PicoAmps = (d * 0.1D);
-                localPhx21Status.SystemCurrent = ByteUtil.BytesToWord(paramArrayOfByte[37], paramArrayOfByte[36]);
-                localPhx21Status.PumpPower = paramArrayOfByte[38];
+                localVoc3000Status.PicoAmps = (d * 0.1D);
+                localVoc3000Status.SystemCurrent = ByteUtil.BytesToWord(paramArrayOfByte[37], paramArrayOfByte[36]);
+                localVoc3000Status.PumpPower = paramArrayOfByte[38];
                 if ((paramArrayOfByte[4] & 0x4) > 0) {
                     bool = true;
                 } else {
                     bool = false;
                 }
-                localPhx21Status.IsSolenoidAOn = bool;
+                localVoc3000Status.IsSolenoidAOn = bool;
                 if ((paramArrayOfByte[4] & 0x8) > 0) {
                     bool = true;
                 } else {
                     bool = false;
                 }
-                localPhx21Status.IsSolenoidBOn = bool;
-                localPhx21Status.FIDRange = paramArrayOfByte[19];
-                bool = CheckIfIgnited(localPhx21Status);
+                localVoc3000Status.IsSolenoidBOn = bool;
+                localVoc3000Status.FIDRange = paramArrayOfByte[19];
+                bool = CheckIfIgnited(localVoc3000Status);
                 if (bool != this.prevIgnite) {
                     this.ignitedChagedCount += 1;
                     if (this.ignitedChagedCount >= 3) {
@@ -419,11 +459,11 @@ public class BluetoothUtil {
                 } else {
                     this.ignitedChagedCount = 0;
                 }
-                localPhx21Status.IsIgnited = this.prevIgnite;
-                if ((localPhx21Status.IsIgnited) && (localPhx21Status.PumpPower >= 85.0D)) {
+                localVoc3000Status.IsIgnited = this.prevIgnite;
+                if ((localVoc3000Status.IsIgnited) && (localVoc3000Status.PumpPower >= 85.0D)) {
                     TurnOffPump();
                 }
-                if ((localPhx21Status.BatteryVoltage > 15.0F) || (localPhx21Status.PicoAmps < -10000.0D) || (localPhx21Status.ThermoCouple < -400.0F)) {
+                if ((localVoc3000Status.BatteryVoltage > 15.0F) || (localVoc3000Status.PicoAmps < -10000.0D) || (localVoc3000Status.thermoCouple < -400.0F)) {
                     int i = this.junkDataCount;
                     if (i < 10) {
                         this.junkDataCount = (i + 1);
@@ -432,7 +472,7 @@ public class BluetoothUtil {
                     }
                 }
                 this.junkDataCount = 0;
-                if ((localPhx21Status.FIDRange == 0) && (localPhx21Status.PicoAmps >= 6500.0D)) {
+                if ((localVoc3000Status.FIDRange == 0) && (localVoc3000Status.PicoAmps >= 6500.0D)) {
                     this.changeCount += 1;
                     if (this.changeCount >= 1) {
                         this.changeCount = 0;
@@ -445,7 +485,7 @@ public class BluetoothUtil {
                             }
                         }
                     }
-                } else if ((localPhx21Status.FIDRange == 3) && (localPhx21Status.PicoAmps <= 6000.0D)) {
+                } else if ((localVoc3000Status.FIDRange == 3) && (localVoc3000Status.PicoAmps <= 6000.0D)) {
                     this.changeCount += 1;
                     if (this.changeCount >= 1) {
                         this.changeCount = 0;
@@ -458,44 +498,39 @@ public class BluetoothUtil {
                     } else {
                     }
                 }
-                localPhx21Status.RawPpm = getValueByKB(localPhx21Status.PicoAmps);
-                this.pastPpms.add(Double.valueOf(localPhx21Status.RawPpm));
+                localVoc3000Status.RawPpm = getValueByKB(localVoc3000Status.PicoAmps);
+                this.pastPpms.add(Double.valueOf(localVoc3000Status.RawPpm));
                 if (this.pastPpms.size() > this.maxPastPpms) {
                     this.pastPpms.remove(0);
                 }
-                localPhx21Status.LongAveragePpm = getAverage(this.LongAverageCount);
-                localPhx21Status.ShortAveragePpm = getAverage(this.ShortAverageCount);
-                localPhx21Status.UseAverage = checkP(localPhx21Status, this.pastPpms);
-                if (localPhx21Status.UseAverage) {
-                    if (localPhx21Status.FIDRange == 3) {
-                        d = localPhx21Status.LongAveragePpm;
+                localVoc3000Status.LongAveragePpm = getAverage(this.LongAverageCount);
+                localVoc3000Status.ShortAveragePpm = getAverage(this.ShortAverageCount);
+                localVoc3000Status.UseAverage = checkP(localVoc3000Status, this.pastPpms);
+                if (localVoc3000Status.UseAverage) {
+                    if (localVoc3000Status.FIDRange == 3) {
+                        d = localVoc3000Status.LongAveragePpm;
                     } else {
-                        d = localPhx21Status.ShortAveragePpm;
+                        d = localVoc3000Status.ShortAveragePpm;
                     }
-                    localPhx21Status.Ppm = d;
+                    localVoc3000Status.Ppm = d;
                 } else {
-                    localPhx21Status.Ppm = localPhx21Status.RawPpm;
+                    localVoc3000Status.Ppm = localVoc3000Status.RawPpm;
                 }
-                if (localPhx21Status.IsIgnited) {
-                    localPhx21Status.PpmStr = String.valueOf(localPhx21Status.Ppm);
+                if (localVoc3000Status.IsIgnited) {
+                    localVoc3000Status.PpmStr = String.valueOf(localVoc3000Status.Ppm);
                 } else {
-                    localPhx21Status.PpmStr = "N/A";
+                    localVoc3000Status.PpmStr = "N/A";
                 }
-//                localPhx21Status = paramArrayOfByte;
-                if ((localPhx21Status.PicoAmps <= 200.0D) && (this.currentHardwareAvg == 10)) {
+                if ((localVoc3000Status.PicoAmps <= 200.0D) && (this.currentHardwareAvg == 10)) {
                     SetIntegrationControlParams(50);
-                } else if ((localPhx21Status.PicoAmps > 200.0D) && (this.currentHardwareAvg == 50)) {
+                } else if ((localVoc3000Status.PicoAmps > 200.0D) && (this.currentHardwareAvg == 50)) {
                     SetIntegrationControlParams(10);
                 }
-                localPhx21Status = localPhx21Status;
-            } else {
-//                paramArrayOfByte = localPhx21Status;
+                localVoc3000Status = localVoc3000Status;
             }
-        } else {
-//            paramArrayOfByte = localPhx21Status;
         }
-        this._currentStatus = localPhx21Status;
-        return localPhx21Status;
+        this._currentStatus = localVoc3000Status;
+        return localVoc3000Status;
     }
 
     private float ConvertKelvinToFahrenheit1(float paramFloat) {
@@ -506,8 +541,8 @@ public class BluetoothUtil {
         return (float) Math.round((paramFloat - 273.15F) * 2.5F + 32.0F);
     }
 
-    private boolean CheckIfIgnited(Phx21Status paramPhx21Status) {
-        return (paramPhx21Status.ThermoCouple > 75.0F) && (paramPhx21Status.IsSolenoidAOn) && (paramPhx21Status.IsPumpAOn);
+    private boolean CheckIfIgnited(Voc3000Status paramVoc3000Status) {
+        return (paramVoc3000Status.thermoCouple > 75.0F) && (paramVoc3000Status.IsSolenoidAOn) && (paramVoc3000Status.IsPumpAOn);
     }
 
     private void TurnOffPump() {
@@ -528,13 +563,6 @@ public class BluetoothUtil {
 
     private double getAverage(int paramInt) {
         if (this.pastPpms.size() > 0) {
-//            MyLogger localMyLogger = MyLogger.jLog();
-//            StringBuilder localStringBuilder = new StringBuilder();
-//            localStringBuilder.append("size ");
-//            localStringBuilder.append(String.valueOf(this.pastPpms.size()));
-//            localStringBuilder.append(" length ");
-//            localStringBuilder.append(String.valueOf(paramInt));
-//            localMyLogger.saveToFile(localStringBuilder.toString());
             double d1 = 0.0D;
             int i = 0;
             if (this.pastPpms.size() > paramInt) {
@@ -555,7 +583,7 @@ public class BluetoothUtil {
         return 0.0D;
     }
 
-    boolean checkP(Phx21Status paramPhx21Status, List<Double> paramList) {
+    boolean checkP(Voc3000Status paramVoc3000Status, List<Double> paramList) {
         boolean bool = false;
         if (paramList != null) {
             int i = 0;
@@ -565,7 +593,7 @@ public class BluetoothUtil {
             paramList = paramList.subList(i, paramList.size());
             if (paramList != null) {
                 for (double d : paramList) {
-                    if ((d / paramPhx21Status.LongAveragePpm * 100.0D >= 100 - this.UseAvgPerc) && (d / paramPhx21Status.LongAveragePpm * 100.0D <= this.UseAvgPerc + 100)) {
+                    if ((d / paramVoc3000Status.LongAveragePpm * 100.0D >= 100 - this.UseAvgPerc) && (d / paramVoc3000Status.LongAveragePpm * 100.0D <= this.UseAvgPerc + 100)) {
                         bool = true;
                     } else {
                         bool = false;

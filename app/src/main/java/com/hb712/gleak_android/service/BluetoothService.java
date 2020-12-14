@@ -230,17 +230,11 @@ public class BluetoothService {
                             break;
                         }
                     }
-//                    for (int i = 0; i < buffer.length; i++) {
-//                        buffer[i] = ((Integer) mmInStream.read()).byteValue();+
-//                    }
-//                    buffer[bytes] = (byte) '\n';
-//                    bytes++;
 
                     byte[] buffers = new byte[bytes];
                     System.arraycopy(buffer, 0, buffers, 0, bytes);
                     mHandler.obtainMessage(GlobalParam.MESSAGE_READ, bytes, -1, buffers).sendToTarget();
                     System.out.println(Arrays.toString(buffer));
-//                    sleep(10);
                 } catch (IOException e) {
                     LogUtil.warnOut(TAG, e, "收发失败");
                     connectionFailed();

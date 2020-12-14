@@ -552,8 +552,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     public void fireClick2(View view) {
         if (isConnected()) {
-//            mBluetooth.openFire2();
-            mBluetooth.readData();
+            mBluetooth.openFire2();
+//            mBluetooth.readData();
         }
     }
 

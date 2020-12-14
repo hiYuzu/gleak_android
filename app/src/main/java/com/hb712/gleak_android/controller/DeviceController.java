@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * 仪器控制、仪器信息
+ *
  * @author hiYuzu
  * @version V1.0
  * @date 2020/10/20 10:28
@@ -35,6 +36,7 @@ public class DeviceController {
     private double ccTemp;
     private double fireTemp;
     private double microCurrent;
+    private double currentPpm;
 
     private List<Double> pastPpm = new ArrayList<>();
 
@@ -165,6 +167,14 @@ public class DeviceController {
 
     public void setMicroCurrent(double microCurrent) {
         this.microCurrent = microCurrent;
+    }
+
+    public double getCurrentPpm() {
+        return currentPpm;
+    }
+
+    public void setCurrentPpm(double currentPpm) {
+        this.currentPpm = currentPpm;
     }
 }
 

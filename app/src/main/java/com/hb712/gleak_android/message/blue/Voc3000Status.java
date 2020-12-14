@@ -1,6 +1,6 @@
 package com.hb712.gleak_android.message.blue;
 
-public class Phx21Status {
+public class Voc3000Status {
     public float AirPressure;
     public float BatteryVoltage;
     public float ChamberOuterTemp;
@@ -19,7 +19,7 @@ public class Phx21Status {
     public double ShortAveragePpm;
     public float SystemCurrent;
     public float TankPressure;
-    public float ThermoCouple;
+    public float thermoCouple;
     public String Timestamp;
     public boolean UseAverage;
 }
