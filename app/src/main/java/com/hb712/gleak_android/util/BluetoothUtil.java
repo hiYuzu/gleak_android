@@ -340,7 +340,8 @@ public class BluetoothUtil {
         if (voc3000Status != null) {
             DeviceController.getInstance().setMicroCurrent(voc3000Status.PicoAmps);
             DeviceController.getInstance().setPump(voc3000Status.PumpPower);
-            DeviceController.getInstance().setHydrogenPress(voc3000Status.TankPressure);
+            this.h2pressure = voc3000Status.TankPressure;
+            DeviceController.getInstance().setHydrogenPress(this.h2pressure);
             this.BatteryVoltage = voc3000Status.BatteryVoltage;
             this.BatteryVoltagePercent = getBatteryPercent(this.BatteryVoltage);
             if (this.BatteryVoltagePercent > 100.0D) {
@@ -354,7 +355,7 @@ public class BluetoothUtil {
             DeviceController.getInstance().setHydrogenPressPercent(this.h2pressurePercent);
             this.fireOn = voc3000Status.IsIgnited;
             DeviceController.getInstance().setFireOn(fireOn);
-            DeviceController.getInstance().setFireTemp(voc3000Status.thermoCouple);
+            DeviceController.getInstance().setFireTemp(voc3000Status.ThermoCouple);
             DeviceController.getInstance().setCcTemp(voc3000Status.ChamberOuterTemp);
             if (this.fireOn) {
                 this.currentValue = voc3000Status.Ppm;
@@ -362,6 +363,9 @@ public class BluetoothUtil {
                 this.currentValue = 0.0D;
             }
             DeviceController.getInstance().setCurrentPpm(this.currentValue);
+            DeviceController.getInstance().setDischargePress(voc3000Status.SamplePressure);
+            DeviceController.getInstance().setOutletHydrogenPress(voc3000Status.AirPressure);
+            DeviceController.getInstance().setSystemCurrent(voc3000Status.SystemCurrent);
             return;
         }
     }
@@ -431,7 +435,7 @@ public class BluetoothUtil {
                 localVoc3000Status.RawPpm = d;
                 localVoc3000Status.SamplePressure = (ByteUtil.BytesToWord(paramArrayOfByte[14], paramArrayOfByte[13]) * 0.01F);
                 localVoc3000Status.TankPressure = (ByteUtil.BytesToWord(paramArrayOfByte[18], paramArrayOfByte[17]) * 1.0F);
-                localVoc3000Status.thermoCouple = ConvertKelvinToFahrenheit(ByteUtil.BytesToWord(paramArrayOfByte[8], paramArrayOfByte[7]) * 0.1F);
+                localVoc3000Status.ThermoCouple = ConvertKelvinToFahrenheit(ByteUtil.BytesToWord(paramArrayOfByte[8], paramArrayOfByte[7]) * 0.1F);
                 d = ByteUtil.BytesToDword(paramArrayOfByte[27], paramArrayOfByte[26], paramArrayOfByte[25], paramArrayOfByte[24]);
                 Double.isNaN(d);
                 localVoc3000Status.PicoAmps = (d * 0.1D);
@@ -463,7 +467,7 @@ public class BluetoothUtil {
                 if ((localVoc3000Status.IsIgnited) && (localVoc3000Status.PumpPower >= 85.0D)) {
                     TurnOffPump();
                 }
-                if ((localVoc3000Status.BatteryVoltage > 15.0F) || (localVoc3000Status.PicoAmps < -10000.0D) || (localVoc3000Status.thermoCouple < -400.0F)) {
+                if ((localVoc3000Status.BatteryVoltage > 15.0F) || (localVoc3000Status.PicoAmps < -10000.0D) || (localVoc3000Status.ThermoCouple < -400.0F)) {
                     int i = this.junkDataCount;
                     if (i < 10) {
                         this.junkDataCount = (i + 1);
@@ -526,7 +530,6 @@ public class BluetoothUtil {
                 } else if ((localVoc3000Status.PicoAmps > 200.0D) && (this.currentHardwareAvg == 50)) {
                     SetIntegrationControlParams(10);
                 }
-                localVoc3000Status = localVoc3000Status;
             }
         }
         this._currentStatus = localVoc3000Status;
@@ -542,7 +545,7 @@ public class BluetoothUtil {
     }
 
     private boolean CheckIfIgnited(Voc3000Status paramVoc3000Status) {
-        return (paramVoc3000Status.thermoCouple > 75.0F) && (paramVoc3000Status.IsSolenoidAOn) && (paramVoc3000Status.IsPumpAOn);
+        return (paramVoc3000Status.ThermoCouple > 75.0F) && (paramVoc3000Status.IsSolenoidAOn) && (paramVoc3000Status.IsPumpAOn);
     }
 
     private void TurnOffPump() {

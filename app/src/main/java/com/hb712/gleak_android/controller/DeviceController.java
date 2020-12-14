@@ -63,14 +63,7 @@ public class DeviceController {
     }
 
     public void setPowerPercent(double vol) {
-        if (vol > 8.2D) {
-            powerPercent = 100.0D;
-        } else if (vol < 6.1D) {
-            powerPercent = 0.0D;
-        } else {
-            double d = 100.0D / (8.2D - 6.1D);
-            powerPercent = d * vol + (0.0D - 6.1D * d);
-        }
+        powerPercent = vol;
     }
 
     public double getVol() {
@@ -134,14 +127,7 @@ public class DeviceController {
     }
 
     public void setHydrogenPressPercent(double hydrogenPress) {
-        if (hydrogenPress > 2200.0D) {
-            hydrogenPressPercent = 100.0D;
-        } else if (hydrogenPress < 30.0D) {
-            hydrogenPressPercent = 0.0D;
-        } else {
-            double d = 100.0D / (2200.0D - 30.0D);
-            hydrogenPressPercent = d * hydrogenPress + (0.0D - 30.0D * d);
-        }
+        hydrogenPressPercent = hydrogenPress;
 
     }
 
