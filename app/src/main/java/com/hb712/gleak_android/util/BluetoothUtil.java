@@ -48,6 +48,7 @@ public class BluetoothUtil {
     private double currentValue = 0.0D;
     private double h2pressure = 0.0D;
     private double h2pressurePercent = 0.0D;
+    //电压值
     private double BatteryVoltage = 0.0D;
     private double BatteryVoltagePercent = 0.0D;
     List<PpmCalibrationInfo> PpmCalibrationInfoList = new ArrayList();
@@ -343,6 +344,7 @@ public class BluetoothUtil {
             this.h2pressure = voc3000Status.TankPressure;
             DeviceController.getInstance().setHydrogenPress(this.h2pressure);
             this.BatteryVoltage = voc3000Status.BatteryVoltage;
+            DeviceController.getInstance().setVol(this.BatteryVoltage);
             this.BatteryVoltagePercent = getBatteryPercent(this.BatteryVoltage);
             if (this.BatteryVoltagePercent > 100.0D) {
                 this.BatteryVoltagePercent = 100.0D;
