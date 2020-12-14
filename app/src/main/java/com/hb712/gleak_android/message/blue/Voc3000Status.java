@@ -3,7 +3,7 @@ package com.hb712.gleak_android.message.blue;
 public class Voc3000Status {
     //出口氢气压力
     public float AirPressure;
-    //电量
+    //电压
     public float BatteryVoltage;
     //燃烧室温度
     public float ChamberOuterTemp;
