@@ -7,14 +7,19 @@ import com.hb712.gleak_android.dao.DaoSession;
 import com.hb712.gleak_android.util.LogUtil;
 
 import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
 /**
  * @author hiYuzu
  * @version V1.0
  * @date 2020/10/22 8:30
  */
+@Entity
 public class CalibrationInfo implements Comparable<CalibrationInfo> {
     private static final String TAG = CalibrationInfo.class.getSimpleName();
+    @Id
     private Long id;
     private String calibrateTime;
     private String deviceName;
@@ -28,9 +33,11 @@ public class CalibrationInfo implements Comparable<CalibrationInfo> {
     private transient DaoSession daoSession;
     private transient CalibrationInfoDao calibrationInfoDao;
 
+    @Generated
     public CalibrationInfo() {
     }
 
+    @Generated
     public CalibrationInfo(Long id, String deviceName, long seriesId, String calibrateTime, double signalValue, double standardValue, double kValue, double bValue) {
         this.id = id;
         this.deviceName = deviceName;

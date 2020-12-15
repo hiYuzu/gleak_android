@@ -25,6 +25,7 @@ import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
+import com.hb712.gleak_android.util.PermissionsUtil;
 
 /**
  * @author hiYuzu
@@ -74,7 +75,7 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
             mMessageText.setVisibility(View.GONE);
             mResultText.setVisibility(View.GONE);
             mLoadingImage.setVisibility(View.GONE);
-
+            PermissionsUtil.requestWriteExternalStorage(this, this);
             MainApplication.getInstance().removeUserPwd();
 
             mLoginButton.setOnClickListener(v -> {

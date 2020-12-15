@@ -52,6 +52,8 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DetectActivity extends BaseActivity implements HttpInterface {
 
@@ -108,6 +110,10 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private double detectMaxvalueMg = 0;
 
     private RtspPlayer mRtspPlayer;
+
+    private TimerTask timerTask;
+    private Timer timer;
+    private int timerTime = 500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,6 +211,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 detectConnectB.setText(R.string.detect_disconnect);
                 connDeviceTV.setText(name);
                 ToastUtil.shortInstanceToast("蓝牙已连接");
+                startReadTask();
             }
 
             @Override
@@ -213,13 +220,49 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 detectConnectB.setText(R.string.detect_connect);
                 connDeviceTV.setText(R.string.detect_disconnected);
                 ToastUtil.shortInstanceToast("蓝牙已断开");
+                stopReadTask();
             }
 
             @Override
             public void onDataReceived(byte[] data) {
-                mBluetooth.analysisCommand(data);
+                //仪器参数
+                showFragmentContent(data);
             }
         });
+    }
+
+    /**
+     * 开启读取线程
+     */
+    private void startReadTask() {
+        if (this.timerTask != null) {
+            this.timerTask.cancel();
+        }
+        this.timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                mBluetooth.readData();
+            }
+        };
+        if (this.timer == null) {
+            this.timer = new Timer();
+        }
+        this.timer.purge();
+        this.timer.schedule(this.timerTask, this.timerTime, this.timerTime);
+    }
+
+    /**
+     * 关闭读取线程
+     */
+    private void stopReadTask() {
+        if (this.timer != null) {
+            this.timer.cancel();
+            this.timer = null;
+        }
+        if (this.timerTask != null) {
+            this.timerTask.cancel();
+            this.timerTask = null;
+        }
     }
 
     private void initClass() {
@@ -307,6 +350,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
     public void onStart() {
         super.onStart();
         if (!mBluetooth.isBluetoothEnabled()) {
@@ -574,6 +618,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      * @param paramBytes 接收的数据
      */
     private void showFragmentContent(byte[] paramBytes) {
+        mBluetooth.analysisCommand(paramBytes);
         // TODO: hiYuzu 2020/12/2 数据处理：paramBytes 给到 DeviceController 做进一步处理解析
         double systemCurrent = deviceController.getSystemCurrent();
         if (!unitPPM) {

@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hb712.gleak_android.base.BaseActivity;
+import com.hb712.gleak_android.dao.DBManager;
 import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
@@ -38,6 +39,8 @@ public class MainActivity extends BaseActivity implements HttpInterface {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        LogUtil.initDirectory();
+        DBManager.getInstance().init(this);
         GPSUtil.requestLocationPower(this);
         getAllMonitor();
         UploadPositionService.getInstance().uploadPosition();

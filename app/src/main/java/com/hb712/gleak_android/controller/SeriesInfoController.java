@@ -35,12 +35,12 @@ public class SeriesInfoController {
 
     public static List<SeriesInfo> getAll()
     {
-        //checkStd();
-        //return DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().list();
+        checkStd();
+        return DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().list();
         // TODO: hiYuzu 2020/12/2 测试用，待删除
-        List<SeriesInfo> seriesInfoList = new ArrayList<>();
-        seriesInfoList.add(new SeriesInfo(1L, "测试曲线", true));
-        return seriesInfoList;
+//        List<SeriesInfo> seriesInfoList = new ArrayList<>();
+//        seriesInfoList.add(new SeriesInfo(1L, "测试曲线", true));
+//        return seriesInfoList;
     }
 
     public static List<SeriesInfo> getAllEdits()

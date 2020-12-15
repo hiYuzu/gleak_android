@@ -1,5 +1,9 @@
 package com.hb712.gleak_android.entity;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
+
 /**
  * 曲线信息
  *
@@ -7,14 +11,18 @@ package com.hb712.gleak_android.entity;
  * @version V1.0
  * @date 2020/10/21 10:00
  */
+@Entity
 public class SeriesInfo {
+    @Id
+    private Long id;
     private String seriesName = "";
     private boolean stdSeries = false;
-    private Long id;
 
+    @Generated
     public SeriesInfo() {
     }
 
+    @Generated
     public SeriesInfo(Long id, String seriesName, boolean stdSeries) {
         this.id = id;
         this.seriesName = seriesName;

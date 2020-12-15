@@ -17,7 +17,7 @@ import org.greenrobot.greendao.internal.DaoConfig;
  * @date 2020/10/22 11:19
  */
 public class SeriesLimitInfoDao extends AbstractDao<SeriesLimitInfo, Long> {
-    private static final String TABLE_NAME = "series_limit_info";
+    public static final String TABLENAME = "series_limit_info";
     private DaoSession daoSession;
     private String selectDeep;
 
@@ -25,76 +25,68 @@ public class SeriesLimitInfoDao extends AbstractDao<SeriesLimitInfo, Long> {
         super(daoConfig);
     }
 
-    SeriesLimitInfoDao(DaoConfig daoConfig, DaoSession paramDaoSession) {
-        super(daoConfig, paramDaoSession);
-        this.daoSession = paramDaoSession;
+    SeriesLimitInfoDao(DaoConfig daoConfig, DaoSession daoSession) {
+        super(daoConfig, daoSession);
+        this.daoSession = daoSession;
     }
 
-    static void createTable(Database database, boolean paramBoolean) {
-        String str;
-        if (paramBoolean) {
-            str = "IF NOT EXISTS ";
-        } else {
-            str = "";
-        }
-        String sql = "CREATE TABLE " +
-                str +
-                "\"" + TABLE_NAME + "\" (\"id\" INTEGER PRIMARY KEY AUTOINCREMENT ,\"series_id\" INTEGER NOT NULL ,\"max_value\" REAL NOT NULL );";
+    static void createTable(Database database) {
+        String sql = "CREATE TABLE IF NOT EXISTS " +
+                "\"" + TABLENAME + "\" (\"id\" INTEGER PRIMARY KEY AUTOINCREMENT ,\"series_id\" INTEGER NOT NULL ,\"max_value\" REAL NOT NULL );";
         database.execSQL(sql);
     }
 
-    static void dropTable(Database database, boolean paramBoolean) {
-        StringBuilder localStringBuilder = new StringBuilder();
-        localStringBuilder.append("DROP TABLE ");
-        String str;
-        if (paramBoolean) {
-            str = "IF EXISTS ";
-        } else {
-            str = "";
-        }
-        localStringBuilder.append(str);
-        localStringBuilder.append("\"" + TABLE_NAME + "\"");
-        database.execSQL(localStringBuilder.toString());
+    static void dropTable(Database database) {
+        String sql = "DROP TABLE IF EXISTS " +
+                "\"" + TABLENAME + "\"";
+        database.execSQL(sql);
     }
 
-    protected final void attachEntity(SeriesLimitInfo seriesLimitInfo) {
-        super.attachEntity(seriesLimitInfo);
-        seriesLimitInfo.setDaoSession(daoSession);
+    @Override
+    protected void attachEntity(SeriesLimitInfo entity) {
+        super.attachEntity(entity);
+        entity.setDaoSession(daoSession);
     }
 
-    protected final void bindValues(SQLiteStatement sqLiteStatement, SeriesLimitInfo seriesLimitInfo) {
-        sqLiteStatement.clearBindings();
-        Long id = seriesLimitInfo.getId();
+    @Override
+    protected void bindValues(SQLiteStatement stmt, SeriesLimitInfo entity) {
+        stmt.clearBindings();
+        Long id = entity.getId();
         if (id != null) {
-            sqLiteStatement.bindLong(1, id);
+            stmt.bindLong(1, id);
         }
-        sqLiteStatement.bindLong(2, seriesLimitInfo.getSeriesId());
-        sqLiteStatement.bindDouble(3, seriesLimitInfo.getMaxValue());
+        stmt.bindLong(2, entity.getSeriesId());
+        stmt.bindDouble(3, entity.getMaxValue());
     }
 
-    protected final void bindValues(DatabaseStatement databaseStatement, SeriesLimitInfo seriesLimitInfo) {
-        databaseStatement.clearBindings();
-        Long id = seriesLimitInfo.getId();
+    @Override
+    protected void bindValues(DatabaseStatement stmt, SeriesLimitInfo entity) {
+        stmt.clearBindings();
+        Long id = entity.getId();
         if (id != null) {
-            databaseStatement.bindLong(1, id);
+            stmt.bindLong(1, id);
         }
-        databaseStatement.bindLong(2, seriesLimitInfo.getSeriesId());
-        databaseStatement.bindDouble(3, seriesLimitInfo.getMaxValue());
+        stmt.bindLong(2, entity.getSeriesId());
+        stmt.bindDouble(3, entity.getMaxValue());
     }
 
-    public Long getKey(SeriesLimitInfo seriesLimitInfo) {
-        return seriesLimitInfo != null ? seriesLimitInfo.getId() : null;
+    @Override
+    protected Long getKey(SeriesLimitInfo entity) {
+        return entity != null ? entity.getId() : null;
     }
 
-    public boolean hasKey(SeriesLimitInfo seriesLimitInfo) {
-        return seriesLimitInfo.getId() != null;
+    @Override
+    protected boolean hasKey(SeriesLimitInfo entity) {
+        return entity.getId() != null;
     }
 
-    protected final boolean isEntityUpdateable() {
+    @Override
+    protected boolean isEntityUpdateable() {
         return true;
     }
 
-    public SeriesLimitInfo readEntity(Cursor cursor, int offset) {
+    @Override
+    protected SeriesLimitInfo readEntity(Cursor cursor, int offset) {
         Long id = null;
         if (!cursor.isNull(offset)) {
             id = cursor.getLong(offset);
@@ -102,22 +94,25 @@ public class SeriesLimitInfoDao extends AbstractDao<SeriesLimitInfo, Long> {
         return new SeriesLimitInfo(id, cursor.getLong(offset + 1), cursor.getDouble(offset + 2));
     }
 
-    public void readEntity(Cursor cursor, SeriesLimitInfo seriesLimitInfo, int offset) {
+    @Override
+    protected void readEntity(Cursor cursor, SeriesLimitInfo entity, int offset) {
         Long id = null;
         if (!cursor.isNull(offset)) {
             id = cursor.getLong(offset);
         }
-        seriesLimitInfo.setId(id);
-        seriesLimitInfo.setSeriesId(cursor.getLong(offset + 1));
-        seriesLimitInfo.setMaxValue(cursor.getDouble(offset + 2));
+        entity.setId(id);
+        entity.setSeriesId(cursor.getLong(offset + 1));
+        entity.setMaxValue(cursor.getDouble(offset + 2));
     }
 
-    public Long readKey(Cursor cursor, int offset) {
+    @Override
+    protected Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset) ? null : cursor.getLong(offset);
     }
 
-    protected final Long updateKeyAfterInsert(SeriesLimitInfo seriesLimitInfo, long rowId) {
-        seriesLimitInfo.setId(rowId);
+    @Override
+    protected Long updateKeyAfterInsert(SeriesLimitInfo entity, long rowId) {
+        entity.setId(rowId);
         return rowId;
     }
 

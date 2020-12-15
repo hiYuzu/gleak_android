@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
 import com.hb712.gleak_android.entity.CalibrationInfo;
+import com.hb712.gleak_android.entity.FactorCoefficientInfo;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -17,7 +18,7 @@ import org.greenrobot.greendao.internal.DaoConfig;
  * @date 2020/10/22 8:58
  */
 public class CalibrationInfoDao extends AbstractDao<CalibrationInfo, Long> {
-    private static final String TABLE_NAME = "calibration_info";
+    public static final String TABLENAME = "calibration_info";
     private static final String TAG = CalibrationInfoDao.class.getSimpleName();
     private DaoSession daoSession;
 
@@ -30,92 +31,85 @@ public class CalibrationInfoDao extends AbstractDao<CalibrationInfo, Long> {
         this.daoSession = daoSession;
     }
 
-    static void createTable(Database paramDatabase, boolean paramBoolean) {
-        String str;
-        if (paramBoolean) {
-            str = "IF NOT EXISTS ";
-        } else {
-            str = "";
-        }
-        String sql = "CREATE TABLE " +
-                str +
-                "\"" + TABLE_NAME + "\" (\"id\" INTEGER PRIMARY KEY ,\"device_name\" TEXT,\"series_id\" INTEGER NOT NULL ,\"calibrate_time\" TEXT,\"signal_value\" REAL NOT NULL ,\"standard_value\" REAL NOT NULL ,\"k_value\" REAL NOT NULL ,\"b_value\" REAL NOT NULL );";
-        paramDatabase.execSQL(sql);
+    static void createTable(Database database) {
+        String sql = "CREATE TABLE IF NOT EXISTS " +
+                "\"" + TABLENAME + "\" (\"id\" INTEGER PRIMARY KEY ,\"device_name\" TEXT,\"series_id\" INTEGER NOT NULL ,\"calibrate_time\" TEXT,\"signal_value\" REAL NOT NULL ,\"standard_value\" REAL NOT NULL ,\"k_value\" REAL NOT NULL ,\"b_value\" REAL NOT NULL );";
+        database.execSQL(sql);
     }
 
-    static void dropTable(Database paramDatabase, boolean paramBoolean) {
-        String str;
-        if (paramBoolean) {
-            str = "IF EXISTS ";
-        } else {
-            str = "";
-        }
-        String sql = "DROP TABLE " +
-                str +
-                "\"" + TABLE_NAME + "\"";
-        paramDatabase.execSQL(sql);
+    static void dropTable(Database database) {
+        String sql = "DROP TABLE IF EXISTS " +
+                "\"" + TABLENAME + "\"";
+        database.execSQL(sql);
     }
 
-    protected final void attachEntity(CalibrationInfo calibrationInfo) {
-        super.attachEntity(calibrationInfo);
-        calibrationInfo.setDaoSession(daoSession);
+    @Override
+    protected void attachEntity(CalibrationInfo entity) {
+        super.attachEntity(entity);
+        entity.setDaoSession(daoSession);
     }
 
-    protected final void bindValues(SQLiteStatement sqLiteStatement, CalibrationInfo calibrationInfo) {
-        sqLiteStatement.clearBindings();
-        Long id = calibrationInfo.getId();
+    @Override
+    protected void bindValues(SQLiteStatement stmt, CalibrationInfo entity) {
+        stmt.clearBindings();
+        Long id = entity.getId();
         if (id != null) {
-            sqLiteStatement.bindLong(1, id);
+            stmt.bindLong(1, id);
         }
-        String deviceName = calibrationInfo.getDeviceName();
+        String deviceName = entity.getDeviceName();
         if (deviceName != null) {
-            sqLiteStatement.bindString(2, deviceName);
+            stmt.bindString(2, deviceName);
         }
-        sqLiteStatement.bindLong(3, calibrationInfo.getSeriesId());
-        String calibrateTime = calibrationInfo.getCalibrateTime();
+        stmt.bindLong(3, entity.getSeriesId());
+        String calibrateTime = entity.getCalibrateTime();
         if (calibrateTime != null) {
-            sqLiteStatement.bindString(4, calibrateTime);
+            stmt.bindString(4, calibrateTime);
         }
-        sqLiteStatement.bindDouble(5, calibrationInfo.getSignalValue());
-        sqLiteStatement.bindDouble(6, calibrationInfo.getStandardValue());
-        sqLiteStatement.bindDouble(7, calibrationInfo.getkValue());
-        sqLiteStatement.bindDouble(8, calibrationInfo.getbValue());
+        stmt.bindDouble(5, entity.getSignalValue());
+        stmt.bindDouble(6, entity.getStandardValue());
+        stmt.bindDouble(7, entity.getkValue());
+        stmt.bindDouble(8, entity.getbValue());
     }
 
-    protected final void bindValues(DatabaseStatement databaseStatement, CalibrationInfo calibrationInfo) {
-        databaseStatement.clearBindings();
-        Long id = calibrationInfo.getId();
+    @Override
+    protected void bindValues(DatabaseStatement stmt, CalibrationInfo entity) {
+        stmt.clearBindings();
+        Long id = entity.getId();
         if (id != null) {
-            databaseStatement.bindLong(1, id);
+            stmt.bindLong(1, id);
         }
-        String deviceName = calibrationInfo.getDeviceName();
+        String deviceName = entity.getDeviceName();
         if (deviceName != null) {
-            databaseStatement.bindString(2, deviceName);
+            stmt.bindString(2, deviceName);
         }
-        databaseStatement.bindLong(3, calibrationInfo.getSeriesId());
-        String calibrateTime = calibrationInfo.getCalibrateTime();
+        stmt.bindLong(3, entity.getSeriesId());
+        String calibrateTime = entity.getCalibrateTime();
         if (calibrateTime != null) {
-            databaseStatement.bindString(4, calibrateTime);
+            stmt.bindString(4, calibrateTime);
         }
-        databaseStatement.bindDouble(5, calibrationInfo.getSignalValue());
-        databaseStatement.bindDouble(6, calibrationInfo.getStandardValue());
-        databaseStatement.bindDouble(7, calibrationInfo.getkValue());
-        databaseStatement.bindDouble(8, calibrationInfo.getbValue());
+        stmt.bindDouble(5, entity.getSignalValue());
+        stmt.bindDouble(6, entity.getStandardValue());
+        stmt.bindDouble(7, entity.getkValue());
+        stmt.bindDouble(8, entity.getbValue());
     }
 
-    public Long getKey(CalibrationInfo calibrationInfo) {
-        return calibrationInfo != null ? calibrationInfo.getId() : null;
+    @Override
+    protected Long getKey(CalibrationInfo entity) {
+        return entity != null ? entity.getId() : null;
     }
 
-    public boolean hasKey(CalibrationInfo calibrationInfo) {
-        return calibrationInfo.getId() != null;
+    @Override
+    protected boolean hasKey(CalibrationInfo entity) {
+        return entity.getId() != null;
     }
 
+    @Override
     protected final boolean isEntityUpdateable() {
         return true;
     }
 
-    public CalibrationInfo readEntity(Cursor cursor, int paramInt) {
+    @Override
+    protected CalibrationInfo readEntity(Cursor cursor, int paramInt) {
         Long id = null;
         if (!cursor.isNull(paramInt)) {
             id = cursor.getLong(paramInt);
@@ -132,30 +126,32 @@ public class CalibrationInfoDao extends AbstractDao<CalibrationInfo, Long> {
         return new CalibrationInfo(id, deviceName, seriesId, calibrateTime, cursor.getDouble(paramInt + 4), cursor.getDouble(paramInt + 5), cursor.getDouble(paramInt + 6), cursor.getDouble(paramInt + 7));
     }
 
-
-    public void readEntity(Cursor cursor, CalibrationInfo calibrationInfo, int offset) {
+    @Override
+    protected void readEntity(Cursor cursor, CalibrationInfo entity, int offset) {
         if (!cursor.isNull(offset)) {
-            calibrationInfo.setId(cursor.getLong(offset));
+            entity.setId(cursor.getLong(offset));
         }
         if (!cursor.isNull(offset + 1)) {
-            calibrationInfo.setDeviceName(cursor.getString(offset + 1));
+            entity.setDeviceName(cursor.getString(offset + 1));
         }
-        calibrationInfo.setSeriesId(cursor.getLong(offset + 2));
+        entity.setSeriesId(cursor.getLong(offset + 2));
         if (!cursor.isNull(offset + 3)) {
-            calibrationInfo.setCalibrateTime(cursor.getString(offset + 3));
+            entity.setCalibrateTime(cursor.getString(offset + 3));
         }
-        calibrationInfo.setSignalValue(cursor.getDouble(offset + 4));
-        calibrationInfo.setStandardValue(cursor.getDouble(offset + 5));
-        calibrationInfo.setkValue(cursor.getDouble(offset + 6));
-        calibrationInfo.setbValue(cursor.getDouble(offset + 7));
+        entity.setSignalValue(cursor.getDouble(offset + 4));
+        entity.setStandardValue(cursor.getDouble(offset + 5));
+        entity.setkValue(cursor.getDouble(offset + 6));
+        entity.setbValue(cursor.getDouble(offset + 7));
     }
 
-    public Long readKey(Cursor cursor, int offset) {
+    @Override
+    protected Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset) ? null : cursor.getLong(offset);
     }
 
-    protected final Long updateKeyAfterInsert(CalibrationInfo calibrationInfo, long rowId) {
-        calibrationInfo.setId(rowId);
+    @Override
+    protected Long updateKeyAfterInsert(CalibrationInfo entity, long rowId) {
+        entity.setId(rowId);
         return rowId;
     }
 

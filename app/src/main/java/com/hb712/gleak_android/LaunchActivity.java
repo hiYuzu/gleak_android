@@ -1,11 +1,13 @@
 package com.hb712.gleak_android;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -16,7 +18,10 @@ import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
+import com.hb712.gleak_android.util.PermissionsUtil;
 import com.hb712.gleak_android.util.ToastUtil;
+
+import java.util.Objects;
 
 public class LaunchActivity extends BaseActivity implements HttpInterface {
 
@@ -44,6 +49,7 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
         View mContentView = findViewById(R.id.fullscreen_content);
+        PermissionsUtil.requestWriteExternalStorage(this, this);
         mMessage = findViewById(R.id.launch_message);
         TextView mVersion = findViewById(R.id.version_text);
         PackageInfo info;
@@ -102,13 +108,13 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
 
             @Override
             public void onServiceError(Bundle bundle) {
-                ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
+                ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                 gotoLoginActivity();
             }
 
             @Override
             public void onNetworkError(Bundle bundle) {
-                ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
+                ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                 gotoLoginActivity();
             }
         });

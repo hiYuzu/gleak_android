@@ -23,76 +23,80 @@ import org.greenrobot.greendao.identityscope.IdentityScopeType;
 public class DaoMaster extends AbstractDaoMaster {
     private static final int SCHEMA_VERSION = 3;
 
-    DaoMaster(SQLiteDatabase paramSQLiteDatabase) {
-        this(new StandardDatabase(paramSQLiteDatabase));
+    DaoMaster(SQLiteDatabase sqliteDatabase) {
+        this(new StandardDatabase(sqliteDatabase));
     }
 
-    private DaoMaster(Database paramDatabase) {
-        super(paramDatabase, SCHEMA_VERSION);
+    private DaoMaster(Database database) {
+        super(database, SCHEMA_VERSION);
         registerDaoClass(FactorCoefficientInfoDao.class);
         registerDaoClass(SeriesInfoDao.class);
         registerDaoClass(CalibrationInfoDao.class);
         registerDaoClass(SeriesLimitInfoDao.class);
     }
 
-    private static void createAllTables(Database paramDatabase, boolean paramBoolean) {
-        FactorCoefficientInfoDao.createTable(paramDatabase, paramBoolean);
-        SeriesInfoDao.createTable(paramDatabase, paramBoolean);
-        CalibrationInfoDao.createTable(paramDatabase, paramBoolean);
-        SeriesLimitInfoDao.createTable(paramDatabase, paramBoolean);
+    private static void createAllTables(Database database) {
+        FactorCoefficientInfoDao.createTable(database);
+        SeriesInfoDao.createTable(database);
+        CalibrationInfoDao.createTable(database);
+        SeriesLimitInfoDao.createTable(database);
     }
 
-    private static void dropAllTables(Database paramDatabase, boolean paramBoolean) {
-        FactorCoefficientInfoDao.dropTable(paramDatabase, paramBoolean);
-        SeriesInfoDao.dropTable(paramDatabase, paramBoolean);
-        CalibrationInfoDao.dropTable(paramDatabase, paramBoolean);
-        SeriesLimitInfoDao.dropTable(paramDatabase, paramBoolean);
+    private static void dropAllTables(Database database) {
+        FactorCoefficientInfoDao.dropTable(database);
+        SeriesInfoDao.dropTable(database);
+        CalibrationInfoDao.dropTable(database);
+        SeriesLimitInfoDao.dropTable(database);
     }
 
-    public static DaoSession newDevSession(Context paramContext, String paramString) {
-        return new DaoMaster(new DevOpenHelper(paramContext, paramString).getWritableDb()).newSession();
+    public static DaoSession newDevSession(Context context, String dbName) {
+        return new DaoMaster(new DevOpenHelper(context, dbName).getWritableDb()).newSession();
     }
 
+    @Override
     public DaoSession newSession() {
-        return new DaoSession(this.db, IdentityScopeType.Session, this.daoConfigMap);
+        return new DaoSession(db, IdentityScopeType.Session, daoConfigMap);
     }
 
-    public DaoSession newSession(IdentityScopeType paramIdentityScopeType) {
-        return new DaoSession(this.db, paramIdentityScopeType, this.daoConfigMap);
+    @Override
+    public DaoSession newSession(IdentityScopeType identityScopeType) {
+        return new DaoSession(db, identityScopeType, daoConfigMap);
     }
 
     public static class DevOpenHelper extends DaoMaster.OpenHelper {
         private static final String TAG = DevOpenHelper.class.getSimpleName();
 
-        DevOpenHelper(Context paramContext, String paramString) {
-            super(paramContext, paramString);
+        DevOpenHelper(Context context, String dbName) {
+            super(context, dbName);
         }
 
-        DevOpenHelper(Context paramContext, String paramString, SQLiteDatabase.CursorFactory paramCursorFactory) {
-            super(paramContext, paramString, paramCursorFactory);
+        DevOpenHelper(Context context, String dbName, SQLiteDatabase.CursorFactory cursorFactory) {
+            super(context, dbName, cursorFactory);
         }
 
-        public void onUpgrade(Database paramDatabase, int paramInt1, int paramInt2) {
-            LogUtil.infoOut(TAG, "删除所有表，更新schema版本:" + paramInt1 + " -> " + paramInt2);
-            DaoMaster.dropAllTables(paramDatabase, true);
-            onCreate(paramDatabase);
+        @Override
+        public void onUpgrade(Database db, int oldVersion, int newVersion) {
+            LogUtil.infoOut(TAG, "删除所有表，更新schema版本:" + oldVersion + " -> " + newVersion);
+            DaoMaster.dropAllTables(db);
+            onCreate(db);
         }
     }
 
     public static abstract class OpenHelper extends DatabaseOpenHelper {
         private static final String TAG = OpenHelper.class.getSimpleName();
 
-        OpenHelper(Context paramContext, String paramString) {
-            super(paramContext, paramString, SCHEMA_VERSION);
+        OpenHelper(Context context, String dbName) {
+            super(context, dbName, SCHEMA_VERSION);
         }
 
-        OpenHelper(Context paramContext, String paramString, SQLiteDatabase.CursorFactory paramCursorFactory) {
-            super(paramContext, paramString, paramCursorFactory, SCHEMA_VERSION);
+        OpenHelper(Context context, String dbName, SQLiteDatabase.CursorFactory cursorFactory) {
+            super(context, dbName, cursorFactory, SCHEMA_VERSION);
         }
 
-        public void onCreate(Database paramDatabase) {
+        @Override
+        public void onCreate(Database db) {
+            DaoMaster.createAllTables(db);
             LogUtil.infoOut(TAG, "已创建表");
-            DaoMaster.createAllTables(paramDatabase, false);
         }
     }
 }

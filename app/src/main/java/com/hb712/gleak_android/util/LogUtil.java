@@ -27,22 +27,22 @@ public class LogUtil {
     private static boolean isSave = false;
 
     public static void initDirectory() {
-        logFilePath = GlobalParam.LOG_PATH + File.separator + "log-" + DateUtil.getCurrentTime(DateUtil.DATE_SERIES) + "-.txt";
-        File logFile = new File(logFilePath);
-        if (logFile.exists()) {
+        logFilePath = GlobalParam.LOG_PATH + File.separator + "log-" + DateUtil.getCurrentTime(DateUtil.DATE_SERIES) + ".txt";
+        File logFileDir = new File(GlobalParam.LOG_PATH);
+        if (logFileDir.exists()) {
             isSave = true;
             return;
         }
-        if (!logFile.mkdirs()) {
-            LogUtil.debugOut(TAG, "日志文件夹创建失败");
-        } else {
-            try {
-                if (logFile.createNewFile()) {
-                    isSave = true;
-                }
-            } catch (IOException ioe) {
-                Log.e(TAG, "创建日志文件失败", ioe);
+        if (!logFileDir.mkdirs()) {
+            Log.w(TAG,"日志文件夹创建失败");
+        }
+        try {
+            File file = new File(logFilePath);
+            if (file.createNewFile()) {
+                isSave = true;
             }
+        } catch (IOException ioe) {
+            Log.w(TAG, "创建日志文件失败");
         }
     }
 
@@ -118,7 +118,7 @@ public class LogUtil {
     }
 
     private static void writeToFile(Character type, String tag, String msg) {
-        String log = DateUtil.getCurrentTime(DateUtil.HP_TIME) + " " + type + "/" + TAG + ": " + msg;
+        String log = DateUtil.getCurrentTime(DateUtil.HP_TIME) + " " + type + "/" + tag + ": " + msg;
         FileOutputStream fos = null;
         BufferedWriter bw = null;
         try {

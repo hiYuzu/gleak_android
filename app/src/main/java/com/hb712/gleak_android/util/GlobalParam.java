@@ -23,10 +23,10 @@ public class GlobalParam {
 
     public static final String KEY_USERTOKEN = "Authorization";
 
-    public static final String DEVICE_ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "EnpromiLDAR";
-    public static final String VIDEO_RECORD_PATH = DEVICE_ROOT_PATH + File.separator + "ijkplayer" + File.separator + "video";
-    public static final String SNAPSHOT_PATH = DEVICE_ROOT_PATH + File.separator + "ijkplayer" + File.separator + "snapshot";
-    public static final String LOG_PATH = DEVICE_ROOT_PATH + File.separator + "log";
+    private static final String DEVICE_ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/EnpromiLDAR";
+    public static final String VIDEO_RECORD_PATH = DEVICE_ROOT_PATH + File.separator + "/ijkplayer/video";
+    public static final String SNAPSHOT_PATH = DEVICE_ROOT_PATH + File.separator + "ijkplayer/snapshot";
+    public static final String LOG_PATH = DEVICE_ROOT_PATH + File.separator + "/log";
 
     public static boolean rememberPwd = false;
 

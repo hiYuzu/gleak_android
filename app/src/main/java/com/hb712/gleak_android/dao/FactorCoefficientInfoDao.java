@@ -17,150 +17,135 @@ import org.greenrobot.greendao.internal.DaoConfig;
  * @date 2020/10/21 15:17
  */
 public class FactorCoefficientInfoDao extends AbstractDao<FactorCoefficientInfo, Long> {
-    private static final String TABLE_NAME = "factor_coefficient_info";
+    public static final String TABLENAME = "factor_coefficient_info";
 
-    public FactorCoefficientInfoDao(DaoConfig paramDaoConfig) {
-        super(paramDaoConfig);
+    public FactorCoefficientInfoDao(DaoConfig daoConfig) {
+        super(daoConfig);
     }
 
-    FactorCoefficientInfoDao(DaoConfig paramDaoConfig, DaoSession paramDaoSession) {
-        super(paramDaoConfig, paramDaoSession);
+    FactorCoefficientInfoDao(DaoConfig daoConfig, DaoSession daoSession) {
+        super(daoConfig, daoSession);
     }
 
-    static void createTable(Database paramDatabase, boolean paramBoolean) {
-        String str;
-        if (paramBoolean) {
-            str = "IF NOT EXISTS ";
-        } else {
-            str = "";
-        }
-        String sql = "CREATE TABLE " +
-                str +
-                "\"" + TABLE_NAME + "\" (\"id\" INTEGER PRIMARY KEY AUTOINCREMENT ,\"factor_name\" TEXT,\"cas\" TEXT,\"coefficient\" REAL NOT NULL ,\"molecule_value\" REAL NOT NULL );";
-        paramDatabase.execSQL(sql);
+    static void createTable(Database database) {
+        String sql = "CREATE TABLE IF NOT EXISTS " +
+                "\"" + TABLENAME + "\" (\"id\" INTEGER PRIMARY KEY AUTOINCREMENT ,\"factor_name\" TEXT,\"cas\" TEXT,\"coefficient\" REAL NOT NULL ,\"molecule_value\" REAL NOT NULL );";
+        database.execSQL(sql);
     }
 
-    static void dropTable(Database paramDatabase, boolean paramBoolean) {
-        String str;
-        if (paramBoolean) {
-            str = "IF EXISTS ";
-        } else {
-            str = "";
-        }
-        String sql = "DROP TABLE " +
-                str +
-                "\"" + TABLE_NAME + "\"";
-        paramDatabase.execSQL(sql);
+    static void dropTable(Database database) {
+        String sql = "DROP TABLE IF EXISTS " +
+                "\"" + TABLENAME + "\"";
+        database.execSQL(sql);
     }
 
-    protected final void bindValues(SQLiteStatement paramSQLiteStatement, FactorCoefficientInfo paramFactorCoefficientInfo) {
-        paramSQLiteStatement.clearBindings();
-        Object localObject = paramFactorCoefficientInfo.getId();
-        if (localObject != null) {
-            paramSQLiteStatement.bindLong(1, (Long) localObject);
+
+    @Override
+    protected void bindValues(SQLiteStatement stmt, FactorCoefficientInfo entity) {
+        stmt.clearBindings();
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
         }
-        localObject = paramFactorCoefficientInfo.getFactorName();
-        if (localObject != null) {
-            paramSQLiteStatement.bindString(2, (String) localObject);
+        String factorName = entity.getFactorName();
+        if (factorName != null) {
+            stmt.bindString(2, factorName);
         }
-        localObject = paramFactorCoefficientInfo.getCas();
-        if (localObject != null) {
-            paramSQLiteStatement.bindString(3, (String) localObject);
+        String cas = entity.getCas();
+        if (cas != null) {
+            stmt.bindString(3, cas);
         }
-        paramSQLiteStatement.bindDouble(4, paramFactorCoefficientInfo.getCoefficient());
-        paramSQLiteStatement.bindDouble(5, paramFactorCoefficientInfo.getMoleculeValue());
+        stmt.bindDouble(4, entity.getCoefficient());
+        stmt.bindDouble(5, entity.getMoleculeValue());
     }
 
-    protected final void bindValues(DatabaseStatement paramDatabaseStatement, FactorCoefficientInfo paramFactorCoefficientInfo) {
-        paramDatabaseStatement.clearBindings();
-        Object localObject = paramFactorCoefficientInfo.getId();
-        if (localObject != null) {
-            paramDatabaseStatement.bindLong(1, (Long) localObject);
+    @Override
+    protected void bindValues(DatabaseStatement stmt, FactorCoefficientInfo entity) {
+        stmt.clearBindings();
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
         }
-        localObject = paramFactorCoefficientInfo.getFactorName();
-        if (localObject != null) {
-            paramDatabaseStatement.bindString(2, (String) localObject);
+        String factorName = entity.getFactorName();
+        if (factorName != null) {
+            stmt.bindString(2, (String) factorName);
         }
-        localObject = paramFactorCoefficientInfo.getCas();
-        if (localObject != null) {
-            paramDatabaseStatement.bindString(3, (String) localObject);
+        String cas = entity.getCas();
+        if (cas != null) {
+            stmt.bindString(3, cas);
         }
-        paramDatabaseStatement.bindDouble(4, paramFactorCoefficientInfo.getCoefficient());
-        paramDatabaseStatement.bindDouble(5, paramFactorCoefficientInfo.getMoleculeValue());
+        stmt.bindDouble(4, entity.getCoefficient());
+        stmt.bindDouble(5, entity.getMoleculeValue());
     }
 
-    public Long getKey(FactorCoefficientInfo paramFactorCoefficientInfo) {
-        if (paramFactorCoefficientInfo != null) {
-            return paramFactorCoefficientInfo.getId();
-        }
-        return null;
+    @Override
+    protected Long getKey(FactorCoefficientInfo entity) {
+        return entity != null ? entity.getId() : null;
     }
 
-    public boolean hasKey(FactorCoefficientInfo paramFactorCoefficientInfo) {
-        return paramFactorCoefficientInfo.getId() != null;
+    @Override
+    protected boolean hasKey(FactorCoefficientInfo entity) {
+        return entity.getId() != null;
     }
 
-    protected final boolean isEntityUpdateable() {
+    @Override
+    protected boolean isEntityUpdateable() {
         return true;
     }
 
-    public FactorCoefficientInfo readEntity(Cursor paramCursor, int paramInt) {
-        Long localLong;
-        if (paramCursor.isNull(paramInt)) {
-            localLong = null;
-        } else {
-            localLong = paramCursor.getLong(paramInt);
+    @Override
+    protected FactorCoefficientInfo readEntity(Cursor cursor, int offset) {
+        Long id = null;
+        if (!cursor.isNull(offset)) {
+            id = cursor.getLong(offset);
         }
-        String str1;
-        if (paramCursor.isNull(paramInt + 1)) {
-            str1 = null;
-        } else {
-            str1 = paramCursor.getString(paramInt + 1);
+
+        String factorName = null;
+        if (!cursor.isNull(offset + 1)) {
+            factorName = cursor.getString(offset + 1);
         }
-        String str2;
-        if (paramCursor.isNull(paramInt + 2)) {
-            str2 = null;
-        } else {
-            str2 = paramCursor.getString(paramInt + 2);
+
+        String cas = null;
+        if (!cursor.isNull(offset + 2)) {
+            cas = cursor.getString(offset + 2);
         }
-        return new FactorCoefficientInfo(localLong, str1, str2, paramCursor.getDouble(paramInt + 3), paramCursor.getDouble(paramInt + 4));
+
+        return new FactorCoefficientInfo(id, factorName, cas, cursor.getDouble(offset + 3), cursor.getDouble(offset + 4));
     }
 
-    public void readEntity(Cursor paramCursor, FactorCoefficientInfo paramFactorCoefficientInfo, int paramInt) {
-        boolean bool = paramCursor.isNull(paramInt);
-        Object localObject1;
-        if (bool) {
-            localObject1 = null;
-        } else {
-            localObject1 = paramCursor.getLong(paramInt);
+    @Override
+    protected void readEntity(Cursor cursor, FactorCoefficientInfo entity, int offset) {
+        boolean bool = cursor.isNull(offset);
+        Long id = null;
+        if (!bool) {
+            id = cursor.getLong(offset);
         }
-        paramFactorCoefficientInfo.setId((Long) localObject1);
-        if (paramCursor.isNull(paramInt + 1)) {
-            localObject1 = null;
-        } else {
-            localObject1 = paramCursor.getString(paramInt + 1);
+        entity.setId(id);
+
+        String factorName = null;
+        if (!cursor.isNull(offset + 1)) {
+            factorName = cursor.getString(offset + 1);
         }
-        paramFactorCoefficientInfo.setFactorName((String) localObject1);
-        if (paramCursor.isNull(paramInt + 2)) {
-            localObject1 = null;
-        } else {
-            localObject1 = paramCursor.getString(paramInt + 2);
+        entity.setFactorName(factorName);
+
+        String cas = null;
+        if (!cursor.isNull(offset + 2)) {
+            cas = cursor.getString(offset + 2);
         }
-        paramFactorCoefficientInfo.setCas((String) localObject1);
-        paramFactorCoefficientInfo.setCoefficient(paramCursor.getDouble(paramInt + 3));
-        paramFactorCoefficientInfo.setMoleculeValue(paramCursor.getDouble(paramInt + 4));
+        entity.setCas(cas);
+        entity.setCoefficient(cursor.getDouble(offset + 3));
+        entity.setMoleculeValue(cursor.getDouble(offset + 4));
     }
 
-    public Long readKey(Cursor paramCursor, int paramInt) {
-        if (paramCursor.isNull(paramInt)) {
-            return null;
-        }
-        return paramCursor.getLong(paramInt);
+    @Override
+    protected Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset) ? null : cursor.getLong(offset);
     }
 
-    protected final Long updateKeyAfterInsert(FactorCoefficientInfo paramFactorCoefficientInfo, long paramLong) {
-        paramFactorCoefficientInfo.setId(paramLong);
-        return paramLong;
+    @Override
+    protected Long updateKeyAfterInsert(FactorCoefficientInfo entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
 
     public static class Properties {

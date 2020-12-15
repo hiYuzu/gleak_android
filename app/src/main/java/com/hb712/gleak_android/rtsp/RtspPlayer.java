@@ -108,14 +108,14 @@ public class RtspPlayer {
             LogUtil.infoOut(TAG, "无视频信号");
             return -1;
         }
-        String path = GlobalParam.VIDEO_RECORD_PATH;
-        File fileDir = new File(path);
+        File fileDir = new File(GlobalParam.VIDEO_RECORD_PATH);
         if (!fileDir.exists()) {
             if (!fileDir.mkdirs()) {
-                LogUtil.debugOut(TAG, "视频文件夹创建失败");
+                LogUtil.warnOut(TAG, null, "视频文件夹创建失败");
+                return -1;
             }
         }
-        videoPath = path
+        videoPath = GlobalParam.VIDEO_RECORD_PATH
                 + File.separator
                 + DateUtil.getCurrentTime(DateUtil.TIME_SERIES)
                 + ".mp4";
@@ -125,7 +125,6 @@ public class RtspPlayer {
             LogUtil.infoOut(TAG, "开始录制");
         }
         return result;
-
     }
 
     public void stopRecord() {

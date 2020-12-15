@@ -1,21 +1,28 @@
 package com.hb712.gleak_android.entity;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
+
 /**
  * @author hiYuzu
  * @version V1.0
  * @date 2020/10/20 10:28
  */
+@Entity
 public class FactorCoefficientInfo {
+    @Id
     private Long id;
     private String factorName = "";
     private String cas = "";
     private double coefficient = 1.0D;
     private double moleculeValue = 12.0D;
 
-
+    @Generated
     public FactorCoefficientInfo() {
     }
 
+    @Generated
     public FactorCoefficientInfo(Long id, String factorName, String cas, double coefficient, double moleculeValue) {
         this.id = id;
         this.factorName = factorName;

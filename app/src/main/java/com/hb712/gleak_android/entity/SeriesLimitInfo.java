@@ -5,25 +5,32 @@ import com.hb712.gleak_android.dao.SeriesLimitInfoDao;
 import com.hb712.gleak_android.util.LogUtil;
 
 import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
 /**
  * @author hiYuzu
  * @version V1.0
  * @date 2020/10/21 10:10
  */
+@Entity
 public class SeriesLimitInfo {
     private static final String TAG = SeriesLimitInfo.class.getSimpleName();
-    private double maxValue;
+    @Id
     private Long id;
+    private double maxValue;
     private long seriesId;
     private SeriesInfo seriesInfo;
     private transient Long seriesInfoResolvedKey;
     private transient DaoSession daoSession;
     private transient SeriesLimitInfoDao seriesLimitInfoDao;
 
+    @Generated
     public SeriesLimitInfo() {
     }
 
+    @Generated
     public SeriesLimitInfo(Long id, Long seriesId, double maxValue) {
         this.id = id;
         this.seriesId = seriesId;

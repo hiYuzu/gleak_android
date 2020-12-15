@@ -46,8 +46,8 @@ public class DBManager {
         return new DaoMaster(getWritableDatabase()).newSession();
     }
 
-    public void init(Context paramContext) {
-        this.context = paramContext;
-        this.openHelper = new DaoMaster.DevOpenHelper(paramContext, DB_NAME, null);
+    public void init(Context context) {
+        this.context = context;
+        this.openHelper = new DaoMaster.DevOpenHelper(context, DB_NAME, null);
     }
 }

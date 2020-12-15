@@ -5,29 +5,28 @@ import com.hb712.gleak_android.message.blue.CalibrationInfo;
 import com.hb712.gleak_android.message.blue.CurveInfo;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class CalibrateInfoManager {
     static CalibrateInfoManager _mng = new CalibrateInfoManager();
-    private List<CalibrationInfo> _CalibrationInfos = null;
+    private List<CalibrationInfo> calibrationInfos = null;
     FactorCoefficientInfo _Factor = null;
     private CurveInfo currentCurve = null;
 
     private void calculateKB() {
-        Collections.sort(this._CalibrationInfos);
+        Collections.sort(this.calibrationInfos);
         int i = 0;
-        while (i < this._CalibrationInfos.size() - 1) {
-            double d1 = ((CalibrationInfo) this._CalibrationInfos.get(i + 1)).getSignalValue() - ((CalibrationInfo) this._CalibrationInfos.get(i)).getSignalValue();
+        while (i < this.calibrationInfos.size() - 1) {
+            double d1 = this.calibrationInfos.get(i + 1).getSignalValue() - this.calibrationInfos.get(i).getSignalValue();
             if (d1 != 0.0D) {
-                d1 = (((CalibrationInfo) this._CalibrationInfos.get(i + 1)).getStandardValue() - ((CalibrationInfo) this._CalibrationInfos.get(i)).getStandardValue()) / d1;
-                double d2 = ((CalibrationInfo) this._CalibrationInfos.get(i)).getStandardValue();
-                double d3 = ((CalibrationInfo) this._CalibrationInfos.get(i)).getSignalValue();
-                ((CalibrationInfo) this._CalibrationInfos.get(i)).setKValue(d1);
-                ((CalibrationInfo) this._CalibrationInfos.get(i)).setBValue(d2 - d3 * d1);
+                d1 = (this.calibrationInfos.get(i + 1).getStandardValue() - this.calibrationInfos.get(i).getStandardValue()) / d1;
+                double d2 = this.calibrationInfos.get(i).getStandardValue();
+                double d3 = this.calibrationInfos.get(i).getSignalValue();
+                this.calibrationInfos.get(i).setKValue(d1);
+                this.calibrationInfos.get(i).setBValue(d2 - d3 * d1);
             } else {
-                ((CalibrationInfo) this._CalibrationInfos.get(i)).setKValue(1.0D);
-                ((CalibrationInfo) this._CalibrationInfos.get(i)).setBValue(0.0D);
+                this.calibrationInfos.get(i).setKValue(1.0D);
+                this.calibrationInfos.get(i).setBValue(0.0D);
             }
             i += 1;
         }
@@ -40,8 +39,8 @@ public class CalibrateInfoManager {
 //    public void changeCurve(CurveInfo paramCurveInfo) {
 //        if (paramCurveInfo != null) {
 //            this.currentCurve = paramCurveInfo;
-//            this._CalibrationInfos = DBManager.getInstance().getReadableSession().getCalibrationInfoDao().queryBuilder().where(CalibrationInfoDao.Properties.Curve_id.eq(paramCurveInfo.get_id()), new WhereCondition[0]).list();
-//            Collections.sort(this._CalibrationInfos);
+//            this.calibrationInfos = DBManager.getInstance().getReadableSession().getCalibrationInfoDao().queryBuilder().where(CalibrationInfoDao.Properties.Curve_id.eq(paramCurveInfo.get_id()), new WhereCondition[0]).list();
+//            Collections.sort(this.calibrationInfos);
 //            return;
 //        }
 //    }
@@ -56,9 +55,9 @@ public class CalibrateInfoManager {
 //    }
 
 //    public void deleteCalibrateInfo(int paramInt) {
-//        if (this._CalibrationInfos.size() > paramInt) {
-//            ((CalibrationInfo) this._CalibrationInfos.get(paramInt)).delete();
-//            this._CalibrationInfos.remove(paramInt);
+//        if (this.calibrationInfos.size() > paramInt) {
+//            ((CalibrationInfo) this.calibrationInfos.get(paramInt)).delete();
+//            this.calibrationInfos.remove(paramInt);
 //        }
 //        saveAll();
 //    }
@@ -69,9 +68,9 @@ public class CalibrateInfoManager {
 
     public double getValueBySignal(double paramDouble) {
         double d = paramDouble;
-        Object localObject = this._CalibrationInfos;
-        if (localObject != null) {
-            if (((List) localObject).size() < 2) {
+        List<CalibrationInfo> calibrationInfos = this.calibrationInfos;
+        if (calibrationInfos != null) {
+            if (calibrationInfos.size() < 2) {
                 return 0.0D;
             }
             int k = -1;
@@ -79,34 +78,29 @@ public class CalibrateInfoManager {
             int j;
             for (; ; ) {
                 j = k;
-                if (i >= this._CalibrationInfos.size() - 1) {
+                if (i >= this.calibrationInfos.size() - 1) {
                     break;
                 }
-                if (((CalibrationInfo) this._CalibrationInfos.get(i + 1)).getSignalValue() >= paramDouble) {
+                if (this.calibrationInfos.get(i + 1).getSignalValue() >= paramDouble) {
                     j = i;
                     break;
                 }
                 i += 1;
             }
             if (j == -1) {
-                j = this._CalibrationInfos.size() - 2;
+                j = this.calibrationInfos.size() - 2;
             }
-            paramDouble = ((CalibrationInfo) this._CalibrationInfos.get(j)).getKValue() * paramDouble + ((CalibrationInfo) this._CalibrationInfos.get(j)).getBValue();
-            localObject = this._Factor;
-            if (localObject != null) {
-                paramDouble *= ((FactorCoefficientInfo) localObject).getCoefficient();
+            paramDouble = this.calibrationInfos.get(j).getKValue() * paramDouble + this.calibrationInfos.get(j).getBValue();
+            FactorCoefficientInfo factor = this._Factor;
+            if (factor != null) {
+                paramDouble *= factor.getCoefficient();
             }
-        } else {
-            paramDouble = d;
         }
-        if (paramDouble < 0.0D) {
-            return 0.0D;
-        }
-        return paramDouble;
+        return Math.max(paramDouble, 0.0D);
     }
 
     public List<CalibrationInfo> get_CalibrationInfos() {
-        return this._CalibrationInfos;
+        return this.calibrationInfos;
     }
 
     public FactorCoefficientInfo get_Factor() {
@@ -115,7 +109,7 @@ public class CalibrateInfoManager {
 
 //    public void saveAll() {
 //        calculateKB();
-//        Iterator localIterator = this._CalibrationInfos.iterator();
+//        Iterator localIterator = this.calibrationInfos.iterator();
 //        while (localIterator.hasNext()) {
 //            CalibrationInfo localCalibrationInfo = (CalibrationInfo) localIterator.next();
 //            DBManager.getInstance().getWritableSession().getCalibrationInfoDao().save(localCalibrationInfo);
@@ -134,18 +128,18 @@ public class CalibrateInfoManager {
             int k;
             for (; ; ) {
                 k = m;
-                if (j >= this._CalibrationInfos.size()) {
+                if (j >= this.calibrationInfos.size()) {
                     break;
                 }
-                if (Double.compare(((CalibrationInfo) this._CalibrationInfos.get(j)).getStandardValue(), ((CalibrationInfo) paramList.get(i)).getStandardValue()) == 0) {
-                    ((CalibrationInfo) this._CalibrationInfos.get(j)).setValueFromCalibrateInfo((CalibrationInfo) paramList.get(i));
+                if (Double.compare(this.calibrationInfos.get(j).getStandardValue(), paramList.get(i).getStandardValue()) == 0) {
+                    this.calibrationInfos.get(j).setValueFromCalibrateInfo(paramList.get(i));
                     k = 1;
                     break;
                 }
                 j += 1;
             }
             if (k == 0) {
-                this._CalibrationInfos.add(paramList.get(i));
+                this.calibrationInfos.add(paramList.get(i));
             }
             i += 1;
         }
