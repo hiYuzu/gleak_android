@@ -20,7 +20,8 @@ public class DateUtil {
     public static final String DATE_SERIES = "yyyyMMdd";
 
     /**
-     * 获取通用格式的当前时间
+     * 获取默认格式 {@link #DEFAULT_TIME} 的当前时间
+     *
      * @return yyyy-MM-dd HH:mm:ss
      */
     @SuppressLint("SimpleDateFormat")
@@ -28,6 +29,11 @@ public class DateUtil {
         return new SimpleDateFormat(DEFAULT_TIME).format(new Date());
     }
 
+    /**
+     * 获取指定格式的当前时间
+     * @param format 时间格式
+     * @return
+     */
     @SuppressLint("SimpleDateFormat")
     public static String getCurrentTime(String format) {
         return new SimpleDateFormat(format).format(new Date());
