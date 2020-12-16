@@ -53,27 +53,31 @@ public class UploadPositionService {
                     return;
                 }
                 MyPosition myPosition = new MyPosition(mainApp.getUserId(), lng, lat);
-                HttpUtils.post(null, mainApp.baseUrl + "/api/location/insert", myPosition.toMap(), new OKHttpListener() {
-                    @Override
-                    public void onStart() {
-                        LogUtil.debugOut(TAG, "上传定位...");
-                    }
+                try {
+                    HttpUtils.post(null, mainApp.baseUrl + "/api/location/insert", myPosition.toMap(), new OKHttpListener() {
+                        @Override
+                        public void onStart() {
+                            LogUtil.debugOut(TAG, "上传定位...");
+                        }
 
-                    @Override
-                    public void onSuccess(Bundle bundle) {
-                        LogUtil.debugOut(TAG, "定位上传成功");
-                    }
+                        @Override
+                        public void onSuccess(Bundle bundle) {
+                            LogUtil.debugOut(TAG, "定位上传成功");
+                        }
 
-                    @Override
-                    public void onServiceError(Bundle bundle) {
-                        LogUtil.debugOut(TAG, Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
-                    }
+                        @Override
+                        public void onServiceError(Bundle bundle) {
+                            LogUtil.debugOut(TAG, Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                        }
 
-                    @Override
-                    public void onNetworkError(Bundle bundle) {
-                        LogUtil.debugOut(TAG, Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
-                    }
-                });
+                        @Override
+                        public void onNetworkError(Bundle bundle) {
+                            LogUtil.debugOut(TAG, Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                        }
+                    });
+                } catch (NullPointerException npe) {
+                    LogUtil.errorOut(TAG, npe, null);
+                }
             }
         }
 

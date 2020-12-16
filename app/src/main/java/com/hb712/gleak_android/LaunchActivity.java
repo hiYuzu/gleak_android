@@ -83,41 +83,45 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
     }
 
     private void login(String username, String password) {
-        HttpUtils.get(this, MainApplication.getInstance().baseUrl + "/api/login?name=" + username + "&password=" + password, new OKHttpListener() {
-            @Override
-            public void onStart() {
-                mMessage.setText("正在登录...");
-            }
+        try {
+            HttpUtils.get(this, MainApplication.getInstance().baseUrl + "/api/login?name=" + username + "&password=" + password, new OKHttpListener() {
+                @Override
+                public void onStart() {
+                    mMessage.setText("正在登录...");
+                }
 
-            @Override
-            public void onSuccess(Bundle bundle) {
-                String result = bundle.getString(HttpUtils.MESSAGE);
-                JSONObject json = JSONObject.parseObject(result);
-                if (json.getBoolean("status")) {
-                    LogUtil.debugOut(TAG, "用户" + json.getJSONObject("data").getString("userId") + "登录成功!");
+                @Override
+                public void onSuccess(Bundle bundle) {
+                    String result = bundle.getString(HttpUtils.MESSAGE);
+                    JSONObject json = JSONObject.parseObject(result);
+                    if (json.getBoolean("status")) {
+                        LogUtil.debugOut(TAG, "用户" + json.getJSONObject("data").getString("userId") + "登录成功!");
 
-                    MainApplication.getInstance().setUserId(json.getJSONObject("data").getString("userId"));
-                    MainApplication.getInstance().setToken(json.getJSONObject("data").getString("token"));
+                        MainApplication.getInstance().setUserId(json.getJSONObject("data").getString("userId"));
+                        MainApplication.getInstance().setToken(json.getJSONObject("data").getString("token"));
 
-                    gotoMainActivity(username, password);
-                } else {
-                    LogUtil.debugOut(TAG, "自动登录失败:" + bundle.getString(HttpUtils.MESSAGE));
+                        gotoMainActivity(username, password);
+                    } else {
+                        LogUtil.debugOut(TAG, "自动登录失败:" + bundle.getString(HttpUtils.MESSAGE));
+                        gotoLoginActivity();
+                    }
+                }
+
+                @Override
+                public void onServiceError(Bundle bundle) {
+                    ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                     gotoLoginActivity();
                 }
-            }
 
-            @Override
-            public void onServiceError(Bundle bundle) {
-                ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
-                gotoLoginActivity();
-            }
-
-            @Override
-            public void onNetworkError(Bundle bundle) {
-                ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
-                gotoLoginActivity();
-            }
-        });
+                @Override
+                public void onNetworkError(Bundle bundle) {
+                    ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    gotoLoginActivity();
+                }
+            });
+        } catch (NullPointerException npe) {
+            LogUtil.errorOut(TAG, npe, null);
+        }
     }
 
     private void gotoMainActivity(String username, String password) {

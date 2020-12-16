@@ -38,7 +38,7 @@ public class BluetoothService {
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
     private int mState;
-    private boolean isAndroid = GlobalParam.DEVICE_OTHER;
+    private final boolean isAndroid = GlobalParam.DEVICE_OTHER;
 
     public BluetoothService(Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();

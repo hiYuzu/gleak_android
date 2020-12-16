@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -13,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
@@ -51,13 +51,14 @@ import org.greenrobot.greendao.query.WhereCondition;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class DetectActivity extends BaseActivity implements HttpInterface {
 
     private static final String TAG = DetectActivity.class.getSimpleName();
+
+    private ImageView fireImage;
 
     private Button startRecordBtn;
     private Button uploadVideoBtn;
@@ -109,10 +110,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
     private RtspPlayer mRtspPlayer;
 
-    private TimerTask timerTask;
-    private Timer timer;
-    private int timerTime = 500;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,6 +144,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      * 初始化控件
      */
     private void initView() {
+        fireImage = findViewById(R.id.ioFire);
+
         startRecordBtn = findViewById(R.id.startRecordBtn);
         startRecordBtn.setOnClickListener((p) -> {
             if (!MainApplication.getInstance().isLogin()) {
@@ -400,35 +399,40 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         if (newLeak == null) {
             return;
         }
-        HttpUtils.post(this, MainApplication.getInstance().baseUrl + "/api/monitor/insert", newLeak.toMap(), new OKHttpListener() {
-            @Override
-            public void onStart() {
+        try {
+            HttpUtils.post(this, MainApplication.getInstance().baseUrl + "/api/monitor/insert", newLeak.toMap(), new OKHttpListener() {
+                @Override
+                public void onStart() {
 
-            }
-
-            @Override
-            public void onSuccess(Bundle bundle) {
-                String result = bundle.getString(HttpUtils.MESSAGE);
-                JSONObject json = JSONObject.parseObject(result);
-                if (json.getBoolean("status")) {
-                    selectedLeakId = json.getString("data");
-                    GlobalParam.initLeakData.add(new InitLeakData(selectedLeakId, newLeak.getName(), newLeak.getCode(), newLeak.getLongitude(), newLeak.getLatitude()));
-                    startSave();
-                } else {
-                    LogUtil.infoOut(TAG, json.getString("msg"));
                 }
-            }
 
-            @Override
-            public void onServiceError(Bundle bundle) {
-                ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
-            }
+                @Override
+                public void onSuccess(Bundle bundle) {
+                    String result = bundle.getString(HttpUtils.MESSAGE);
+                    JSONObject json = JSONObject.parseObject(result);
+                    if (json.getBoolean("status")) {
+                        selectedLeakId = json.getString("data");
+                        GlobalParam.initLeakData.add(new InitLeakData(selectedLeakId, newLeak.getName(), newLeak.getCode(), newLeak.getLongitude(), newLeak.getLatitude()));
+                        startSave();
+                    } else {
+                        LogUtil.infoOut(TAG, json.getString("msg"));
+                    }
+                }
 
-            @Override
-            public void onNetworkError(Bundle bundle) {
-                ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
-            }
-        });
+                @Override
+                public void onServiceError(Bundle bundle) {
+                    ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                }
+
+                @Override
+                public void onNetworkError(Bundle bundle) {
+                    ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                }
+            });
+        } catch (NullPointerException npe) {
+            LogUtil.errorOut(TAG, npe, null);
+        }
+
     }
 
     private void startSave() {
@@ -492,29 +496,33 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     public void uploadVideo(View view) {
-        HttpUtils.post(this, MainApplication.getInstance().baseUrl + "/video/insert", lastedLeakData.toString(), new File(mRtspPlayer.getVideoPath()),
-                new OKHttpListener() {
-                    @Override
-                    public void onStart() {
-                        ToastUtil.shortInstanceToast("开始上传...");
-                    }
+        try {
+            HttpUtils.post(this, MainApplication.getInstance().baseUrl + "/video/insert", lastedLeakData.toString(), new File(mRtspPlayer.getVideoPath()),
+                    new OKHttpListener() {
+                        @Override
+                        public void onStart() {
+                            ToastUtil.shortInstanceToast("开始上传...");
+                        }
 
-                    @Override
-                    public void onSuccess(Bundle bundle) {
-                        ToastUtil.shortInstanceToast("上传成功");
-                        uploadVideoBtn.setEnabled(false);
-                    }
+                        @Override
+                        public void onSuccess(Bundle bundle) {
+                            ToastUtil.shortInstanceToast("上传成功");
+                            uploadVideoBtn.setEnabled(false);
+                        }
 
-                    @Override
-                    public void onServiceError(Bundle bundle) {
-                        ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
-                    }
+                        @Override
+                        public void onServiceError(Bundle bundle) {
+                            ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                        }
 
-                    @Override
-                    public void onNetworkError(Bundle bundle) {
-                        ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
-                    }
-                });
+                        @Override
+                        public void onNetworkError(Bundle bundle) {
+                            ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                        }
+                    });
+        } catch (NullPointerException npe) {
+            LogUtil.errorOut(TAG, npe, null);
+        }
     }
 
     private void showSeriesName() {
@@ -554,6 +562,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     public void fireClick(View view) {
         if (isConnected()) {
             mBluetooth.openFire();
+            changeFirePic(true);
         }
     }
 
@@ -565,6 +574,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     public void fireClick2(View view) {
         if (isConnected()) {
             mBluetooth.openFire2();
+            changeFirePic(true);
         }
     }
 
@@ -576,6 +586,20 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     public void ceasefireClick(View view) {
         if (isConnected()) {
             mBluetooth.closeFire();
+            changeFirePic(false);
+        }
+    }
+
+    boolean lastStatus = false;
+    private void changeFirePic(boolean isFire) {
+        if (lastStatus == isFire) {
+            return;
+        }
+        lastStatus = isFire;
+        if (isFire) {
+            fireImage.setImageResource(R.drawable.fire_on);
+        } else {
+            fireImage.setImageResource(R.drawable.fire_off);
         }
     }
 
@@ -594,6 +618,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     private void showFragmentContent(byte[] paramBytes) {
         deviceController.analysisCommand(paramBytes);
+        changeFirePic(deviceController.isFireOn());
         double currentPpm = deviceController.getCurrentValue();
         cacheCurveData(currentPpm);
         if (!unitPPM) {
