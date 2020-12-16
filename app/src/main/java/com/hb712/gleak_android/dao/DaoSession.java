@@ -1,6 +1,7 @@
 package com.hb712.gleak_android.dao;
 
 import com.hb712.gleak_android.entity.CalibrationInfo;
+import com.hb712.gleak_android.entity.DetectInfo;
 import com.hb712.gleak_android.entity.FactorCoefficientInfo;
 import com.hb712.gleak_android.entity.SeriesInfo;
 import com.hb712.gleak_android.entity.SeriesLimitInfo;
@@ -35,6 +36,10 @@ public class DaoSession extends AbstractDaoSession {
     private final SeriesLimitInfoDao seriesLimitInfoDao;
     private final DaoConfig seriesLimitInfoDaoConfig;
 
+    //检测数据
+    private final DetectInfoDao detectInfoDao;
+    private final DaoConfig detectInfoDaoConfig;
+
 
     DaoSession(Database paramDatabase, IdentityScopeType paramIdentityScopeType, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig> paramMap) {
         super(paramDatabase);
@@ -54,10 +59,15 @@ public class DaoSession extends AbstractDaoSession {
         seriesLimitInfoDaoConfig.initIdentityScope(paramIdentityScopeType);
         seriesLimitInfoDao = new SeriesLimitInfoDao(seriesLimitInfoDaoConfig, this);
 
+        detectInfoDaoConfig = paramMap.get(DetectInfoDao.class).clone();
+        detectInfoDaoConfig.initIdentityScope(paramIdentityScopeType);
+        detectInfoDao = new DetectInfoDao(detectInfoDaoConfig, this);
+
         registerDao(FactorCoefficientInfo.class, factorCoefficientInfoDao);
         registerDao(SeriesInfo.class, seriesInfoDao);
         registerDao(CalibrationInfo.class, calibrationInfoDao);
         registerDao(SeriesLimitInfo.class, seriesLimitInfoDao);
+        registerDao(DetectInfo.class, detectInfoDao);
     }
 
     public void clear() {
@@ -65,6 +75,7 @@ public class DaoSession extends AbstractDaoSession {
         seriesInfoDaoConfig.clearIdentityScope();
         calibrationInfoDaoConfig.clearIdentityScope();
         seriesLimitInfoDaoConfig.clearIdentityScope();
+        detectInfoDaoConfig.clearIdentityScope();
     }
 
     public FactorCoefficientInfoDao getFactorCoefficientInfoDao() {
@@ -81,5 +92,9 @@ public class DaoSession extends AbstractDaoSession {
 
     public SeriesLimitInfoDao getSeriesLimitInfoDao() {
         return seriesLimitInfoDao;
+    }
+
+    public DetectInfoDao getDetectInfoDao() {
+        return detectInfoDao;
     }
 }

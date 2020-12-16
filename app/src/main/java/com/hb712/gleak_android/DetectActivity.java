@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -54,6 +55,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.RequiresApi;
+
 public class DetectActivity extends BaseActivity implements HttpInterface {
 
     private static final String TAG = DetectActivity.class.getSimpleName();
@@ -98,6 +101,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private boolean isSaving = false;
 
     private String selectedLeakId;
+    private String selectedLeakName;
 
     private LeakData lastedLeakData;
 
@@ -263,7 +267,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             if (obj2 != null) {
                 id = Long.parseLong(obj2.toString());
             }
-            List<FactorCoefficientInfo> factorCoefficientInfoList = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().queryBuilder().where(FactorCoefficientInfoDao.Properties.id.eq(id), new WhereCondition[0]).list();
+            List<FactorCoefficientInfo> factorCoefficientInfoList = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().queryBuilder().where(FactorCoefficientInfoDao.Properties.ID.eq(id), new WhereCondition[0]).list();
             if (factorCoefficientInfoList != null && factorCoefficientInfoList.size() > 0) {
                 UnitUtil.changeFactor(factorCoefficientInfoList.get(0));
                 deviceController.changeFactor(factorCoefficientInfoList.get(0));
@@ -412,7 +416,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                     JSONObject json = JSONObject.parseObject(result);
                     if (json.getBoolean("status")) {
                         selectedLeakId = json.getString("data");
-                        GlobalParam.initLeakData.add(new InitLeakData(selectedLeakId, newLeak.getName(), newLeak.getCode(), newLeak.getLongitude(), newLeak.getLatitude()));
+                        selectedLeakName = newLeak.getName();
+                        GlobalParam.initLeakData.add(new InitLeakData(selectedLeakId, selectedLeakName, newLeak.getCode(), newLeak.getLongitude(), newLeak.getLatitude()));
                         startSave();
                     } else {
                         LogUtil.infoOut(TAG, json.getString("msg"));
@@ -444,6 +449,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private void startSave(@NonNull Bundle bundle) {
         if (isConnected() && startRecord()) {
             selectedLeakId = bundle.getString("leakId");
+            selectedLeakName = bundle.getString("leakName");
             startRecordBtn.setText(R.string.stopRecord);
         }
     }
@@ -482,6 +488,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
 
         String leakId = selectedLeakId;
+        String leakName = selectedLeakName;
         String userId = MainApplication.getInstance().getUserId();
         // TODO: hiYuzu 2020/12/4 超标状态由当前选择的限值决定
 //        int monitorStatus = saveMaxValue > seriesLimitInfo.getMaxValue() ? 0 : 1;
@@ -492,7 +499,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         System.out.println(mRtspPlayer.getVideoPath());
 
         // TODO: hiYuzu 2020/12/2 保存到本地数据库 表：leak_data_info
-        // | id | leak_id | monitor_value | monitor_time | monitor_status | video_path | opt_user | opt_time |
+        // | id | leak_name | monitor_value | monitor_time | monitor_status | video_path | opt_user |
     }
 
     public void uploadVideo(View view) {
@@ -533,7 +540,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 detectFactorTV.setText("响应因子");
             }
             try {
-                List<SeriesLimitInfo> seriesLimitInfoList = DBManager.getInstance().getReadableSession().getSeriesLimitInfoDao().queryBuilder().where(SeriesLimitInfoDao.Properties.seriesId.eq(currentSeries.getId()), new WhereCondition[0]).list();
+                List<SeriesLimitInfo> seriesLimitInfoList = DBManager.getInstance().getReadableSession().getSeriesLimitInfoDao().queryBuilder().where(SeriesLimitInfoDao.Properties.SERIES_ID.eq(currentSeries.getId()), new WhereCondition[0]).list();
                 if (seriesLimitInfoList != null && seriesLimitInfoList.size() > 0) {
                     seriesLimitInfo = seriesLimitInfoList.get(0);
                 }
@@ -659,14 +666,15 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void showValueBySeriesLimit(double currentPpm) {
         detectValueET.setText(new DecimalFormat("0.0").format(currentPpm));
         if (seriesLimitInfo != null) {
             if (currentPpm > seriesLimitInfo.getMaxValue()) {
-                detectValueET.setTextColor(getResources().getColor(R.color.red));
+                detectValueET.setTextColor(getResources().getColor(R.color.red, null));
                 return;
             }
-            detectValueET.setTextColor(getResources().getColor(R.color.black));
+            detectValueET.setTextColor(getResources().getColor(R.color.black, null));
         }
     }
 

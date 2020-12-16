@@ -1,24 +1,38 @@
 package com.hb712.gleak_android.entity;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
+
 /**
  * @author hiYuzu
  * @version V1.0
  * @date 2020/10/23 13:47
  */
+@Entity
 public class DetectInfo {
+    @Id
     private Long id;
-    private String sampleName;
-    private double sampleDetectValue;
-    private String sampleDetectTime;
+    private String leakName;
+    private double monitorValue;
+    private String monitorTime;
+    private boolean standard;
+    private String videoPath;
+    private Long optUser;
 
+    @Generated
     public DetectInfo() {
     }
 
-    public DetectInfo(Long id, String sampleName, double sampleDetectValue, String sampleDetectTime) {
+    @Generated
+    public DetectInfo(Long id, String leakName, double monitorValue, String monitorTime, boolean standard, String videoPath, Long optUser) {
         this.id = id;
-        this.sampleName = sampleName;
-        this.sampleDetectValue = sampleDetectValue;
-        this.sampleDetectTime = sampleDetectTime;
+        this.leakName = leakName;
+        this.monitorValue = monitorValue;
+        this.monitorTime = monitorTime;
+        this.standard = standard;
+        this.videoPath = videoPath;
+        this.optUser = optUser;
     }
 
     public Long getId() {
@@ -29,27 +43,51 @@ public class DetectInfo {
         this.id = id;
     }
 
-    public String getSampleName() {
-        return sampleName;
+    public String getLeakName() {
+        return leakName;
     }
 
-    public void setSampleName(String sampleName) {
-        this.sampleName = sampleName;
+    public void setLeakName(String leakName) {
+        this.leakName = leakName;
     }
 
-    public double getSampleDetectValue() {
-        return sampleDetectValue;
+    public double getMonitorValue() {
+        return monitorValue;
     }
 
-    public void setSampleDetectValue(double sampleDetectValue) {
-        this.sampleDetectValue = sampleDetectValue;
+    public void setMonitorValue(double monitorValue) {
+        this.monitorValue = monitorValue;
     }
 
-    public String getSampleDetectTime() {
-        return sampleDetectTime;
+    public String getMonitorTime() {
+        return monitorTime;
     }
 
-    public void setSampleDetectTime(String sampleDetectTime) {
-        this.sampleDetectTime = sampleDetectTime;
+    public void setMonitorTime(String monitorTime) {
+        this.monitorTime = monitorTime;
+    }
+
+    public boolean isStandard() {
+        return standard;
+    }
+
+    public void setStandard(boolean standard) {
+        this.standard = standard;
+    }
+
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
+    }
+
+    public Long getOptUser() {
+        return optUser;
+    }
+
+    public void setOptUser(Long optUser) {
+        this.optUser = optUser;
     }
 }

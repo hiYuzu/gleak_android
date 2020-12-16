@@ -83,7 +83,7 @@ public class FactorDialog {
         Button btnSearch = factorDialogView.findViewById(R.id.searchBtn);
         btnSearch.setOnClickListener(view -> {
             QueryBuilder<FactorCoefficientInfo> queryBuilder = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().queryBuilder();
-            Property localProperty = FactorCoefficientInfoDao.Properties.factorName;
+            Property localProperty = FactorCoefficientInfoDao.Properties.FACTOR_NAME;
             String likeSearch = "%" +
                     factorNameET.getText().toString().trim() +
                     "%";

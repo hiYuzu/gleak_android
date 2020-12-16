@@ -69,6 +69,9 @@ public class CommonDialog {
     }
 
     public interface SuccessCallback {
+        /**
+         * 确认回调
+         */
         void onConfirm();
     }
 }

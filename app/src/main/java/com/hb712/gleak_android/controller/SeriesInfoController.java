@@ -21,7 +21,7 @@ public class SeriesInfoController {
 
     static void checkStd() {
         if (!checkedStd) {
-            List<SeriesInfo> seriesInfoList =  DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().where(SeriesInfoDao.Properties.stdSeries.eq(Boolean.TRUE), new WhereCondition[0]).list();
+            List<SeriesInfo> seriesInfoList =  DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().where(SeriesInfoDao.Properties.STD_SERIES.eq(Boolean.TRUE), new WhereCondition[0]).list();
             if (seriesInfoList != null && seriesInfoList.size() >= 1) {
                 checkedStd = true;
                 return;
@@ -42,6 +42,6 @@ public class SeriesInfoController {
     public static List<SeriesInfo> getAllEdits()
     {
         checkStd();
-        return DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().where(SeriesInfoDao.Properties.stdSeries.eq(Boolean.FALSE), new WhereCondition[0]).list();
+        return DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().where(SeriesInfoDao.Properties.STD_SERIES.eq(Boolean.FALSE), new WhereCondition[0]).list();
     }
 }

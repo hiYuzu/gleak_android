@@ -33,6 +33,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(SeriesInfoDao.class);
         registerDaoClass(CalibrationInfoDao.class);
         registerDaoClass(SeriesLimitInfoDao.class);
+        registerDaoClass(DetectInfoDao.class);
     }
 
     private static void createAllTables(Database database) {
@@ -40,6 +41,7 @@ public class DaoMaster extends AbstractDaoMaster {
         SeriesInfoDao.createTable(database);
         CalibrationInfoDao.createTable(database);
         SeriesLimitInfoDao.createTable(database);
+        DetectInfoDao.createTable(database);
     }
 
     private static void dropAllTables(Database database) {
@@ -47,6 +49,7 @@ public class DaoMaster extends AbstractDaoMaster {
         SeriesInfoDao.dropTable(database);
         CalibrationInfoDao.dropTable(database);
         SeriesLimitInfoDao.dropTable(database);
+        DetectInfoDao.dropTable(database);
     }
 
     public static DaoSession newDevSession(Context context, String dbName) {

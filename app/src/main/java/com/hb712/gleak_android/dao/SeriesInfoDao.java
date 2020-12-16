@@ -18,7 +18,6 @@ import org.greenrobot.greendao.internal.DaoConfig;
  */
 public class SeriesInfoDao extends AbstractDao<SeriesInfo, Long> {
     public static final String TABLENAME = "series_info";
-    private static final String TAG = SeriesInfoDao.class.getSimpleName();
 
     public SeriesInfoDao(DaoConfig daoConfig) {
         super(daoConfig);
@@ -136,8 +135,8 @@ public class SeriesInfoDao extends AbstractDao<SeriesInfo, Long> {
     }
 
     public static class Properties {
-        public static final Property seriesName = new Property(1, String.class, "seriesName", false, "series_name");
-        public static final Property stdSeries = new Property(2, Boolean.TYPE, "stdSeries", false, "std_series");
-        public static final Property id = new Property(0, Long.class, "id", true, "id");
+        public static final Property SERIES_NAME = new Property(1, String.class, "seriesName", false, "series_name");
+        public static final Property STD_SERIES = new Property(2, Boolean.TYPE, "stdSeries", false, "std_series");
+        public static final Property ID = new Property(0, Long.class, "id", true, "id");
     }
 }

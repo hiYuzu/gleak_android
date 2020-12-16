@@ -2,6 +2,7 @@ package com.hb712.gleak_android.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import com.hb712.gleak_android.R;
 import com.hb712.gleak_android.entity.FactorCoefficientInfo;
 
 import java.util.List;
+
+import androidx.annotation.RequiresApi;
 
 /**
  * @author hiYuzu
@@ -50,7 +53,9 @@ public class FactorAdapter extends BaseAdapter {
         return 0;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("InflateParams")
+    @Override
     public View getView(int paramInt, View paramView, ViewGroup paramViewGroup) {
         ViewHolder viewHolder;
         if (paramView == null) {
@@ -63,7 +68,7 @@ public class FactorAdapter extends BaseAdapter {
         }
         viewHolder.factorTV.setText(factorCoefficientInfoList.get(paramInt).getFactorName());
         if (paramInt == this.selectItem) {
-            paramView.setBackgroundColor(context.getResources().getColor(R.color.ff80cbc4));
+            paramView.setBackgroundColor(context.getResources().getColor(R.color.ff80cbc4, null));
             return paramView;
         }
         paramView.setBackgroundColor(0);

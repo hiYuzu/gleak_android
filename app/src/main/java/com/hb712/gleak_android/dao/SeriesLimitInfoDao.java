@@ -117,9 +117,9 @@ public class SeriesLimitInfoDao extends AbstractDao<SeriesLimitInfo, Long> {
     }
 
     public static class Properties {
-        public static final Property seriesId = new Property(1, Long.TYPE, "seriesId", false, "series_id");
-        public static final Property maxValue = new Property(2, Double.TYPE, "maxValue", false, "max_value");
-        public static final Property id = new Property(0, Long.class, "id", true, "id");
+        public static final Property SERIES_ID = new Property(1, Long.TYPE, "seriesId", false, "series_id");
+        public static final Property MAX_VALUE = new Property(2, Double.TYPE, "maxValue", false, "max_value");
+        public static final Property ID = new Property(0, Long.class, "id", true, "id");
     }
 
 }

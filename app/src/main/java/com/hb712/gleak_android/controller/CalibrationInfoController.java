@@ -131,14 +131,14 @@ public class CalibrationInfoController {
     public void setCurrentSeries(SeriesInfo seriesInfo) {
         if (seriesInfo != null) {
             currentSeries = seriesInfo;
-            calibrationInfoList = DBManager.getInstance().getReadableSession().getCalibrationInfoDao().queryBuilder().where(CalibrationInfoDao.Properties.seriesId.eq(seriesInfo.getId()), new WhereCondition[0]).list();
+            calibrationInfoList = DBManager.getInstance().getReadableSession().getCalibrationInfoDao().queryBuilder().where(CalibrationInfoDao.Properties.SERIES_ID.eq(seriesInfo.getId()), new WhereCondition[0]).list();
             Collections.sort(calibrationInfoList);
         }
     }
 
     public void setCurrentSeries(String seriesName) {
         SeriesInfoController.checkStd();
-        List<SeriesInfo> seriesInfoList = DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().where(SeriesInfoDao.Properties.seriesName.eq(seriesName), new WhereCondition[0]).list();
+        List<SeriesInfo> seriesInfoList = DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().where(SeriesInfoDao.Properties.SERIES_NAME.eq(seriesName), new WhereCondition[0]).list();
         if (seriesInfoList != null && seriesInfoList.size() > 0) {
             setCurrentSeries(seriesInfoList.get(0));
         }

@@ -149,10 +149,10 @@ public class FactorCoefficientInfoDao extends AbstractDao<FactorCoefficientInfo,
     }
 
     public static class Properties {
-        public static final Property cas = new Property(2, String.class, "cas", false, "cas");
-        public static final Property coefficient = new Property(3, Double.TYPE, "coefficient", false, "coefficient");
-        public static final Property factorName = new Property(1, String.class, "factorName", false, "factor_name");
-        public static final Property moleculeValue = new Property(4, Double.TYPE, "moleculeValue", false, "molecule_value");
-        public static final Property id = new Property(0, Long.class, "id", true, "id");
+        public static final Property CAS = new Property(2, String.class, "cas", false, "cas");
+        public static final Property COEFFICIENT = new Property(3, Double.TYPE, "coefficient", false, "coefficient");
+        public static final Property FACTOR_NAME = new Property(1, String.class, "factorName", false, "factor_name");
+        public static final Property MOLECULE_VALUE = new Property(4, Double.TYPE, "moleculeValue", false, "molecule_value");
+        public static final Property ID = new Property(0, Long.class, "id", true, "id");
     }
 }

@@ -32,10 +32,21 @@ public class DateUtil {
     /**
      * 获取指定格式的当前时间
      * @param format 时间格式
-     * @return
+     * @return {@link String}
      */
     @SuppressLint("SimpleDateFormat")
     public static String getCurrentTime(String format) {
         return new SimpleDateFormat(format).format(new Date());
+    }
+
+    /**
+     * 获取指定时间的指定格式
+     * @param date 源时间
+     * @param format 时间格式
+     * @return {@link String}
+     */
+    @SuppressLint("SimpleDateFormat")
+    public static String getDateString(Date date, String format) {
+        return new SimpleDateFormat(format).format(date);
     }
 }

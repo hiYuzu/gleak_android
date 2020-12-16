@@ -155,13 +155,13 @@ public class CalibrationInfoDao extends AbstractDao<CalibrationInfo, Long> {
     }
 
     public static class Properties {
-        public static final Property bValue = new Property(7, Double.TYPE, "bValue", false, "b_value");
-        public static final Property calibrateTime = new Property(3, String.class, "calibrateTime", false, "calibrate_time");
-        public static final Property seriesId = new Property(2, Long.TYPE, "seriesId", false, "series_id");
-        public static final Property deviceName = new Property(1, String.class, "deviceName", false, "device_name");
-        public static final Property id = new Property(0, Long.class, "id", true, "id");
-        public static final Property kValue= new Property(6, Double.TYPE, "kValue", false, "k_value");
-        public static final Property signalValue = new Property(4, Double.TYPE, "signalValue", false, "signal_value");
-        public static final Property standardValue = new Property(5, Double.TYPE, "standardValue", false, "standard_value");
+        public static final Property B_VALUE = new Property(7, Double.TYPE, "bValue", false, "b_value");
+        public static final Property CALIBRATE_TIME = new Property(3, String.class, "calibrateTime", false, "calibrate_time");
+        public static final Property SERIES_ID = new Property(2, Long.TYPE, "seriesId", false, "series_id");
+        public static final Property DEVICE_NAME = new Property(1, String.class, "deviceName", false, "device_name");
+        public static final Property ID = new Property(0, Long.class, "id", true, "id");
+        public static final Property K_VALUE= new Property(6, Double.TYPE, "kValue", false, "k_value");
+        public static final Property SIGNAL_VALUE = new Property(4, Double.TYPE, "signalValue", false, "signal_value");
+        public static final Property STANDARD_VALUE = new Property(5, Double.TYPE, "standardValue", false, "standard_value");
     }
 }

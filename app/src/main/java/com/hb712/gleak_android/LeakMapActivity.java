@@ -52,6 +52,7 @@ public class LeakMapActivity extends BaseActivity {
     private BitmapDescriptor bitmap;
     // 选择的leak点位
     private String selectedLeakId;
+    private String selectedLeakName;
     // new leak data
     private EditText newLeakName;
     private EditText newLeakCode;
@@ -164,11 +165,12 @@ public class LeakMapActivity extends BaseActivity {
 
         baiduMap.setOnMarkerClickListener(marker -> {
             Bundle bundle = marker.getExtraInfo();
-            // 显示
-            leakName.setText(bundle.getString("leakName"));
-            leakCode.setText(bundle.getString("leakCode"));
             // 存储
             selectedLeakId = bundle.getString("leakId");
+            selectedLeakName = bundle.getString("leakName");
+            // 显示
+            leakName.setText(selectedLeakName);
+            leakCode.setText(bundle.getString("leakCode"));
             return true;
         });
     }
@@ -176,6 +178,7 @@ public class LeakMapActivity extends BaseActivity {
     public void confirmPoint(View view) {
         Intent intent = new Intent();
         intent.putExtra("leakId", selectedLeakId);
+        intent.putExtra("leakName", selectedLeakName);
 
         setResult(Activity.RESULT_OK, intent);
         finish();
@@ -249,6 +252,7 @@ public class LeakMapActivity extends BaseActivity {
     }
 
     private class MyLocationListener extends BDAbstractLocationListener {
+        @Override
         public void onReceiveLocation(BDLocation bdLocation) {
             // mapView 销毁后不在处理新接收的位置
             if (bdLocation == null || mMapView == null) {
