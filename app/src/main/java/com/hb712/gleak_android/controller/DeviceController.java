@@ -96,6 +96,10 @@ public class DeviceController {
             fireOn = status.isFireOn;
             if (fireOn) {
                 currentValue = status.detectValue;
+                //点火后对电压会有影响，所以追加固定8%
+                if(powerPercent <= 90){
+                    powerPercent += 8;
+                }
             } else {
                 currentValue = 0.0D;
             }
