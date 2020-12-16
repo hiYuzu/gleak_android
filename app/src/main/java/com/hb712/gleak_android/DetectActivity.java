@@ -150,6 +150,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         startRecordBtn = findViewById(R.id.startRecordBtn);
         startRecordBtn.setOnClickListener((p) -> {
             if (!MainApplication.getInstance().isLogin()) {
+                ToastUtil.shortInstanceToast("当前未登录");
                 return;
             }
             if (!isSaving) {

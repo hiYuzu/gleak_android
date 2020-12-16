@@ -15,8 +15,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_5dp"
         android:layout_marginTop="@dimen/dimen_5dp"
-        android:gravity="center_horizontal"
+        android:gravity="start"
         android:orientation="horizontal">
 
         <Button
@@ -54,36 +55,14 @@
             android:text="@string/videoStop"
             android:textColor="@color/white" />
 
-        <Button
-            android:id="@+id/startRecordBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fab_margin"
-            android:background="@drawable/button_operation"
-            android:minWidth="65dp"
-            android:minHeight="@dimen/dimen_35dp"
-            android:text="@string/startRecord"
-            android:textColor="@color/white" />
-
-        <Button
-            android:id="@+id/uploadVideoBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fab_margin"
-            android:background="@drawable/button_operation"
-            android:enabled="false"
-            android:minWidth="65dp"
-            android:minHeight="@dimen/dimen_35dp"
-            android:onClick="uploadVideo"
-            android:text="@string/uploadVideo"
-            android:textColor="@color/white" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_5dp"
         android:layout_marginTop="@dimen/fab_margin"
-        android:gravity="center_horizontal"
+        android:gravity="start"
         android:orientation="horizontal">
 
         <Button
@@ -132,6 +111,11 @@
             android:text="@string/detect_ceasefire"
             android:textColor="@color/white" />
 
+        <ImageView android:id="@+id/ioFire"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:src="@drawable/fire_off"/>
     </LinearLayout>
 
     <LinearLayout
@@ -168,7 +152,6 @@
             android:onClick="selectSeries"
             android:text="@string/detect_series"
             android:textColor="@color/launch_text_color" />
-
         <TextView
             android:id="@+id/detectFactor"
             android:layout_width="wrap_content"
@@ -176,8 +159,8 @@
             android:layout_marginStart="@dimen/dimen_25dp"
             android:onClick="selectFactor"
             android:text="@string/detect_factor"
+            android:visibility="gone"
             android:textColor="@color/launch_text_color" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -409,5 +392,34 @@
             </LinearLayout>
 
         </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_gravity="end">
+        <Button
+            android:id="@+id/startRecordBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:background="@drawable/button_cycle"
+            android:minWidth="65dp"
+            android:minHeight="65dp"
+            android:text="@string/startRecord"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/uploadVideoBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:background="@drawable/button_cycle"
+            android:enabled="false"
+            android:minWidth="65dp"
+            android:minHeight="65dp"
+            android:onClick="uploadVideo"
+            android:text="@string/uploadVideo"
+            android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>
