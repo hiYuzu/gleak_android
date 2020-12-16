@@ -89,7 +89,6 @@
     <string name="min_value">最小值</string>
     <string name="avg_value">平均值</string>
     <string name="number">序号</string>
-    <string name="sample_name">样品名称</string>
     <string name="history_detect_value">检测值</string>
     <string name="detect_time">检测时间</string>
     <!--deviceActivity-->
@@ -103,9 +102,9 @@
     <string name="open_bracket">(</string>
     <string name="close_bracket">)</string>
 
-    <string name="leak_name">漏点名称：</string>
-    <string name="leak_code">漏点编号：</string>
-    <string name="leak_period">巡检周期：</string>
+    <string name="leak_name">漏点名称</string>
+    <string name="leak_code">漏点编号</string>
+    <string name="leak_period">巡检周期</string>
     <string name="leak_period_unit">天</string>
     <string name="leak_position">漏点坐标：</string>
 

@@ -27,7 +27,7 @@
         android:layout_weight="2">
 
         <TextView
-            android:id="@+id/sampleName"
+            android:id="@+id/leakNameList"
             style="@style/text_style_16_default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
         android:layout_weight="2">
 
         <TextView
-            android:id="@+id/sampleDetectValue"
+            android:id="@+id/monitorValue"
             style="@style/text_style_16_default"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/sampleDetectTime"
+        android:id="@+id/monitorTime"
         style="@style/text_style_16_default"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

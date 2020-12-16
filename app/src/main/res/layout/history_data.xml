@@ -82,7 +82,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="2dp"
                 android:singleLine="false"
-                android:text="@string/sample_name" />
+                android:text="@string/leak_name" />
         </RelativeLayout>
 
         <RelativeLayout
