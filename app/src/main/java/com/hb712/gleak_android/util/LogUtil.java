@@ -118,7 +118,7 @@ public class LogUtil {
     }
 
     private static void writeToFile(Character type, String tag, String msg) {
-        String log = DateUtil.getCurrentTime(DateUtil.HP_TIME) + " " + type + "/" + tag + ": " + msg;
+        String log = DateUtil.getCurrentTime(DateUtil.HP_TIME) + " " + type + "/" + tag + ": " + msg + "\n";
         FileOutputStream fos = null;
         BufferedWriter bw = null;
         try {

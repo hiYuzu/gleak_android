@@ -34,6 +34,96 @@ public class CalibrationInfoController {
         return instance;
     }
 
+    public synchronized void saveAll() {
+        calculateKb();
+        for (CalibrationInfo temp : calibrationInfoList) {
+            DBManager.getInstance().getWritableSession().getCalibrationInfoDao().save(temp);
+        }
+    }
+
+    private void calculateKb() {
+        Collections.sort(calibrationInfoList);
+        int i = 0;
+        while (i < calibrationInfoList.size() - 1) {
+            double d1 = calibrationInfoList.get(i + 1).getSignalValue() - calibrationInfoList.get(i).getSignalValue();
+            if (d1 != 0.0D) {
+                d1 = (calibrationInfoList.get(i + 1).getStandardValue() - calibrationInfoList.get(i).getStandardValue()) / d1;
+                double d2 = calibrationInfoList.get(i).getStandardValue();
+                double d3 = calibrationInfoList.get(i).getSignalValue();
+                calibrationInfoList.get(i).setKValue(d1);
+                calibrationInfoList.get(i).setBValue(d2 - d3 * d1);
+            } else {
+                calibrationInfoList.get(i).setKValue(1.0D);
+                calibrationInfoList.get(i).setBValue(0.0D);
+            }
+            i += 1;
+        }
+    }
+
+    /**
+     * 计算ppm
+     *
+     * @param microCurrent 微电流
+     * @return
+     */
+    public double getValueBySignal(double microCurrent) {
+        double ppm = 0.0D;
+        int minSize = 2;
+        if (calibrationInfoList != null) {
+            if (calibrationInfoList.size() < minSize) {
+                return 0.0D;
+            }
+            int k = -1;
+            int i = 0;
+            int j;
+            for (; ; ) {
+                j = k;
+                if (i >= calibrationInfoList.size() - 1) {
+                    break;
+                }
+                if (calibrationInfoList.get(i + 1).getSignalValue() >= microCurrent) {
+                    j = i;
+                    break;
+                }
+                i += 1;
+            }
+            if (j == -1) {
+                j = calibrationInfoList.size() - 2;
+            }
+            ppm = calibrationInfoList.get(j).getKValue() * microCurrent + calibrationInfoList.get(j).getBValue();
+            if (factor != null) {
+                ppm *= factor.getCoefficient();
+            }
+        }
+        return Math.max(ppm, 0.0D);
+    }
+
+    public void updateCalibrateInfo(List<CalibrationInfo> calibrationInfos) {
+        int k = 0;
+        for (int i = 0; i < calibrationInfos.size(); i++) {
+            for (int j = 0; j < calibrationInfoList.size(); j++) {
+                if (Double.compare(calibrationInfoList.get(j).getStandardValue(), calibrationInfos.get(i).getStandardValue()) == 0) {
+                    calibrationInfoList.get(j).setValueFromCalibrationInfo(calibrationInfos.get(i));
+                    k = 1;
+                    break;
+                }
+            }
+            if (k == 0) {
+                calibrationInfoList.add(calibrationInfos.get(i));
+            }
+        }
+        calculateKb();
+        saveAll();
+    }
+
+    public void deleteCalibrateInfo(int paramInt) {
+        if (calibrationInfoList.size() > paramInt) {
+            calibrationInfoList.get(paramInt).delete();
+            calibrationInfoList.remove(paramInt);
+            saveAll();
+        }
+    }
+
     public SeriesInfo getCurrentSeries() {
         return currentSeries;
     }
@@ -47,12 +137,9 @@ public class CalibrationInfoController {
     }
 
     public void setCurrentSeries(String seriesName) {
-        // TODO: hiYuzu 2020/12/2 测试用，待删除
-//        setCurrentSeries(new SeriesInfo(1L, "测试曲线", true));
         SeriesInfoController.checkStd();
         List<SeriesInfo> seriesInfoList = DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().where(SeriesInfoDao.Properties.seriesName.eq(seriesName), new WhereCondition[0]).list();
-        if (seriesInfoList != null && seriesInfoList.size() > 0)
-        {
+        if (seriesInfoList != null && seriesInfoList.size() > 0) {
             setCurrentSeries(seriesInfoList.get(0));
         }
     }

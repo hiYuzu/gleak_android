@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -15,8 +16,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineDataSet;
 
 import com.hb712.gleak_android.base.BaseActivity;
 import com.hb712.gleak_android.controller.CalibrationInfoController;
@@ -39,21 +38,22 @@ import com.hb712.gleak_android.entity.SeriesLimitInfo;
 import com.hb712.gleak_android.rtsp.RtspPlayer;
 import com.hb712.gleak_android.util.BluetoothUtil;
 import com.hb712.gleak_android.util.DateUtil;
+import com.hb712.gleak_android.util.ThreadPoolUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.SPUtil;
-import com.hb712.gleak_android.util.UnitManager;
+import com.hb712.gleak_android.util.UnitUtil;
 
 import org.greenrobot.greendao.query.WhereCondition;
 
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class DetectActivity extends BaseActivity implements HttpInterface {
 
@@ -89,7 +89,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private TextView detectParamFireTemp;
     private TextView detectParamMicroCurrent;
 
-    private LineDataSet lineDataSet;
     private double minValue = Double.MAX_VALUE;
     private double maxValue = Double.MIN_VALUE;
 
@@ -101,7 +100,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
     private LeakData lastedLeakData;
 
-    //other
     private BluetoothUtil mBluetooth;
     private DeviceController deviceController;
     private SeriesLimitInfo seriesLimitInfo;
@@ -204,14 +202,16 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             finish();
         }
 
+        startReadTask();
+
         mBluetooth.addBluetoothListener("", new BluetoothUtil.BluetoothListener() {
             @Override
             public void onDeviceConnected(String name, String address) {
                 GlobalParam.isConnected = true;
                 detectConnectB.setText(R.string.detect_disconnect);
                 connDeviceTV.setText(name);
+                deviceController.setDeviceName(name);
                 ToastUtil.shortInstanceToast("蓝牙已连接");
-                startReadTask();
             }
 
             @Override
@@ -220,12 +220,10 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 detectConnectB.setText(R.string.detect_connect);
                 connDeviceTV.setText(R.string.detect_disconnected);
                 ToastUtil.shortInstanceToast("蓝牙已断开");
-                stopReadTask();
             }
 
             @Override
             public void onDataReceived(byte[] data) {
-                //仪器参数
                 showFragmentContent(data);
             }
         });
@@ -235,34 +233,11 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      * 开启读取线程
      */
     private void startReadTask() {
-        if (this.timerTask != null) {
-            this.timerTask.cancel();
-        }
-        this.timerTask = new TimerTask() {
-            @Override
-            public void run() {
+        ThreadPoolUtil.getInstance().scheduledCommonExecute(() -> {
+            if (GlobalParam.isConnected) {
                 mBluetooth.readData();
             }
-        };
-        if (this.timer == null) {
-            this.timer = new Timer();
-        }
-        this.timer.purge();
-        this.timer.schedule(this.timerTask, this.timerTime, this.timerTime);
-    }
-
-    /**
-     * 关闭读取线程
-     */
-    private void stopReadTask() {
-        if (this.timer != null) {
-            this.timer.cancel();
-            this.timer = null;
-        }
-        if (this.timerTask != null) {
-            this.timerTask.cancel();
-            this.timerTask = null;
-        }
+        }, 500, 500, TimeUnit.MILLISECONDS);
     }
 
     private void initClass() {
@@ -290,7 +265,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             }
             List<FactorCoefficientInfo> factorCoefficientInfoList = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().queryBuilder().where(FactorCoefficientInfoDao.Properties.id.eq(id), new WhereCondition[0]).list();
             if (factorCoefficientInfoList != null && factorCoefficientInfoList.size() > 0) {
-                UnitManager.changeFactor(factorCoefficientInfoList.get(0));
+                UnitUtil.changeFactor(factorCoefficientInfoList.get(0));
                 deviceController.changeFactor(factorCoefficientInfoList.get(0));
             }
             showSeriesName();
@@ -589,7 +564,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     public void fireClick2(View view) {
         if (isConnected()) {
             mBluetooth.openFire2();
-//            mBluetooth.readData();
         }
     }
 
@@ -618,92 +592,51 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      * @param paramBytes 接收的数据
      */
     private void showFragmentContent(byte[] paramBytes) {
-        mBluetooth.analysisCommand(paramBytes);
-        // TODO: hiYuzu 2020/12/2 数据处理：paramBytes 给到 DeviceController 做进一步处理解析
-        double currentPpm = deviceController.getCurrentPpm();
+        deviceController.analysisCommand(paramBytes);
+        double currentPpm = deviceController.getCurrentValue();
+        cacheCurveData(currentPpm);
         if (!unitPPM) {
-            currentPpm = UnitManager.getMg(currentPpm);
+            currentPpm = UnitUtil.getMg(currentPpm);
         }
-
         //展示仪器参数
         showStatus();
-        cacheCurveData(currentPpm);
-        detectValueET.setText(new DecimalFormat("0.0").format(currentPpm));
         showValueBySeriesLimit(currentPpm);
         showMax(currentPpm);
     }
 
     @SuppressLint("SetTextI18n")
     private void showStatus() {
-        DecimalFormat localDecimalFormat = new DecimalFormat("0.00");
-        detectParamPower.setText(localDecimalFormat.format(deviceController.getPowerPercent()) + "%");
+        DecimalFormat df = new DecimalFormat("0.00");
+        detectParamPower.setText(df.format(deviceController.getPowerPercent()) + "%");
         detectParamVol.setText(new DecimalFormat("0.000").format(deviceController.getVol()));
-        detectParamHydrogen.setText(localDecimalFormat.format(deviceController.getHydrogenPressPercent()) + "%");
+        detectParamHydrogen.setText(df.format(deviceController.getHydrogenPressPercent()) + "%");
         detectParamHydrogenPress.setText(String.valueOf(deviceController.getHydrogenPress()));
         detectParamPump.setText(String.valueOf(deviceController.getPump()));
-        detectParamCcTemp.setText(localDecimalFormat.format(deviceController.getCcTemp()));
-        detectParamDischargePress.setText(localDecimalFormat.format(deviceController.getDischargePress()));
-        detectParamFireTemp.setText(localDecimalFormat.format(deviceController.getFireTemp()));
-        detectParamOutletHydrogenPress.setText(localDecimalFormat.format(deviceController.getOutletHydrogenPress()));
-        detectParamMicroCurrent.setText(localDecimalFormat.format(deviceController.getMicroCurrent()));
-        detectParamSystemCurrent.setText(localDecimalFormat.format(deviceController.getSystemCurrent()));
+        detectParamCcTemp.setText(df.format(deviceController.getCcTemp()));
+        detectParamDischargePress.setText(df.format(deviceController.getDischargePress()));
+        detectParamFireTemp.setText(df.format(deviceController.getFireTemp()));
+        detectParamOutletHydrogenPress.setText(df.format(deviceController.getOutletHydrogenPress()));
+        detectParamMicroCurrent.setText(df.format(deviceController.getMicroCurrent()));
+        detectParamSystemCurrent.setText(df.format(deviceController.getSystemCurrent()));
     }
 
-    private void cacheCurveData(double paramFloat) {
-        if (minValue > paramFloat) {
-            minValue = paramFloat;
+    private void cacheCurveData(double currentPpm) {
+        if (minValue > currentPpm) {
+            minValue = currentPpm;
         }
-        if (maxValue < paramFloat) {
-            maxValue = paramFloat;
+        if (maxValue < currentPpm) {
+            maxValue = currentPpm;
         }
         if (isSaving) {
             saveMaxValue = maxValue;
             saveTime = DateUtil.getDefaultTime();
         }
-        List<Entry> entries;
-        if (lineDataSet != null) {
-            entries = lineDataSet.getValues();
-        } else {
-            entries = new ArrayList<>();
-        }
-        if (entries.size() >= 200) {
-            entries.remove(0);
-            int i = 0;
-            while (i < entries.size()) {
-                entries.get(i).setX(entries.get(i).getX() - 1.0F);
-                i += 1;
-            }
-        }
-        Entry entry = new Entry();
-        entry.setX(entries.size() + 1);
-        entry.setY((float) paramFloat);
-        entries.add(entry);
-        if (lineDataSet == null) {
-            initDataSet(entries);
-        }
     }
 
-    private void initDataSet(List<Entry> paramList) {
-        lineDataSet = new LineDataSet(paramList, "浓度趋势");
-        lineDataSet.setMode(LineDataSet.Mode.LINEAR);
-        lineDataSet.enableDashedLine(2.0F, 0.0F, 0.0F);
-        lineDataSet.setColor(R.color.blue);
-        lineDataSet.setLineWidth(1.5F);
-        lineDataSet.setDrawCircles(false);
-        lineDataSet.setCircleRadius(4.5F);
-        lineDataSet.setValueTextSize(20.0F);
-        lineDataSet.setDrawValues(false);
-        lineDataSet.setValueTextColor(R.color.black);
-        lineDataSet.setDrawFilled(false);
-        lineDataSet.setFormLineWidth(1.0F);
-        lineDataSet.setFormSize(15.0F);
-        lineDataSet.setFillColor(R.color.blue);
-    }
-
-    private void showValueBySeriesLimit(double paramDouble) {
-        SeriesLimitInfo seriesLimitInfo = this.seriesLimitInfo;
+    private void showValueBySeriesLimit(double currentPpm) {
+        detectValueET.setText(new DecimalFormat("0.0").format(currentPpm));
         if (seriesLimitInfo != null) {
-            if (paramDouble > seriesLimitInfo.getMaxValue()) {
+            if (currentPpm > seriesLimitInfo.getMaxValue()) {
                 detectValueET.setTextColor(getResources().getColor(R.color.red));
                 return;
             }
@@ -752,7 +685,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 if (CalibrationInfoController.getInstance().getCurrentSeries().isStdSeries()) {
                     FactorDialog factorDialog = new FactorDialog(DetectActivity.this, "选择响应因子");
                     factorDialog.setFactorAddSuccessCallback(factorCoefficientInfo -> {
-                        UnitManager.changeFactor(factorCoefficientInfo);
+                        UnitUtil.changeFactor(factorCoefficientInfo);
                         deviceController.changeFactor(factorCoefficientInfo);
                         showFactorName();
                         if (factorCoefficientInfo == null) {

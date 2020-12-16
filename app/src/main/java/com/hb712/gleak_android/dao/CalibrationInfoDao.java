@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
 import com.hb712.gleak_android.entity.CalibrationInfo;
-import com.hb712.gleak_android.entity.FactorCoefficientInfo;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -67,8 +66,8 @@ public class CalibrationInfoDao extends AbstractDao<CalibrationInfo, Long> {
         }
         stmt.bindDouble(5, entity.getSignalValue());
         stmt.bindDouble(6, entity.getStandardValue());
-        stmt.bindDouble(7, entity.getkValue());
-        stmt.bindDouble(8, entity.getbValue());
+        stmt.bindDouble(7, entity.getKValue());
+        stmt.bindDouble(8, entity.getBValue());
     }
 
     @Override
@@ -89,8 +88,8 @@ public class CalibrationInfoDao extends AbstractDao<CalibrationInfo, Long> {
         }
         stmt.bindDouble(5, entity.getSignalValue());
         stmt.bindDouble(6, entity.getStandardValue());
-        stmt.bindDouble(7, entity.getkValue());
-        stmt.bindDouble(8, entity.getbValue());
+        stmt.bindDouble(7, entity.getKValue());
+        stmt.bindDouble(8, entity.getBValue());
     }
 
     @Override
@@ -140,8 +139,8 @@ public class CalibrationInfoDao extends AbstractDao<CalibrationInfo, Long> {
         }
         entity.setSignalValue(cursor.getDouble(offset + 4));
         entity.setStandardValue(cursor.getDouble(offset + 5));
-        entity.setkValue(cursor.getDouble(offset + 6));
-        entity.setbValue(cursor.getDouble(offset + 7));
+        entity.setKValue(cursor.getDouble(offset + 6));
+        entity.setBValue(cursor.getDouble(offset + 7));
     }
 
     @Override

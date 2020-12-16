@@ -38,12 +38,11 @@ public class GlobalParam {
     public static final double MIN_DISTANCE = 5.0;
 
     public static boolean isConnected = false;
-    public static boolean isFireOn = false;
 
     // 蓝牙状态
-    public static final int STATE_NONE = 0;        // 无动作
-    public static final int STATE_CONNECTING = 1;    // 正在连接
-    public static final int STATE_CONNECTED = 2;    // 已连接
+    public static final int STATE_NONE = 0;
+    public static final int STATE_CONNECTING = 1;
+    public static final int STATE_CONNECTED = 2;
 
     //message what
     public static final int MESSAGE_STATE_CHANGE = 1;
@@ -62,7 +61,6 @@ public class GlobalParam {
     public static final boolean DEVICE_ANDROID = true;
     public static final boolean DEVICE_OTHER = false;
 
-    //video
     @SuppressLint("AuthLeak")
     public static String VIDEO_URL = "rtsp://admin:tjtcb712@192.168.3.100:554/h264/ch1/main/av_stream";
 

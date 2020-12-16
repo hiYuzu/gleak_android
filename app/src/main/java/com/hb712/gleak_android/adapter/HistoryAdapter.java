@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.hb712.gleak_android.R;
 import com.hb712.gleak_android.entity.DetectInfo;
-import com.hb712.gleak_android.util.UnitManager;
+import com.hb712.gleak_android.util.UnitUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class HistoryAdapter extends BaseAdapter {
     }
 
     private double getUnitValue(double paramDouble) {
-        return unitPPM ? paramDouble : UnitManager.getMg(paramDouble);
+        return unitPPM ? paramDouble : UnitUtil.getMg(paramDouble);
     }
 
     @SuppressLint("InflateParams")

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.TreeMap;
 import java.util.UUID;
 
 /**
@@ -118,11 +119,18 @@ public class BluetoothService {
         ConnectedThread r;
         synchronized (this) {
             if (mState != GlobalParam.STATE_CONNECTED) {
+                LogUtil.infoOut(TAG, "发送失败, 蓝牙未连接");
                 return;
             }
             r = mConnectedThread;
         }
-        r.write(out);
+        try {
+            r.write(out);
+        } catch (IOException ioe) {
+            LogUtil.errorOut(TAG, ioe, "发送失败");
+        }
+
+
     }
 
     private void connectionFailed() {
@@ -248,12 +256,8 @@ public class BluetoothService {
             }
         }
 
-        void write(byte[] buffer) {
-            try {
-                mmOutStream.write(buffer);
-            } catch (IOException e) {
-                LogUtil.errorOut(TAG, e, "发送数据失败");
-            }
+        void write(byte[] buffer) throws IOException {
+            mmOutStream.write(buffer);
         }
 
         void cancel() {

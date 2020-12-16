@@ -98,13 +98,14 @@ public class ThreadPoolUtil {
      * 定时任务型线程创建
      *
      * @param runnable 线程执行体
-     * @param delay    延迟时间
-     * @param unit     延迟时间单位
+     * @param initialDelay    延迟时间
+     * @param period 周期
+     * @param unit 延迟时间单位
      * @throws NullPointerException 当 runnable 为 null 时，抛出
      * @see ScheduledExecutorService
      */
-    public void scheduledCommonExecute(Runnable runnable, long delay, TimeUnit unit) throws NullPointerException {
-        SCHEDULED_EXECUTOR_SERVICE.schedule(runnable, delay, unit);
+    public void scheduledCommonExecute(Runnable runnable, long initialDelay, long period, TimeUnit unit) throws NullPointerException {
+        SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(runnable, initialDelay, period, unit);
     }
 
 }

@@ -2,9 +2,9 @@ package com.hb712.gleak_android.util;
 
 public class ByteUtil {
 
-    protected static final char[] hexArray = "0123456789ABCDEF".toCharArray();
+    protected static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
-    public static int BytesToDword(byte b3, byte b2, byte b1, byte b0) {
+    public static int bytesToDword(byte b3, byte b2, byte b1, byte b0) {
         int bb3 = b3;
         int bb2 = b2;
         int bb1 = b1;
@@ -21,10 +21,10 @@ public class ByteUtil {
         if (bb0 < 0) {
             bb0 += 256;
         }
-        return (int) (0x00FFFFFFFF & ((bb3 << 24) | (bb2 << 16) | (bb1 << 8) | bb0));
+        return ((bb3 << 24) | (bb2 << 16) | (bb1 << 8) | bb0);
     }
 
-    public static int BytesToWord(byte b1, byte b0) {
+    public static int bytesToWord(byte b1, byte b0) {
         int bb1 = b1;
         int bb0 = b0;
         if (bb1 < 0) {
@@ -42,7 +42,7 @@ public class ByteUtil {
 
     public static String bytesToHex(byte paramByte) {
         paramByte &= 0xFF;
-        char[] arrayOfChar = hexArray;
+        char[] arrayOfChar = HEX_ARRAY;
         return new String(new char[]{arrayOfChar[(paramByte >>> 4)], arrayOfChar[(paramByte & 0xF)]});
     }
 
@@ -51,7 +51,7 @@ public class ByteUtil {
         int i = 0;
         while (i < paramArrayOfByte.length) {
             int j = paramArrayOfByte[i] & 0xFF;
-            char[] arrayOfChar2 = hexArray;
+            char[] arrayOfChar2 = HEX_ARRAY;
             arrayOfChar1[(i * 2)] = arrayOfChar2[(j >>> 4)];
             arrayOfChar1[(i * 2 + 1)] = arrayOfChar2[(j & 0xF)];
             i += 1;

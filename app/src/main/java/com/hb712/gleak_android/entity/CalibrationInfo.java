@@ -21,15 +21,14 @@ public class CalibrationInfo implements Comparable<CalibrationInfo> {
     private static final String TAG = CalibrationInfo.class.getSimpleName();
     @Id
     private Long id;
-    private String calibrateTime;
     private String deviceName;
+    private String calibrateTime;
     private double bValue;
     private double kValue;
     private double signalValue;
     private double standardValue;
-    private SeriesInfo seriesInfo;
-    private transient Long seriesInfoResolvedKey;
     private long seriesId;
+
     private transient DaoSession daoSession;
     private transient CalibrationInfoDao calibrationInfoDao;
 
@@ -49,18 +48,27 @@ public class CalibrationInfo implements Comparable<CalibrationInfo> {
         this.bValue = bValue;
     }
 
+    @Override
     public int compareTo(@NonNull CalibrationInfo calibrationInfo) {
-        return Double.compare(signalValue, calibrationInfo.signalValue);
+        return Double.compare(standardValue, calibrationInfo.standardValue);
+    }
+
+    public void delete() {
+        if (calibrationInfoDao != null) {
+            calibrationInfoDao.delete(this);
+            return;
+        }
+        throw new DaoException("Entity is detached from DAO context");
     }
 
     public void setValueFromCalibrationInfo(CalibrationInfo calibrationInfo) {
         if (calibrationInfo != null) {
-            bValue = calibrationInfo.getbValue();
-            kValue = calibrationInfo.getkValue();
+            bValue = calibrationInfo.getBValue();
+            kValue = calibrationInfo.getKValue();
             seriesId = calibrationInfo.getSeriesId();
             deviceName = calibrationInfo.getDeviceName();
             calibrateTime = calibrationInfo.getCalibrateTime();
-            signalValue = calibrationInfo.getStandardValue();
+            standardValue = calibrationInfo.getStandardValue();
             signalValue = calibrationInfo.getSignalValue();
         }
     }
@@ -89,19 +97,19 @@ public class CalibrationInfo implements Comparable<CalibrationInfo> {
         this.deviceName = deviceName;
     }
 
-    public double getbValue() {
+    public double getBValue() {
         return bValue;
     }
 
-    public void setbValue(double bValue) {
+    public void setBValue(double bValue) {
         this.bValue = bValue;
     }
 
-    public double getkValue() {
+    public double getKValue() {
         return kValue;
     }
 
-    public void setkValue(double kValue) {
+    public void setKValue(double kValue) {
         this.kValue = kValue;
     }
 
@@ -119,34 +127,6 @@ public class CalibrationInfo implements Comparable<CalibrationInfo> {
 
     public void setStandardValue(double standardValue) {
         this.standardValue = standardValue;
-    }
-
-    public SeriesInfo getSeriesInfo() {
-        if (seriesInfoResolvedKey != null && seriesInfoResolvedKey.equals(seriesId)) {
-            return seriesInfo;
-        }
-        if (daoSession != null) {
-            try {
-                this.seriesInfo = daoSession.getSeriesInfoDao().load(seriesId);
-                seriesInfoResolvedKey = seriesId;
-                return this.seriesInfo;
-            } catch (DaoException e) {
-                LogUtil.warnOut(TAG, e, "Entity is detached from DAO context");
-            }
-        }
-        return seriesInfo;
-    }
-
-    public void setSeriesInfo(SeriesInfo seriesInfo) {
-        this.seriesInfo = seriesInfo;
-    }
-
-    public Long getSeriesInfoResolvedKey() {
-        return seriesInfoResolvedKey;
-    }
-
-    public void setSeriesInfoResolvedKey(Long seriesInfoResolvedKey) {
-        this.seriesInfoResolvedKey = seriesInfoResolvedKey;
     }
 
     public long getSeriesId() {

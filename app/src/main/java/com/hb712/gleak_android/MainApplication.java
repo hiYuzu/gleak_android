@@ -1,6 +1,7 @@
 package com.hb712.gleak_android;
 
 import com.hb712.gleak_android.base.BaseApplication;
+import com.hb712.gleak_android.controller.DeviceController;
 import com.hb712.gleak_android.util.BluetoothUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.SPUtil;
@@ -33,9 +34,9 @@ public class MainApplication extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         singleton = this;
-        String appIP = (String) SPUtil.get(this, GlobalParam.SERVE_IP, GlobalParam.DEFAULT_IP);
+        String appIp = (String) SPUtil.get(this, GlobalParam.SERVE_IP, GlobalParam.DEFAULT_IP);
         String appPort = (String) SPUtil.get(this, GlobalParam.SERVE_PORT, GlobalParam.DEFAULT_PORT);
-        baseUrl = "http://" + appIP + (appPort.isEmpty() ? "" : ":" + appPort);
+        baseUrl = "http://" + appIp + (appPort.isEmpty() ? "" : ":" + appPort);
         mBluetooth = BluetoothUtil.getInstance();
     }
 
