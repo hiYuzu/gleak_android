@@ -190,10 +190,10 @@ public class DetectInfoDao extends AbstractDao<DetectInfo, Long> {
     public static class Properties {
         public static final Property ID = new Property(0, Long.class, "id", true, "id");
         public static final Property LEAK_NAME = new Property(1, String.class, "leakName", false, "leak_name");
-        public static final Property MONITOR_VALUE = new Property(1, Double.TYPE, "monitorValue", false, "monitor_value");
-        public static final Property MONITOR_TIME = new Property(1, String.class, "monitorTime", false, "monitor_time");
-        public static final Property STANDARD = new Property(1, Boolean.TYPE, "standard", false, "standard");
-        public static final Property VIDEO_PATH = new Property(1, String.class, "videoPath", false, "video_path");
-        public static final Property OPT_USER = new Property(1, Long.class, "optUser", false, "opt_user");
+        public static final Property MONITOR_VALUE = new Property(2, Double.TYPE, "monitorValue", false, "monitor_value");
+        public static final Property MONITOR_TIME = new Property(3, String.class, "monitorTime", false, "monitor_time");
+        public static final Property STANDARD = new Property(4, Boolean.TYPE, "standard", false, "standard");
+        public static final Property VIDEO_PATH = new Property(5, String.class, "videoPath", false, "video_path");
+        public static final Property OPT_USER = new Property(6, Long.class, "optUser", false, "opt_user");
     }
 }
