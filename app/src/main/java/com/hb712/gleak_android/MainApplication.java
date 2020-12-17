@@ -40,7 +40,9 @@ public class MainApplication extends BaseApplication {
         mBluetooth = BluetoothUtil.getInstance();
     }
 
-    public void saveUserPwd(String username, String password, boolean isSave) {
+    public void saveUserPwd(String userId, String token, String username, String password, boolean isSave) {
+        this.userId = userId;
+        this.token = token;
         this.username = username;
         this.password = password;
         if (isSave) {

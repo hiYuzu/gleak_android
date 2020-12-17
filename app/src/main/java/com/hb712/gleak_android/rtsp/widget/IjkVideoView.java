@@ -269,7 +269,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         openVideo();
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     private void openVideo() {
         if (mUri == null || mSurfaceHolder == null) {
             // 未准备，稍后再试

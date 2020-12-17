@@ -16,8 +16,11 @@ import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.SPUtil;
+import com.hb712.gleak_android.util.ThreadPoolUtil;
 
 import java.util.Objects;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author hiYuzu
@@ -28,10 +31,17 @@ public class UploadPositionService {
     private static final String TAG = UploadPositionService.class.getSimpleName();
     private final LocationClient locationClient;
     private final MainApplication mainApp;
+    private double lng = -1;
+    private double lat = -1;
+    MyPosition myPosition;
+    private LatLng oldLocation = null;
+
+    private Future<?> future;
 
     private UploadPositionService() {
         locationClient = new LocationClient(BaseActivity.baseActivity);
         mainApp = MainApplication.getInstance();
+        myPosition = new MyPosition();
     }
 
     private static class SingletonHolder {
@@ -43,53 +53,65 @@ public class UploadPositionService {
     }
 
     private final BDAbstractLocationListener locationListener = new BDAbstractLocationListener() {
-        private LatLng oldLocation = null;
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
             if (bdLocation != null) {
-                double lng = bdLocation.getLongitude();
-                double lat = bdLocation.getLatitude();
-                if (!isOverMinDistance(lng, lat)) {
-                    return;
-                }
-                MyPosition myPosition = new MyPosition(mainApp.getUserId(), lng, lat);
-                try {
-                    HttpUtils.post(null, mainApp.baseUrl + "/api/location/insert", myPosition.toMap(), new OKHttpListener() {
-                        @Override
-                        public void onStart() {
-                            LogUtil.debugOut(TAG, "上传定位...");
-                        }
-
-                        @Override
-                        public void onSuccess(Bundle bundle) {
-                            LogUtil.debugOut(TAG, "定位上传成功");
-                        }
-
-                        @Override
-                        public void onServiceError(Bundle bundle) {
-                            LogUtil.debugOut(TAG, Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
-                        }
-
-                        @Override
-                        public void onNetworkError(Bundle bundle) {
-                            LogUtil.debugOut(TAG, Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
-                        }
-                    });
-                } catch (NullPointerException npe) {
-                    LogUtil.errorOut(TAG, npe, null);
-                }
+                lng = bdLocation.getLongitude();
+                lat = bdLocation.getLatitude();
             }
-        }
-
-        private boolean isOverMinDistance(double lng, double lat) {
-            if (oldLocation == null) {
-                oldLocation = new LatLng(lat, lng);
-                return true;
-            }
-            double distance = DistanceUtil.getDistance(new LatLng(lat, lng), oldLocation);
-            return distance > GlobalParam.MIN_DISTANCE;
         }
     };
+
+    public void sendPosition() {
+        future = ThreadPoolUtil.getInstance().scheduledCommonExecute(() -> {
+            if (!(boolean) SPUtil.get(mainApp, GlobalParam.UPLOAD_POSITION_KEY, GlobalParam.IS_UPLOAD_POSITION)) {
+                return;
+            }
+            if (lng == -1 && lat == -1) {
+                return;
+            }
+            if (!isOverMinDistance(lng, lat)) {
+                return;
+            }
+            myPosition.setUserId(mainApp.getUserId())
+                    .setLongitude(lng)
+                    .setLatitude(lat);
+            try {
+                HttpUtils.post(null, mainApp.baseUrl + "/api/location/insert", myPosition.toMap(), new OKHttpListener() {
+                    @Override
+                    public void onStart() {
+                        LogUtil.debugOut(TAG, "上传定位...");
+                    }
+
+                    @Override
+                    public void onSuccess(Bundle bundle) {
+                        LogUtil.debugOut(TAG, "定位上传成功");
+                    }
+
+                    @Override
+                    public void onServiceError(Bundle bundle) {
+                        LogUtil.debugOut(TAG, Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    }
+
+                    @Override
+                    public void onNetworkError(Bundle bundle) {
+                        LogUtil.debugOut(TAG, Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    }
+                });
+            } catch (NullPointerException npe) {
+                LogUtil.errorOut(TAG, npe, null);
+            }
+        }, 0, (int) SPUtil.get(MainApplication.getInstance(), GlobalParam.UPLOAD_DELAY_KEY, GlobalParam.UPLOAD_DELAY), TimeUnit.SECONDS);
+    }
+
+    private boolean isOverMinDistance(double lng, double lat) {
+        if (oldLocation == null) {
+            oldLocation = new LatLng(lat, lng);
+            return true;
+        }
+        double distance = DistanceUtil.getDistance(new LatLng(lat, lng), oldLocation);
+        return distance > GlobalParam.MIN_DISTANCE;
+    }
 
     public void uploadPosition() {
         if (!mainApp.isLogin()) {
@@ -104,12 +126,16 @@ public class UploadPositionService {
             return;
         }
         GPSUtil.getBDLocation(locationClient, locationListener);
+        sendPosition();
     }
 
     public void restartUploadPosition() {
         if (locationClient.isStarted()) {
             locationClient.unRegisterLocationListener(locationListener);
             locationClient.stop();
+        }
+        if (future != null) {
+            future.cancel(true);
         }
         uploadPosition();
     }

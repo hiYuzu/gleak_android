@@ -53,7 +53,6 @@ public class FactorAdapter extends BaseAdapter {
         return 0;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("InflateParams")
     @Override
     public View getView(int paramInt, View paramView, ViewGroup paramViewGroup) {

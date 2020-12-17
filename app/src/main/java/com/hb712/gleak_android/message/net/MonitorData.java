@@ -42,6 +42,6 @@ public class MonitorData {
 
     @Override
     public String toString() {
-        return "{monitorTime:" + monitorTime + ", monitorValue:" + monitorValue + ", monitorStatus:" + monitorStatus + "}";
+        return "{\"monitorTime\":\"" + monitorTime + "\", \"monitorValue\":" + monitorValue + ", \"monitorStatus\":" + monitorStatus + "}";
     }
 }

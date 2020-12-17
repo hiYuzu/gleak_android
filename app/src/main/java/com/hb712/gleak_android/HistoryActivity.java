@@ -7,27 +7,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hb712.gleak_android.adapter.HistoryAdapter;
 import com.hb712.gleak_android.dao.DBManager;
-import com.hb712.gleak_android.dao.DetectInfoDao;
 import com.hb712.gleak_android.entity.DetectInfo;
 import com.hb712.gleak_android.util.DateUtil;
 import com.hb712.gleak_android.util.SPUtil;
 import com.hb712.gleak_android.util.UnitUtil;
 
-import org.greenrobot.greendao.query.QueryBuilder;
-import org.greenrobot.greendao.query.WhereCondition;
 
 import java.text.DecimalFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {

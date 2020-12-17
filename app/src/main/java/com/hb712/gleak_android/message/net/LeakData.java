@@ -41,6 +41,6 @@ public class LeakData {
 
     @Override
     public String toString() {
-        return "{leakId:" + leakId + ", userId:" + userId + ", monitorData:" + monitorData.toString() + "}";
+        return "{\"leakId\":" + leakId + ", \"userId\":" + userId + ", \"monitorData\":" + monitorData.toString() + "}";
     }
 }

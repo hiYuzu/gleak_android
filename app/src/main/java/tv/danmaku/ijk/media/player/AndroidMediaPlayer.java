@@ -113,7 +113,6 @@ public class AndroidMediaPlayer extends AbstractMediaPlayer {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void setDataSource(IMediaDataSource mediaDataSource) {
         releaseMediaDataSource();
@@ -122,7 +121,6 @@ public class AndroidMediaPlayer extends AbstractMediaPlayer {
         mInternalMediaPlayer.setDataSource(mMediaDataSource);
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     private static class MediaDataSourceProxy extends MediaDataSource {
         private final IMediaDataSource mMediaDataSource;
 

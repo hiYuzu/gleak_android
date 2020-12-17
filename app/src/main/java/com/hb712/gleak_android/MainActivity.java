@@ -23,6 +23,7 @@ import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author hiYuzu
@@ -71,33 +72,38 @@ public class MainActivity extends BaseActivity implements HttpInterface {
         if (!MainApplication.getInstance().isLogin()) {
             return;
         }
-        HttpUtils.get(this, MainApplication.getInstance().baseUrl + "/api/monitor/selectAllMonitor ", new OKHttpListener() {
-            @Override
-            public void onStart() {
+        try {
+            HttpUtils.get(this, MainApplication.getInstance().baseUrl + "/api/monitor/selectAllMonitor ", new OKHttpListener() {
+                @Override
+                public void onStart() {
 
-            }
-
-            @Override
-            public void onSuccess(Bundle bundle) {
-                String result = bundle.getString(HttpUtils.MESSAGE);
-                JSONObject json = JSONObject.parseObject(result);
-                if (json.getBoolean("status")) {
-                    GlobalParam.initLeakData = (List<InitLeakData>) JSONObject.parseArray(json.getString("data"), InitLeakData.class);
-                } else {
-                    LogUtil.infoOut(TAG, json.getString("msg"));
                 }
-            }
 
-            @Override
-            public void onServiceError(Bundle bundle) {
-                ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
-            }
+                @Override
+                public void onSuccess(Bundle bundle) {
+                    String result = bundle.getString(HttpUtils.MESSAGE);
+                    JSONObject json = JSONObject.parseObject(result);
+                    if (json.getBoolean("status")) {
+                        GlobalParam.initLeakData = (List<InitLeakData>) JSONObject.parseArray(json.getString("data"), InitLeakData.class);
+                    } else {
+                        LogUtil.infoOut(TAG, json.getString("msg"));
+                    }
+                }
 
-            @Override
-            public void onNetworkError(Bundle bundle) {
-                ToastUtil.shortInstanceToast(bundle.getString(HttpUtils.MESSAGE));
-            }
-        });
+                @Override
+                public void onServiceError(Bundle bundle) {
+                    ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                }
+
+                @Override
+                public void onNetworkError(Bundle bundle) {
+                    ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                }
+            });
+        } catch (NullPointerException npe) {
+            LogUtil.errorOut(TAG, npe, null);
+        }
+
     }
 
     public void detectClick(View view) {

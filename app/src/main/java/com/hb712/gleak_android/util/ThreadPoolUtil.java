@@ -10,6 +10,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -103,9 +104,10 @@ public class ThreadPoolUtil {
      * @param unit 延迟时间单位
      * @throws NullPointerException 当 runnable 为 null 时，抛出
      * @see ScheduledExecutorService
+     * @return {@link Future} 返回当前线程
      */
-    public void scheduledCommonExecute(Runnable runnable, long initialDelay, long period, TimeUnit unit) throws NullPointerException {
-        SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(runnable, initialDelay, period, unit);
+    public Future<?> scheduledCommonExecute(Runnable runnable, long initialDelay, long period, TimeUnit unit) throws NullPointerException {
+        return SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(runnable, initialDelay, period, unit);
     }
 
 }

@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
+import com.alibaba.fastjson.JSON;
 import com.hb712.gleak_android.MainApplication;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
@@ -48,16 +49,15 @@ public class HttpUtils {
         httpExecute(httpInterface, httpUrl, new Request.Builder().get(), listener);
     }
 
-    public static void post(HttpInterface httpInterface, String httpUrl, String jsonString, File file, @NonNull OKHttpListener listener) {
+    public static void post(HttpInterface httpInterface, String httpUrl, Object object, File file, @NonNull OKHttpListener listener) {
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         if (file != null) {
             isSendVideo = true;
             builder.addPart(MultipartBody.Part.createFormData("video", file.getName(), RequestBody.create(MediaType.parse("multipart/form-data"), file)));
         }
 
-        if (jsonString != null) {
-            builder.addPart(MultipartBody.Part.createFormData("data", jsonString));
-        }
+        String jsonString = JSON.toJSONString(object);
+        builder.addPart(MultipartBody.Part.createFormData("data", jsonString));
         httpExecute(httpInterface, httpUrl, new Request.Builder().post(builder.build()), listener);
     }
 

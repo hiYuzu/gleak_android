@@ -26,6 +26,7 @@ import com.hb712.gleak_android.util.ToastUtil;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class CalibrateActivity extends AppCompatActivity {
@@ -35,6 +36,7 @@ public class CalibrateActivity extends AppCompatActivity {
     private DeviceController deviceController;
     private CalibrationInfoController calibrationInfoController;
     private boolean ifexit = false;
+    private Future<?> future = null;
 
     private Spinner seriesInfoSp;
     private TextView currentSignal;
@@ -159,6 +161,9 @@ public class CalibrateActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         ifexit = true;
+        if (future != null) {
+            future.cancel(true);
+        }
 //        mainApp.mBluetooth.removeBlueListener("calibrateBT");
     }
 
@@ -168,7 +173,7 @@ public class CalibrateActivity extends AppCompatActivity {
         /// DetectActivity 和 DeviceController 为单例则注释下方监听
 //        mainApp.mBluetooth.addBluetoothListener("calibrateBT", this::analysisData);
         ifexit = false;
-        ThreadPoolUtil.getInstance().scheduledCommonExecute(this::showSystemCurrentStatus, 0L, 500, TimeUnit.MILLISECONDS);
+        future = ThreadPoolUtil.getInstance().scheduledCommonExecute(this::showSystemCurrentStatus, 0L, 500, TimeUnit.MILLISECONDS);
     }
 
     private void analysisData(byte[] dataArray) {

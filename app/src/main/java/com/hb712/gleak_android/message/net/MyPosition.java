@@ -28,24 +28,27 @@ public class MyPosition {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public MyPosition setUserId(String userId) {
         this.userId = userId;
+        return this;
     }
 
     public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public MyPosition setLongitude(double longitude) {
         this.longitude = longitude;
+        return this;
     }
 
     public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public MyPosition setLatitude(double latitude) {
         this.latitude = latitude;
+        return this;
     }
 
     @SuppressLint("DefaultLocale")

@@ -136,7 +136,7 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
                 if (json.getBoolean("status")) {
                     LogUtil.debugOut(TAG, "用户" + json.getJSONObject("data").getString("userId") + "登录成功!");
 
-                    MainApplication.getInstance().saveUserPwd(json.getJSONObject("data").getString("userId"), json.getJSONObject("data").getString("token"), mSaveUsernameCheckBox.isChecked());
+                    MainApplication.getInstance().saveUserPwd(json.getJSONObject("data").getString("userId"), json.getJSONObject("data").getString("token"), username, password, mSaveUsernameCheckBox.isChecked());
 
                     gotoMainActivity(username, password);
                 } else {

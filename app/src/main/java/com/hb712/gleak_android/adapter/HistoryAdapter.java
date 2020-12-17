@@ -77,7 +77,6 @@ public class HistoryAdapter extends BaseAdapter {
         return unitPpm ? paramDouble : UnitUtil.getMg(paramDouble);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

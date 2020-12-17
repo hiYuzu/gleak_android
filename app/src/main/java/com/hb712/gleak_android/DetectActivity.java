@@ -53,6 +53,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.RequiresApi;
@@ -113,6 +114,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private double detectMaxvalueMg = 0;
 
     private RtspPlayer mRtspPlayer;
+
+    private Future<?> future;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,12 +209,12 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             finish();
         }
 
-        startReadTask();
 
         mBluetooth.addBluetoothListener("", new BluetoothUtil.BluetoothListener() {
             @Override
             public void onDeviceConnected(String name, String address) {
                 GlobalParam.isConnected = true;
+                future = ThreadPoolUtil.getInstance().scheduledCommonExecute(() -> mBluetooth.readData(), 100, 500, TimeUnit.MILLISECONDS);
                 detectConnectB.setText(R.string.detect_disconnect);
                 connDeviceTV.setText(name);
                 deviceController.setDeviceName(name);
@@ -221,6 +224,9 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             @Override
             public void onDeviceDisconnected() {
                 GlobalParam.isConnected = false;
+                if (future != null) {
+                    future.cancel(true);
+                }
                 detectConnectB.setText(R.string.detect_connect);
                 connDeviceTV.setText(R.string.detect_disconnected);
                 ToastUtil.shortInstanceToast("蓝牙已断开");
@@ -231,17 +237,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 showFragmentContent(data);
             }
         });
-    }
-
-    /**
-     * 开启读取线程
-     */
-    private void startReadTask() {
-        ThreadPoolUtil.getInstance().scheduledCommonExecute(() -> {
-            if (GlobalParam.isConnected) {
-                mBluetooth.readData();
-            }
-        }, 500, 500, TimeUnit.MILLISECONDS);
     }
 
     private void initClass() {
@@ -476,10 +471,10 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
     private void saveData() {
         // TODO: hiYuzu 2020/12/4 取消注释 
-        if (seriesLimitInfo == null) {
-            LogUtil.warnOut(TAG, null, "曲线信息为空");
-            return;
-        }
+//        if (seriesLimitInfo == null) {
+//            LogUtil.warnOut(TAG, null, "曲线信息为空");
+//            return;
+//        }
 
         // 如果已登录，则上传可用
         if (MainApplication.getInstance().isLogin()) {
@@ -504,7 +499,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
     public void uploadVideo(View view) {
         try {
-            HttpUtils.post(this, MainApplication.getInstance().baseUrl + "/video/insert", lastedLeakData.toString(), new File(mRtspPlayer.getVideoPath()),
+            HttpUtils.post(this, MainApplication.getInstance().baseUrl + "/video/insert", lastedLeakData, new File(mRtspPlayer.getVideoPath()),
                     new OKHttpListener() {
                         @Override
                         public void onStart() {
@@ -598,6 +593,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     boolean lastStatus = false;
+
     private void changeFirePic(boolean isFire) {
         if (lastStatus == isFire) {
             return;
@@ -666,7 +662,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void showValueBySeriesLimit(double currentPpm) {
         detectValueET.setText(new DecimalFormat("0.0").format(currentPpm));
         if (seriesLimitInfo != null) {

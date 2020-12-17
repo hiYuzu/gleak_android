@@ -18,7 +18,7 @@ public class GlobalParam {
     public static String SERVE_IP = "serve_ip";
     public static String SERVE_PORT = "serve_port";
 
-    public static final String DEFAULT_IP = "192.168.3.108";
+    public static final String DEFAULT_IP = "192.168.3.126";
     public static final String DEFAULT_PORT = "3000";
 
     public static final String KEY_USERTOKEN = "Authorization";
