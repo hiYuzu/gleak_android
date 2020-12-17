@@ -82,7 +82,7 @@ public class CalibrateActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             if (calibrateIndex > -1) {
-                ToastUtil.shortInstanceToast("校准中，请等待结束...");
+                ToastUtil.toastWithLog("校准中，请等待结束...");
                 return true;
             }
             onBackPressed();
@@ -280,15 +280,15 @@ public class CalibrateActivity extends AppCompatActivity {
         }
 
         if (currentSignal.getText().toString().isEmpty()) {
-            ToastUtil.shortInstanceToast("信号错误！");
+            ToastUtil.toastWithLog("信号错误！");
             return;
         }
         if (calibrationInfoController.getCurrentSeries() == null) {
-            ToastUtil.shortInstanceToast("请选择工作曲线！");
+            ToastUtil.toastWithLog("请选择工作曲线！");
             return;
         }
         if (editTexts[paramInt].getText().toString().isEmpty()) {
-            ToastUtil.shortInstanceToast("请输入标气" + (paramInt + 1) + "浓度！");
+            ToastUtil.toastWithLog("请输入标气" + (paramInt + 1) + "浓度！");
             return;
         }
         CalibrationInfo localCalibrationInfo = new CalibrationInfo();

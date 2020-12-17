@@ -22,8 +22,8 @@ import androidx.annotation.RequiresApi;
  * @date 2020/10/21 14:02
  */
 public class FactorAdapter extends BaseAdapter {
-    private Context context;
-    private List<FactorCoefficientInfo> factorCoefficientInfoList;
+    private final Context context;
+    private final List<FactorCoefficientInfo> factorCoefficientInfoList;
     private int selectItem = -1;
 
     public FactorAdapter(Context context, List<FactorCoefficientInfo> factorCoefficientInfoList) {
@@ -35,10 +35,12 @@ public class FactorAdapter extends BaseAdapter {
         factorCoefficientInfoList.clear();
     }
 
+    @Override
     public int getCount() {
         return factorCoefficientInfoList == null ? 0 : factorCoefficientInfoList.size();
     }
 
+    @Override
     public FactorCoefficientInfo getItem(int paramInt) {
         if (factorCoefficientInfoList != null && paramInt < factorCoefficientInfoList.size()) {
             return factorCoefficientInfoList.get(paramInt);
@@ -46,6 +48,7 @@ public class FactorAdapter extends BaseAdapter {
         return null;
     }
 
+    @Override
     public long getItemId(int paramInt) {
         if (factorCoefficientInfoList != null && factorCoefficientInfoList.size() > paramInt) {
             return (factorCoefficientInfoList.get(paramInt)).getId();

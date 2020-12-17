@@ -1,13 +1,11 @@
 package com.hb712.gleak_android;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -109,13 +107,13 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
 
                 @Override
                 public void onServiceError(Bundle bundle) {
-                    ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    ToastUtil.toastWithLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                     gotoLoginActivity();
                 }
 
                 @Override
                 public void onNetworkError(Bundle bundle) {
-                    ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    ToastUtil.toastWithLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                     gotoLoginActivity();
                 }
             });

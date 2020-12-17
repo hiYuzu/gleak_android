@@ -16,12 +16,14 @@ import com.hb712.gleak_android.controller.CalibrationInfoController;
 import com.hb712.gleak_android.dao.DBManager;
 import com.hb712.gleak_android.dao.FactorCoefficientInfoDao;
 import com.hb712.gleak_android.entity.FactorCoefficientInfo;
+import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 
 import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.query.WhereCondition;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,7 +34,7 @@ import java.util.List;
  * @date 2020/10/21 11:43
  */
 public class FactorDialog {
-
+    private static final String TAG = FactorDialog.class.getSimpleName();
     private int selectIndex = -1;
     private List<FactorCoefficientInfo> factorCoefficientInfoList = null;
     private FactorAddSuccessCallback factorAddSuccessCallback;
@@ -70,7 +72,12 @@ public class FactorDialog {
             }
         });
         listView = factorDialogView.findViewById(R.id.factorList);
-        factorCoefficientInfoList = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().loadAll();
+        try {
+            factorCoefficientInfoList = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().loadAll();
+        } catch (Exception e) {
+            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            LogUtil.assertOut(TAG, e, "FactorCoefficientInfoDao");
+        }
         adapter = new FactorAdapter(context, factorCoefficientInfoList);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener((parent, view, position, id) -> {
@@ -82,7 +89,14 @@ public class FactorDialog {
         factorNameET = factorDialogView.findViewById(R.id.factorName);
         Button btnSearch = factorDialogView.findViewById(R.id.searchBtn);
         btnSearch.setOnClickListener(view -> {
-            QueryBuilder<FactorCoefficientInfo> queryBuilder = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().queryBuilder();
+            QueryBuilder<FactorCoefficientInfo> queryBuilder;
+            try {
+                queryBuilder = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().queryBuilder();
+            } catch (Exception e) {
+                ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                LogUtil.assertOut(TAG, e, "FactorCoefficientInfoDao");
+                return;
+            }
             Property localProperty = FactorCoefficientInfoDao.Properties.FACTOR_NAME;
             String likeSearch = "%" +
                     factorNameET.getText().toString().trim() +
@@ -98,7 +112,7 @@ public class FactorDialog {
                 factorAddSuccessCallback.onSave(null);
             } else {
                 if (selectIndex < 0) {
-                    ToastUtil.shortInstanceToast("请选择响应因子");
+                    ToastUtil.toastWithLog("请选择响应因子");
                     return;
                 }
                 if (factorAddSuccessCallback != null) {

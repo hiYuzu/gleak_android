@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.hb712.gleak_android.util.LogUtil;
+
 /**
  * @author hiYuzu
  * @version V1.0
@@ -31,7 +33,7 @@ public class DBManager {
         return openHelper.getReadableDatabase();
     }
 
-    public DaoSession getReadableSession() {
+    public DaoSession getReadableSession() throws Exception {
         return new DaoMaster(getReadableDatabase()).newSession();
     }
 
@@ -42,7 +44,7 @@ public class DBManager {
         return openHelper.getWritableDatabase();
     }
 
-    public DaoSession getWritableSession() {
+    public DaoSession getWritableSession() throws Exception {
         return new DaoMaster(getWritableDatabase()).newSession();
     }
 

@@ -81,7 +81,7 @@ public class DaoMaster extends AbstractDaoMaster {
         public void onUpgrade(Database db, int oldVersion, int newVersion) {
             LogUtil.infoOut(TAG, "删除所有表，更新schema版本:" + oldVersion + " -> " + newVersion);
             DaoMaster.dropAllTables(db);
-            onCreate(db);
+            super.onCreate(db);
         }
     }
 

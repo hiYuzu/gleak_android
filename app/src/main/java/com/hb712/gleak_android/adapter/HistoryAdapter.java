@@ -26,17 +26,18 @@ import androidx.annotation.RequiresApi;
  * @date 2020/10/23 12:18
  */
 public class HistoryAdapter extends BaseAdapter {
-    private Context context;
-    private List<DetectInfoView> detectInfoViewList = new ArrayList<>();
+    private final Context context;
+    public List<DetectInfoView> detectInfoViewList;
     private boolean unitPpm = false;
     private int selectItem = -1;
 
     public HistoryAdapter(Context context, List<DetectInfo> detectInfoList) {
         this.context = context;
-        AddData(detectInfoList);
+        detectInfoViewList = new ArrayList<>();
+        addData(detectInfoList);
     }
 
-    public void AddData(List<DetectInfo> detectInfoList) {
+    public void addData(List<DetectInfo> detectInfoList) {
         if (detectInfoList != null) {
             for (int i = 0; i < detectInfoList.size(); i++) {
                 DetectInfoView detectInfoView = new DetectInfoView();
@@ -53,17 +54,17 @@ public class HistoryAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return detectInfoViewList != null ? detectInfoViewList.size() : 0;
+        return detectInfoViewList.size();
     }
 
     @Override
     public Object getItem(int paramInt) {
-        return detectInfoViewList != null && paramInt < detectInfoViewList.size() ? detectInfoViewList.get(paramInt) : null;
+        return paramInt < detectInfoViewList.size() ? detectInfoViewList.get(paramInt) : null;
     }
 
     @Override
     public long getItemId(int paramInt) {
-        if (detectInfoViewList != null && detectInfoViewList.size() > paramInt) {
+        if (detectInfoViewList.size() > paramInt) {
             DetectInfoView detectInfoView = detectInfoViewList.get(paramInt);
             if (detectInfoView != null) {
                 return detectInfoView.detectInfo.getId();

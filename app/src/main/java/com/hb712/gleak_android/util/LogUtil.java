@@ -23,6 +23,7 @@ public class LogUtil {
     private static final char INFO = 'I';
     private static final char WARN = 'W';
     private static final char ERROR = 'E';
+    private static final char ASSERT = 'A';
 
     private static boolean isSave = false;
 
@@ -34,7 +35,7 @@ public class LogUtil {
             return;
         }
         if (!logFileDir.mkdirs()) {
-            Log.w(TAG,"日志文件夹创建失败");
+            Log.w(TAG, "日志文件夹创建失败");
         }
         try {
             File file = new File(logFilePath);
@@ -67,7 +68,7 @@ public class LogUtil {
      */
     public static void infoOut(String tag, String detail) {
         Log.i(tag, detail);
-        ToastUtil.shortInstanceToast(detail);
+        ToastUtil.toastWithoutLog(detail);
         if (isSave) {
             writeToFile(INFO, tag, detail);
         }
@@ -77,7 +78,7 @@ public class LogUtil {
      * warn
      *
      * @param tag    标签
-     * @param e     异常类型
+     * @param e      异常类型
      * @param detail 描述
      */
     public static void warnOut(String tag, Exception e, String detail) {
@@ -99,7 +100,7 @@ public class LogUtil {
      * error
      *
      * @param tag    标签
-     * @param e     异常类型
+     * @param e      异常类型
      * @param detail 描述
      */
     public static void errorOut(String tag, Exception e, String detail) {
@@ -114,6 +115,19 @@ public class LogUtil {
         Log.e(tag, msg);
         if (isSave) {
             writeToFile(ERROR, tag, msg);
+        }
+    }
+
+    public static void assertOut(String tag, @NonNull Exception e, @NonNull String detail) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(e.getMessage());
+        if (!detail.isEmpty()) {
+            sb.append(", detail: ").append(detail);
+        }
+        String msg = sb.toString();
+        Log.e(tag, msg);
+        if (isSave) {
+            writeToFile(ASSERT, tag, msg);
         }
     }
 

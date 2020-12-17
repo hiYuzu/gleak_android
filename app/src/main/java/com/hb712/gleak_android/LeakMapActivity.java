@@ -214,7 +214,7 @@ public class LeakMapActivity extends BaseActivity {
                 setResult(Activity.RESULT_FIRST_USER, intent);
                 finish();
             } catch (Exception e) {
-                ToastUtil.shortInstanceToast("非法输入，请重试！");
+                ToastUtil.toastWithLog("非法输入，请重试！");
                 LogUtil.errorOut(TAG, e, "非法输入");
             }
         });

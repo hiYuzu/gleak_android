@@ -6,6 +6,8 @@ import com.hb712.gleak_android.dao.SeriesInfoDao;
 import com.hb712.gleak_android.entity.CalibrationInfo;
 import com.hb712.gleak_android.entity.FactorCoefficientInfo;
 import com.hb712.gleak_android.entity.SeriesInfo;
+import com.hb712.gleak_android.util.LogUtil;
+import com.hb712.gleak_android.util.ToastUtil;
 
 import org.greenrobot.greendao.query.WhereCondition;
 
@@ -20,6 +22,7 @@ import java.util.List;
  * @date 2020/10/21 9:57
  */
 public class CalibrationInfoController {
+    private static final String TAG = CalibrationInfoController.class.getSimpleName();
 
     private SeriesInfo currentSeries = null;
     private FactorCoefficientInfo factor;
@@ -37,7 +40,12 @@ public class CalibrationInfoController {
     public synchronized void saveAll() {
         calculateKb();
         for (CalibrationInfo temp : calibrationInfoList) {
-            DBManager.getInstance().getWritableSession().getCalibrationInfoDao().save(temp);
+            try {
+                DBManager.getInstance().getWritableSession().getCalibrationInfoDao().save(temp);
+            } catch (Exception e) {
+                ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                LogUtil.assertOut(TAG, e, "CalibrationInfoDao");
+            }
         }
     }
 
@@ -131,14 +139,25 @@ public class CalibrationInfoController {
     public void setCurrentSeries(SeriesInfo seriesInfo) {
         if (seriesInfo != null) {
             currentSeries = seriesInfo;
-            calibrationInfoList = DBManager.getInstance().getReadableSession().getCalibrationInfoDao().queryBuilder().where(CalibrationInfoDao.Properties.SERIES_ID.eq(seriesInfo.getId()), new WhereCondition[0]).list();
-            Collections.sort(calibrationInfoList);
+            try {
+                calibrationInfoList = DBManager.getInstance().getReadableSession().getCalibrationInfoDao().queryBuilder().where(CalibrationInfoDao.Properties.SERIES_ID.eq(seriesInfo.getId()), new WhereCondition[0]).list();
+                Collections.sort(calibrationInfoList);
+            } catch (Exception e) {
+                ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                LogUtil.assertOut(TAG, e, "CalibrationInfoDao");
+            }
         }
     }
 
     public void setCurrentSeries(String seriesName) {
+        List<SeriesInfo> seriesInfoList = null;
         SeriesInfoController.checkStd();
-        List<SeriesInfo> seriesInfoList = DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().where(SeriesInfoDao.Properties.SERIES_NAME.eq(seriesName), new WhereCondition[0]).list();
+        try {
+            seriesInfoList = DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().where(SeriesInfoDao.Properties.SERIES_NAME.eq(seriesName), new WhereCondition[0]).list();
+        } catch (Exception e) {
+            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            LogUtil.assertOut(TAG, e, "SeriesInfoDao");
+        }
         if (seriesInfoList != null && seriesInfoList.size() > 0) {
             setCurrentSeries(seriesInfoList.get(0));
         }

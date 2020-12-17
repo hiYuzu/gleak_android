@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -55,8 +54,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import androidx.annotation.RequiresApi;
 
 public class DetectActivity extends BaseActivity implements HttpInterface {
 
@@ -156,7 +153,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         startRecordBtn = findViewById(R.id.startRecordBtn);
         startRecordBtn.setOnClickListener((p) -> {
             if (!MainApplication.getInstance().isLogin()) {
-                ToastUtil.shortInstanceToast("当前未登录");
+                ToastUtil.toastWithLog("当前未登录");
                 return;
             }
             if (!isSaving) {
@@ -205,7 +202,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     private void initBluetooth() {
         if (!mBluetooth.isBluetoothAvailable()) {
-            ToastUtil.longInstanceToast("蓝牙不可用");
+            ToastUtil.toastWithLog("蓝牙不可用");
             finish();
         }
 
@@ -218,7 +215,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 detectConnectB.setText(R.string.detect_disconnect);
                 connDeviceTV.setText(name);
                 deviceController.setDeviceName(name);
-                ToastUtil.shortInstanceToast("蓝牙已连接");
+                ToastUtil.toastWithLog("蓝牙已连接");
             }
 
             @Override
@@ -229,7 +226,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 }
                 detectConnectB.setText(R.string.detect_connect);
                 connDeviceTV.setText(R.string.detect_disconnected);
-                ToastUtil.shortInstanceToast("蓝牙已断开");
+                ToastUtil.toastWithLog("蓝牙已断开");
             }
 
             @Override
@@ -379,7 +376,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         } else if (requestCode == GlobalParam.REQUEST_LEAK_DATA) {
             Bundle bundle = data.getExtras();
             if (bundle == null) {
-                ToastUtil.shortInstanceToast("获取漏点信息失败，请重试");
+                ToastUtil.toastWithLog("获取漏点信息失败，请重试");
                 return;
             }
             // 获取漏点数据
@@ -388,7 +385,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             } else if (resultCode == Activity.RESULT_OK) {
                 startSave(data.getExtras());
             } else {
-                ToastUtil.shortInstanceToast("获取漏点信息失败，请重试");
+                ToastUtil.toastWithLog("获取漏点信息失败，请重试");
             }
         }
     }
@@ -421,12 +418,12 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
                 @Override
                 public void onServiceError(Bundle bundle) {
-                    ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    ToastUtil.toastWithLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                 }
 
                 @Override
                 public void onNetworkError(Bundle bundle) {
-                    ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    ToastUtil.toastWithLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                 }
             });
         } catch (NullPointerException npe) {
@@ -454,7 +451,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             isSaving = true;
             startRecordBtn.setText(R.string.stopRecord);
         } else {
-            ToastUtil.shortInstanceToast("无法开启录制");
+            ToastUtil.toastWithLog("无法开启录制");
         }
         return isSaving;
     }
@@ -503,23 +500,23 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                     new OKHttpListener() {
                         @Override
                         public void onStart() {
-                            ToastUtil.shortInstanceToast("开始上传...");
+                            ToastUtil.toastWithLog("开始上传...");
                         }
 
                         @Override
                         public void onSuccess(Bundle bundle) {
-                            ToastUtil.shortInstanceToast("上传成功");
+                            ToastUtil.toastWithLog("上传成功");
                             uploadVideoBtn.setEnabled(false);
                         }
 
                         @Override
                         public void onServiceError(Bundle bundle) {
-                            ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                            ToastUtil.toastWithLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                         }
 
                         @Override
                         public void onNetworkError(Bundle bundle) {
-                            ToastUtil.shortInstanceToast(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                            ToastUtil.toastWithLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                         }
                     });
         } catch (NullPointerException npe) {
@@ -610,7 +607,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         if (GlobalParam.isConnected) {
             return true;
         }
-        ToastUtil.shortInstanceToast("蓝牙未连接");
+        ToastUtil.toastWithLog("蓝牙未连接");
         return false;
     }
 

@@ -8,14 +8,13 @@ public class ToastUtil {
     private static final String TAG = ToastUtil.class.getSimpleName();
     private static final Toast mToast = Toast.makeText(BaseApplication.baseApplication, "", Toast.LENGTH_SHORT);
 
-    public static void shortInstanceToast(CharSequence cs) {
+    public static void toastWithLog(CharSequence cs) {
         LogUtil.debugOut(TAG, cs.toString());
         mToast.setText(cs);
         mToast.show();
     }
 
-    public static void longInstanceToast(CharSequence cs) {
-        LogUtil.debugOut(TAG, cs.toString());
+    public static void toastWithoutLog(CharSequence cs) {
         mToast.setText(cs);
         mToast.show();
     }

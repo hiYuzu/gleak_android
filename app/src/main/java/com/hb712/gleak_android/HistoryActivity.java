@@ -15,7 +15,9 @@ import com.hb712.gleak_android.adapter.HistoryAdapter;
 import com.hb712.gleak_android.dao.DBManager;
 import com.hb712.gleak_android.entity.DetectInfo;
 import com.hb712.gleak_android.util.DateUtil;
+import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.SPUtil;
+import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.UnitUtil;
 
 
@@ -74,11 +76,17 @@ public class HistoryActivity extends AppCompatActivity {
         detectInfoList.clear();
         historyAdapter.clear();
         setStatisticValue(null, unitPpm);
-        List<DetectInfo> detectInfoList = DBManager.getInstance().getReadableSession().getDetectInfoDao().queryBuilder().limit(100).list();
+        List<DetectInfo> detectInfoList = null;
+        try {
+            detectInfoList = DBManager.getInstance().getReadableSession().getDetectInfoDao().queryBuilder().limit(100).list();
+        } catch (Exception e) {
+            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            LogUtil.assertOut(TAG, e, "DetectInfoDao");
+        }
         if (detectInfoList != null && detectInfoList.size() > 0) {
             setStatisticValue(detectInfoList, unitPpm);
             this.detectInfoList.addAll(detectInfoList);
-            historyAdapter.AddData(this.detectInfoList);
+            historyAdapter.addData(this.detectInfoList);
         }
         historyAdapter.notifyDataSetChanged();
     }
@@ -209,17 +217,13 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     public void exportHistory(View view) {
-        /*
-        paramString1 = this.adapter;
-        if ((paramString1 != null) && (paramString1.mList != null) && (this.adapter.mList.size() >= 1)) {
-            this.mLoading.setText(paramString2);
-            this.mTask = new MyTask();
-            this.mTask.execute(new String[0]);
+        if (historyAdapter.detectInfoViewList.size() > 0) {
+//            mLoading.setText(paramString2);
+//            mTask = new MyTask();
+//            mTask.execute(new String[0]);
             return;
         }
-        ToastManager.showShortToast(this, "请先搜索记录数据！");
-
-         */
+        ToastUtil.toastWithoutLog("请先搜索记录数据！");
     }
 }
 
