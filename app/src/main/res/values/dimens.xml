@@ -5,6 +5,7 @@
     <dimen name="dimen_2dp">2dp</dimen>
     <dimen name="dimen_5dp">5dp</dimen>
     <dimen name="dimen_10dp">10dp</dimen>
+    <dimen name="dimen_16sp">16sp</dimen>
     <dimen name="dimen_25dp">25dp</dimen>
     <dimen name="dimen_35dp">35dp</dimen>
     <dimen name="dimen_40dp">40dp</dimen>

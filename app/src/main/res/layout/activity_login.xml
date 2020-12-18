@@ -15,28 +15,36 @@
         android:layout_marginEnd="@dimen/dimen_40dp"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/username"
-            style="@style/AppTheme"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/username_hint"
-            android:inputType="text"
-            android:textColor="@color/white"
-            android:textColorHint="@color/login_textHintColor"
-            tools:ignore="LabelFor" />
+            android:layout_marginTop="@dimen/fab_margin"
+            android:textAppearance="@style/LoginTextHintStyle">
 
-        <EditText
-            android:id="@+id/password"
+            <AutoCompleteTextView
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/username_hint"
+                android:maxLines="1" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
             style="@style/AppTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fab_margin"
-            android:hint="@string/password_hint"
-            android:inputType="textPassword"
-            android:textColor="@color/white"
-            android:textColorHint="@color/login_textHintColor"
-            tools:ignore="LabelFor" />
+            android:textAppearance="@style/LoginTextHintStyle"
+            tools:ignore="LabelFor">
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/password_hint"
+                android:inputType="textPassword" />
+
+        </android.support.design.widget.TextInputLayout>
 
         <CheckBox
             android:id="@+id/save_username_pwd"
@@ -71,13 +79,14 @@
             android:layout_marginTop="@dimen/fab_margin"
             android:textColor="@color/white" />
     </LinearLayout>
+
     <ImageView
         android:id="@+id/loading_image"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/login_layout"
-        android:src="@drawable/action_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/login_layout"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/action_loading"
         tools:ignore="ContentDescription" />
 
     <Button
@@ -85,12 +94,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/dimen_25dp"
         android:layout_marginEnd="@dimen/dimen_25dp"
+        android:layout_marginBottom="@dimen/dimen_25dp"
         android:background="@drawable/button_operation"
-        android:textColor="@color/white"
         android:onClick="loginWithoutUser"
-        android:text="@string/login_without_user" />
+        android:text="@string/login_without_user"
+        android:textColor="@color/white" />
 
 </RelativeLayout>
 

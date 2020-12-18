@@ -67,4 +67,11 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:singleLine">true</item>
     </style>
+
+    <!--登录名和密码字体样式-->
+    <style name="LoginTextHintStyle">
+        <item name="android:textSize">@dimen/dimen_16sp</item>
+        <item name="android:textColor">@color/launch_text_color</item>
+    </style>
+
 </resources>
