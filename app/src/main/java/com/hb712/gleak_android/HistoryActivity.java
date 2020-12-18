@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.hb712.gleak_android.adapter.HistoryAdapter;
 import com.hb712.gleak_android.dao.DBManager;
+import com.hb712.gleak_android.dao.DaoSession;
+import com.hb712.gleak_android.dao.DetectInfoDao;
 import com.hb712.gleak_android.entity.DetectInfo;
 import com.hb712.gleak_android.util.DateUtil;
 import com.hb712.gleak_android.util.LogUtil;
@@ -21,9 +23,14 @@ import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.UnitUtil;
 
 
+import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.query.QueryBuilder;
+import org.greenrobot.greendao.query.WhereCondition;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
@@ -175,44 +182,51 @@ public class HistoryActivity extends AppCompatActivity {
     public void searchHistory(View view) {
         /*
         detectInfoList.clear();
-        this.adapter.Clear();
-        SetStatisticValue(null, this.unitPpm);
-        Object localObject;
-        if (this.etSampleName.getText().toString().trim().equals("")) {
-            if (this.etSampleTime.getText().toString().trim().equals("")) {
-                localObject = DBManager.getInstance().getReadableSession().getDetectInfoDao().queryBuilder().list();
+        historyAdapter.clear();
+        setStatisticValue(null, unitPpm);
+        List<DetectInfo> detectInfoList;
+        DaoSession daoSession;
+        try {
+            daoSession = DBManager.getInstance().getReadableSession();
+        } catch (Exception e) {
+            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            LogUtil.assertOut(TAG, e, "DetectInfoDao");
+            return;
+        }
+        if (sampleName.getText().toString().trim().isEmpty()) {
+            if (detectDate.getText().toString().trim().isEmpty()) {
+                detectInfoList = daoSession.getDetectInfoDao().queryBuilder().list();
                 break label359;
             }
         }
-        Property localProperty;
-        StringBuilder localStringBuilder;
-        if (this.etSampleTime.getText().toString().trim().equals("")) {
-            localObject = DBManager.getInstance().getReadableSession().getDetectInfoDao().queryBuilder();
-            localProperty = DetectInfoDao.Properties.SampleName;
-            localStringBuilder = new StringBuilder();
-            localStringBuilder.append("%");
-            localStringBuilder.append(this.etSampleName.getText().toString().trim());
-            localStringBuilder.append("%");
-            localObject = ((QueryBuilder) localObject).where(localProperty.like(localStringBuilder.toString()), new WhereCondition[0]).list();
+        Property property;
+        StringBuilder sb;
+        if (detectDate.getText().toString().trim().isEmpty()) {
+            QueryBuilder<DetectInfo> queryBuilder = daoSession.getDetectInfoDao().queryBuilder();
+            property = DetectInfoDao.Properties.LEAK_NAME;
+            sb = new StringBuilder();
+            sb.append("%");
+            sb.append(sampleName.getText().toString().trim());
+            sb.append("%");
+            detectInfoList = queryBuilder.where(property.like(sb.toString()), new WhereCondition[0]).list();
         } else if (this.etSampleName.getText().toString().trim().equals("")) {
-            localObject = DBManager.getInstance().getReadableSession().getDetectInfoDao().queryBuilder().where(DetectInfoDao.Properties.DetectTime.ge(this.etSampleTime.getText().toString().trim()), new WhereCondition[0]).list();
+            localObject = daoSession.getDetectInfoDao().queryBuilder().where(DetectInfoDao.Properties.DetectTime.ge(this.etSampleTime.getText().toString().trim()), new WhereCondition[0]).list();
         } else {
-            localObject = DBManager.getInstance().getReadableSession().getDetectInfoDao().queryBuilder();
-            localProperty = DetectInfoDao.Properties.SampleName;
-            localStringBuilder = new StringBuilder();
-            localStringBuilder.append("%");
-            localStringBuilder.append(this.etSampleName.getText().toString().trim());
-            localStringBuilder.append("%");
-            localObject = ((QueryBuilder) localObject).where(localProperty.like(localStringBuilder.toString()), new WhereCondition[]{DetectInfoDao.Properties.DetectTime.ge(this.etSampleTime.getText().toString().trim())}).list();
+            localObject = daoSession.getDetectInfoDao().queryBuilder();
+            property = DetectInfoDao.Properties.SampleName;
+            sb = new StringBuilder();
+            sb.append("%");
+            sb.append(this.etSampleName.getText().toString().trim());
+            sb.append("%");
+            localObject = ((QueryBuilder) localObject).where(property.like(sb.toString()), new WhereCondition[]{DetectInfoDao.Properties.DetectTime.ge(this.etSampleTime.getText().toString().trim())}).list();
         }
         label359:
         if ((localObject != null) && (((List) localObject).size() > 0)) {
-            SetStatisticValue((List) localObject, this.unitPpm);
+            setStatisticValue((List) localObject, this.unitPpm);
             this.detectInfos.addAll((Collection) localObject);
-            this.adapter.AddData(this.detectInfos);
+            historyAdapter.AddData(this.detectInfos);
         }
-        this.adapter.notifyDataSetChanged();
-
+        historyAdapter.notifyDataSetChanged();
          */
     }
 
