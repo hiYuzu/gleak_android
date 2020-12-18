@@ -10,8 +10,8 @@
     <string name="launch_content">Enpromi Explorer</string>
     <string name="copy_right">Copyright © Enpromi. All Right Reserved.</string>
     <!--loginActivity-->
-    <string name="username_hint">用户名</string>
-    <string name="password_hint">密码</string>
+    <string name="username_hint">登录账号</string>
+    <string name="password_hint">登录密码</string>
     <string name="save_username_pwd">自动登录</string>
     <string name="login_button_string">登录</string>
     <string name="login_without_user">离线登录</string>
