@@ -1,7 +1,7 @@
 <resources>
 
     <string name="blank" />
-    <string name="app_name">Explorer</string>
+    <string name="app_name">泄漏检测</string>
     <string name="title_activity_detect">检测</string>
     <string name="title_activity_calibrate">校准</string>
     <string name="title_activity_history">历史记录</string>
@@ -14,7 +14,7 @@
     <string name="password_hint">登录密码</string>
     <string name="save_username_pwd">自动登录</string>
     <string name="login_button_string">登录</string>
-    <string name="login_without_user">离线登录</string>
+    <string name="login_without_user">离线使用</string>
     <!--mainActivity-->
     <string name="main_detect">检测</string>
     <string name="main_calibrate">校准</string>
