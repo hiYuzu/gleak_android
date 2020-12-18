@@ -94,12 +94,11 @@ public class DeviceController {
             systemCurrent = status.systemCurrent;
 
             fireOn = status.isFireOn;
+            if (powerPercent < 0) {
+                powerPercent = 0;
+            }
             if (fireOn) {
                 currentValue = status.detectValue;
-                //点火后对电压会有影响，所以追加固定8%
-                if(powerPercent <= 90){
-                    powerPercent += 8;
-                }
             } else {
                 currentValue = 0.0D;
             }
@@ -223,6 +222,7 @@ public class DeviceController {
 
     /**
      * 判断是否点火成功
+     *
      * @param status
      * @return
      */
