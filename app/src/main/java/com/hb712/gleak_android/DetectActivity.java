@@ -478,7 +478,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         int monitorStatus = 1;
         MonitorData monitorData = new MonitorData(saveTime, saveMaxValue, monitorStatus);
         lastedLeakData = new LeakData(selectedLeakId, userId, monitorData);
-
         try {
             DetectInfo detectInfo = new DetectInfo();
             detectInfo.setLeakName(selectedLeakName);
@@ -494,6 +493,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             ToastUtil.toastWithoutLog("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "DetectInfoDao");
         }
+        CommonDialog.infoDialog("测量结束：" + "\n时间：" + saveTime + "\n漏点名：" + selectedLeakName + "\n最大值：" + saveMaxValue);
+        saveMaxValue = 0;
     }
 
     public void uploadVideo(View view) {
@@ -656,7 +657,9 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             maxValue = currentPpm;
         }
         if (isSaving) {
-            saveMaxValue = maxValue;
+            if (saveMaxValue < currentPpm) {
+                saveMaxValue = currentPpm;
+            }
             saveTime = DateUtil.getDefaultTime();
         }
     }
