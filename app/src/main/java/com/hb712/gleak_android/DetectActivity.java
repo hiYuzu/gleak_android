@@ -26,6 +26,7 @@ import com.hb712.gleak_android.dao.SeriesLimitInfoDao;
 import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.dialog.FactorDialog;
 import com.hb712.gleak_android.dialog.SeriesDialog;
+import com.hb712.gleak_android.entity.DetectInfo;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.message.net.LeakData;
@@ -111,7 +112,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private double detectMaxvalueMg = 0;
 
     private RtspPlayer mRtspPlayer;
-
+    private MainApplication mainApp;
     private Future<?> future;
 
     @Override
@@ -119,11 +120,12 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detect);
         setupActionBar();
-        mBluetooth = MainApplication.getInstance().mBluetooth;
+        mainApp = MainApplication.getInstance();
+        mBluetooth = mainApp.mBluetooth;
         initView();
         initBluetooth();
         initClass();
-        initCurveInfo();
+        initSeriesInfo();
         runOnUiThread(this::loadRtsp);
     }
 
@@ -152,7 +154,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
         startRecordBtn = findViewById(R.id.startRecordBtn);
         startRecordBtn.setOnClickListener((p) -> {
-            if (!MainApplication.getInstance().isLogin()) {
+            if (!mainApp.isLogin()) {
                 ToastUtil.toastWithLog("当前未登录");
                 return;
             }
@@ -243,22 +245,11 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     /**
      * 初始化曲线信息（工作曲线和响应因子）
      */
-    private void initCurveInfo() {
-        Object obj1 = SPUtil.get(this, "DetectSeries", "");
-        String seriesName = "";
-        if (obj1 != null) {
-            seriesName = obj1.toString();
-        }
-        if (seriesName.equals("")) {
-            seriesName = "标准曲线";
-        }
+    private void initSeriesInfo() {
+        String seriesName = (String) SPUtil.get(this, "DetectSeries", "标准曲线");
         try {
             CalibrationInfoController.getInstance().setCurrentSeries(seriesName);
-            Object obj2 = SPUtil.get(this, "DetectFactor", 0L);
-            long id = -1;
-            if (obj2 != null) {
-                id = Long.parseLong(obj2.toString());
-            }
+            Long id = (Long) SPUtil.get(this, "DetectFactor", 0L);
             List<FactorCoefficientInfo> factorCoefficientInfoList = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().queryBuilder().where(FactorCoefficientInfoDao.Properties.ID.eq(id), new WhereCondition[0]).list();
             if (factorCoefficientInfoList != null && factorCoefficientInfoList.size() > 0) {
                 UnitUtil.changeFactor(factorCoefficientInfoList.get(0));
@@ -396,7 +387,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             return;
         }
         try {
-            HttpUtils.post(this, MainApplication.getInstance().baseUrl + "/api/monitor/insert", newLeak.toMap(), new OKHttpListener() {
+            HttpUtils.post(this, mainApp.baseUrl + "/api/monitor/insert", newLeak.toMap(), new OKHttpListener() {
                 @Override
                 public void onStart() {
 
@@ -433,8 +424,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private void startSave() {
-        if (isConnected() && startRecord()) {
-            startRecordBtn.setText(R.string.stopRecord);
+        if (isConnected()) {
+            startRecord();
         }
     }
 
@@ -442,7 +433,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         if (isConnected() && startRecord()) {
             selectedLeakId = bundle.getString("leakId");
             selectedLeakName = bundle.getString("leakName");
-            startRecordBtn.setText(R.string.stopRecord);
         }
     }
 
@@ -467,36 +457,46 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private void saveData() {
-        // TODO: hiYuzu 2020/12/4 取消注释 
+        // TODO: hiYuzu 2020/12/4 无曲线信息则不保存本次数据
 //        if (seriesLimitInfo == null) {
 //            LogUtil.warnOut(TAG, null, "曲线信息为空");
 //            return;
 //        }
 
         // 如果已登录，则上传可用
-        if (MainApplication.getInstance().isLogin()) {
+        if (mainApp.isLogin()) {
             uploadVideoBtn.setEnabled(true);
         }
 
-
-        String leakId = selectedLeakId;
-        String leakName = selectedLeakName;
-        String userId = MainApplication.getInstance().getUserId();
-        // TODO: hiYuzu 2020/12/4 超标状态由当前选择的限值决定
+        String userId = mainApp.getUserId();
+        // TODO: hiYuzu 2020/12/4 超标状态由当前选择的限值决定，0超标，1正常
+//        boolean standard = saveMaxValue <= seriesLimitInfo.getMaxValue();
+        boolean standard = true;
 //        int monitorStatus = saveMaxValue > seriesLimitInfo.getMaxValue() ? 0 : 1;
         int monitorStatus = 1;
         MonitorData monitorData = new MonitorData(saveTime, saveMaxValue, monitorStatus);
-        lastedLeakData = new LeakData(leakId, userId, monitorData);
-        System.out.println(lastedLeakData.toString());
-        System.out.println(mRtspPlayer.getVideoPath());
+        lastedLeakData = new LeakData(selectedLeakId, userId, monitorData);
 
-        // TODO: hiYuzu 2020/12/2 保存到本地数据库 表：leak_data_info
-        // | id | leak_name | monitor_value | monitor_time | monitor_status | video_path | opt_user |
+        try {
+            DetectInfo detectInfo = new DetectInfo();
+            detectInfo.setLeakName(selectedLeakName);
+            detectInfo.setMonitorValue(saveMaxValue);
+            detectInfo.setMonitorTime(saveTime);
+            detectInfo.setStandard(standard);
+            detectInfo.setVideoPath(mRtspPlayer.getVideoPath());
+            detectInfo.setOptUser(Long.parseLong(userId));
+            DBManager.getInstance().getWritableSession().getDetectInfoDao().save(detectInfo);
+        } catch (NumberFormatException nfe) {
+            ToastUtil.toastWithLog("用户id解析失败");
+        } catch (Exception e) {
+            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            LogUtil.assertOut(TAG, e, "DetectInfoDao");
+        }
     }
 
     public void uploadVideo(View view) {
         try {
-            HttpUtils.post(this, MainApplication.getInstance().baseUrl + "/video/insert", lastedLeakData, new File(mRtspPlayer.getVideoPath()),
+            HttpUtils.post(this, mainApp.baseUrl + "/video/insert", lastedLeakData, new File(mRtspPlayer.getVideoPath()),
                     new OKHttpListener() {
                         @Override
                         public void onStart() {

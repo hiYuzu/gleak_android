@@ -30,7 +30,7 @@ public class GlobalParam {
 
     public static boolean rememberPwd = false;
 
-    public static final boolean IS_UPLOAD_POSITION = true;
+    public static final boolean IS_UPLOAD_POSITION = false;
     public static final String UPLOAD_POSITION_KEY = "is_upload_position";
     public static final String UPLOAD_DELAY_KEY = "upload_delay";
     public static final int UPLOAD_DELAY = 10;

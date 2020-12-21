@@ -180,9 +180,9 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
     public static void loadLibrariesOnce(IjkLibLoader libLoader) {
         synchronized (IjkMediaPlayer.class) {
             if (!mIsLibLoaded) {
-                if (libLoader == null)
+                if (libLoader == null) {
                     libLoader = sLocalLibLoader;
-
+                }
                 libLoader.loadLibrary("ijkffmpeg");
                 libLoader.loadLibrary("ijksdl");
                 libLoader.loadLibrary("ijkplayer");

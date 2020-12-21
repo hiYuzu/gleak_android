@@ -30,10 +30,13 @@ public class RtspPlayer {
 
     private boolean recording = false;
 
-    public void init(Activity activity, BaseLoadingView loadingView) {
-        mLoadingView = loadingView;
+    static {
         IjkMediaPlayer.loadLibrariesOnce(null);
         IjkMediaPlayer.native_profileBegin("libijkplayer.so");
+    }
+
+    public void init(Activity activity, BaseLoadingView loadingView) {
+        mLoadingView = loadingView;
 
         mVideoView = activity.findViewById(R.id.videoView);
         mVideoView.setOnCompletionListener(iMediaPlayer -> mVideoView.resume());

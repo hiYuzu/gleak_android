@@ -24,14 +24,6 @@ import java.util.List;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
-    /**
-     * 监听Preference
-     */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, value) -> {
-        preference.setSummary(value.toString());
-        return true;
-    };
-
     private static boolean isXLargeTablet(Context context) {
         return (context.getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
@@ -64,6 +56,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     /**
      * 验证，组织未知的fragment启动
      */
+    @Override
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
                 || GeneralPreferenceFragment.class.getName().equals(fragmentName)
@@ -95,6 +88,27 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }).show();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        backMain();
+    }
+
+    private void backMain() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        this.finish();
+    }
+
     /**
      * 通用设置fragment UI
      */
@@ -110,10 +124,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
+            initRemember();
+            initPosition();
+            initServe();
+        }
 
-            SwitchPreference general_remember = (SwitchPreference) findPreference("general_remember");
-            general_remember.setChecked(GlobalParam.rememberPwd);
-            general_remember.setOnPreferenceChangeListener((preference, newValue) -> {
+        private void initRemember() {
+            SwitchPreference generalRemember = (SwitchPreference) findPreference("general_remember");
+            generalRemember.setChecked(GlobalParam.rememberPwd);
+            generalRemember.setOnPreferenceChangeListener((preference, newValue) -> {
                 try {
                     if ((boolean) newValue) {
                         mainApp.saveUserPwd();
@@ -128,7 +147,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 return false;
 
             });
+        }
 
+        private void initPosition() {
             EditTextPreference uploadPositionPeriod = (EditTextPreference) findPreference("upload_position_period");
             uploadPositionPeriod.setEnabled((boolean) SPUtil.get(mainApp, GlobalParam.UPLOAD_POSITION_KEY, GlobalParam.IS_UPLOAD_POSITION));
             uploadPositionPeriod.setText(String.valueOf(SPUtil.get(mainApp, GlobalParam.UPLOAD_DELAY_KEY, GlobalParam.UPLOAD_DELAY)));
@@ -164,8 +185,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 }
                 return false;
             });
+        }
 
-
+        private void initServe() {
             serveIp = (EditTextPreference) findPreference(GlobalParam.SERVE_IP);
             servePort = (EditTextPreference) findPreference(GlobalParam.SERVE_PORT);
             serveIp.setText(SPUtil.get(mainApp, GlobalParam.SERVE_IP, GlobalParam.DEFAULT_IP).toString());
@@ -206,16 +228,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             });
         }
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
-        }
-
         private boolean isCorrectIp(String ip) {
             //0.0.0.0 -> 255.255.255.255
             if (ip.length() < 7 || ip.length() > 15) {
@@ -252,6 +264,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
             return true;
         }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            int id = item.getItemId();
+            if (id == android.R.id.home) {
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
@@ -262,18 +284,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_device);
-            setHasOptionsMenu(true);
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
+            startActivity(new Intent(getContext(), SeriesSettingActivity.class));
         }
     }
 

@@ -180,11 +180,10 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     public void searchHistory(View view) {
-        /*
         detectInfoList.clear();
         historyAdapter.clear();
         setStatisticValue(null, unitPpm);
-        List<DetectInfo> detectInfoList;
+        List<DetectInfo> detectInfoList = null;
         DaoSession daoSession;
         try {
             daoSession = DBManager.getInstance().getReadableSession();
@@ -193,45 +192,37 @@ public class HistoryActivity extends AppCompatActivity {
             LogUtil.assertOut(TAG, e, "DetectInfoDao");
             return;
         }
-        if (sampleName.getText().toString().trim().isEmpty()) {
-            if (detectDate.getText().toString().trim().isEmpty()) {
-                detectInfoList = daoSession.getDetectInfoDao().queryBuilder().list();
-                break label359;
+        String name = sampleName.getText().toString().trim();
+        String date = detectDate.getText().toString().trim();
+
+        if (name.isEmpty() && date.isEmpty()) {
+            detectInfoList = daoSession.getDetectInfoDao().queryBuilder().list();
+        } else {
+            QueryBuilder<DetectInfo> queryBuilder = daoSession.getDetectInfoDao().queryBuilder();
+            if (!name.isEmpty() && date.isEmpty()) {
+                Property property = DetectInfoDao.Properties.LEAK_NAME;
+                String str = "%" + name + "%";
+                detectInfoList = queryBuilder.where(property.like(str), new WhereCondition[0]).list();
+            } else if (name.isEmpty() && !date.isEmpty()) {
+                detectInfoList = queryBuilder.where(DetectInfoDao.Properties.MONITOR_TIME.ge(date), new WhereCondition[0]).list();
+            } else {
+                Property nameProperty = DetectInfoDao.Properties.LEAK_NAME;
+                Property dateProperty = DetectInfoDao.Properties.MONITOR_TIME;
+                String str = "%" + name + "%";
+                detectInfoList = queryBuilder.where(nameProperty.like(str), new WhereCondition[]{dateProperty.ge(date)}).list();
             }
         }
-        Property property;
-        StringBuilder sb;
-        if (detectDate.getText().toString().trim().isEmpty()) {
-            QueryBuilder<DetectInfo> queryBuilder = daoSession.getDetectInfoDao().queryBuilder();
-            property = DetectInfoDao.Properties.LEAK_NAME;
-            sb = new StringBuilder();
-            sb.append("%");
-            sb.append(sampleName.getText().toString().trim());
-            sb.append("%");
-            detectInfoList = queryBuilder.where(property.like(sb.toString()), new WhereCondition[0]).list();
-        } else if (this.etSampleName.getText().toString().trim().equals("")) {
-            localObject = daoSession.getDetectInfoDao().queryBuilder().where(DetectInfoDao.Properties.DetectTime.ge(this.etSampleTime.getText().toString().trim()), new WhereCondition[0]).list();
-        } else {
-            localObject = daoSession.getDetectInfoDao().queryBuilder();
-            property = DetectInfoDao.Properties.SampleName;
-            sb = new StringBuilder();
-            sb.append("%");
-            sb.append(this.etSampleName.getText().toString().trim());
-            sb.append("%");
-            localObject = ((QueryBuilder) localObject).where(property.like(sb.toString()), new WhereCondition[]{DetectInfoDao.Properties.DetectTime.ge(this.etSampleTime.getText().toString().trim())}).list();
-        }
-        label359:
-        if ((localObject != null) && (((List) localObject).size() > 0)) {
-            setStatisticValue((List) localObject, this.unitPpm);
-            this.detectInfos.addAll((Collection) localObject);
-            historyAdapter.AddData(this.detectInfos);
+        if (detectInfoList != null && detectInfoList.size() > 0) {
+            setStatisticValue(detectInfoList, unitPpm);
+            this.detectInfoList.addAll(detectInfoList);
+            historyAdapter.addData(this.detectInfoList);
         }
         historyAdapter.notifyDataSetChanged();
-         */
     }
 
     public void exportHistory(View view) {
         if (historyAdapter.detectInfoViewList.size() > 0) {
+            // TODO: hiYuzu 2020/12/18 导出功能
 //            mLoading.setText(paramString2);
 //            mTask = new MyTask();
 //            mTask.execute(new String[0]);

@@ -122,4 +122,13 @@
     <string name="serve_ip">serve_ip</string>
     <string name="serve_port">serve_port</string>
 
+    <string name="series_add">曲线设置</string>
+    <string name="series_name">曲线名称</string>
+    <string name="series_name_1">曲线名称：</string>
+    <string name="series_limit">限值设置</string>
+    <string name="series_1">曲线：</string>
+    <string name="limit">限值</string>
+    <string name="limit_1">限值：</string>
+    <string name="add">添加</string>
+    <string name="del">删除</string>
 </resources>
