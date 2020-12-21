@@ -60,7 +60,6 @@ public class SeriesDialog {
             }
         });
         seriesSp = seriesDialogView.findViewById(R.id.seriesSp);
-        System.out.println(seriesSp);
         seriesInfoList = SeriesInfoController.getAll();
         String[] seriesSize = new String[seriesInfoList.size()];
         int i = 0;
