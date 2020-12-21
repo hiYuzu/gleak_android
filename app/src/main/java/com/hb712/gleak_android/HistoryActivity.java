@@ -86,7 +86,6 @@ public class HistoryActivity extends AppCompatActivity {
         List<DetectInfo> detectInfoList = null;
         try {
             detectInfoList = DBManager.getInstance().getReadableSession().getDetectInfoDao().queryBuilder().limit(100).list();
-            Collections.reverse(detectInfoList);
         } catch (Exception e) {
             ToastUtil.toastWithoutLog("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "DetectInfoDao");
@@ -178,6 +177,7 @@ public class HistoryActivity extends AppCompatActivity {
                     if (video.exists() && !video.isDirectory()) {
                         if (video.delete()) {
                             LogUtil.infoOut(TAG, "文件已删除");
+                            searchHistory(null);
                         } else {
                             LogUtil.warnOut(TAG, null,"文件删除失败：" + video.getPath());
                         }
@@ -186,8 +186,6 @@ public class HistoryActivity extends AppCompatActivity {
                     ToastUtil.toastWithoutLog("本地数据库发生错误！");
                     LogUtil.assertOut(TAG, e, "DetectInfoDao");
                 }
-                historyAdapter.setSelectItem(position);
-                historyAdapter.notifyDataSetChanged();
             }).show();
             return true;
         });
@@ -227,7 +225,7 @@ public class HistoryActivity extends AppCompatActivity {
                 Property property = DetectInfoDao.Properties.LEAK_NAME;
                 String str = "%" + name + "%";
                 detectInfoList = queryBuilder.where(property.like(str), new WhereCondition[0]).list();
-            } else if (name.isEmpty() && !date.isEmpty()) {
+            } else if (name.isEmpty()) {
                 detectInfoList = queryBuilder.where(DetectInfoDao.Properties.MONITOR_TIME.ge(date), new WhereCondition[0]).list();
             } else {
                 Property nameProperty = DetectInfoDao.Properties.LEAK_NAME;

@@ -17,6 +17,7 @@ import com.hb712.gleak_android.util.UnitUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.RequiresApi;
@@ -39,13 +40,12 @@ public class HistoryAdapter extends BaseAdapter {
     }
 
     public void addData(List<DetectInfo> detectInfoList) {
-        if (detectInfoList != null) {
-            for (int i = 0; i < detectInfoList.size(); i++) {
-                DetectInfoView detectInfoView = new DetectInfoView();
-                detectInfoView.number = (i + 1);
-                detectInfoView.detectInfo = detectInfoList.get(i);
-                detectInfoViewList.add(detectInfoView);
-            }
+        Collections.reverse(detectInfoList);
+        for (int i = 0; i < detectInfoList.size(); i++) {
+            DetectInfoView detectInfoView = new DetectInfoView();
+            detectInfoView.number = (i + 1);
+            detectInfoView.detectInfo = detectInfoList.get(i);
+            detectInfoViewList.add(detectInfoView);
         }
     }
 
