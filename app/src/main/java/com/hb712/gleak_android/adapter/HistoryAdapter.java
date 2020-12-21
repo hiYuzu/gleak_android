@@ -2,6 +2,7 @@ package com.hb712.gleak_android.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,7 +109,7 @@ public class HistoryAdapter extends BaseAdapter {
             convertView.setBackgroundColor(context.getResources().getColor(R.color.ff80cbc4, null));
             return convertView;
         }
-        convertView.setBackgroundColor(0);
+        convertView.setBackgroundColor(Color.parseColor("#FFFFFF"));
         return convertView;
     }
 

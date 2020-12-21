@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/dimen_5dp"
+    android:paddingTop="@dimen/dimen_2dp"
+    android:paddingRight="@dimen/dimen_5dp"
+    android:paddingBottom="@dimen/dimen_2dp">
+
+    <TextView
+        android:id="@+id/seriesNameTextView"
+        style="@style/text_style_16_default"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dimen_5dp"
+        android:layout_weight="1"
+        android:singleLine="false" />
+</LinearLayout>
