@@ -365,8 +365,10 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 finish();
             }
         } else if (requestCode == GlobalParam.REQUEST_LEAK_DATA) {
-            Bundle bundle = data.getExtras();
-            if (bundle == null) {
+            if (data == null) {
+                return;
+            }
+            if (data.getExtras() == null) {
                 ToastUtil.toastWithLog("获取漏点信息失败，请重试");
                 return;
             }
