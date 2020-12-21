@@ -89,9 +89,8 @@ public class SeriesSettingFragment extends Fragment {
         });
         Button deleteSeriesBtn = fragment.findViewById(R.id.deleteSeriesSetting);
         deleteSeriesBtn.setOnClickListener(v -> {
-            int i = selectIndex;
-            if (i > -1) {
-                SeriesInfo seriesInfo = seriesInfoList.get(i);
+            if (selectIndex > -1) {
+                SeriesInfo seriesInfo = seriesInfoList.get(selectIndex);
                 if (seriesInfo.isStdSeries()) {
                     ToastUtil.toastWithoutLog("标准曲线不能删除！");
                 } else {
