@@ -42,14 +42,14 @@
                 <Button
                     android:id="@+id/addNewSeriesSetting"
                     android:layout_width="wrap_content"
-                    android:layout_height="30.0dip"
-                    android:layout_weight="1.0"
+                    android:layout_height="30dp"
+                    android:layout_weight="1"
                     android:layout_marginEnd="@dimen/dimen_50dp"
                     android:background="@drawable/button_operation"
                     android:gravity="center"
                     android:text="@string/add"
                     android:textColor="@color/white"
-                    android:textSize="20.0sp" />
+                    android:textSize="20sp" />
                 <Button
                     android:id="@+id/deleteSeriesSetting"
                     android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
                     android:gravity="center"
                     android:text="@string/del"
                     android:textColor="@color/white"
-                    android:textSize="20.0sp" />
+                    android:textSize="20sp" />
             </LinearLayout>
         </LinearLayout>
 
