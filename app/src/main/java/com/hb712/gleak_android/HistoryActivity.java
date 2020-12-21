@@ -15,6 +15,7 @@ import com.hb712.gleak_android.adapter.HistoryAdapter;
 import com.hb712.gleak_android.dao.DBManager;
 import com.hb712.gleak_android.dao.DaoSession;
 import com.hb712.gleak_android.dao.DetectInfoDao;
+import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.entity.DetectInfo;
 import com.hb712.gleak_android.util.DateUtil;
 import com.hb712.gleak_android.util.LogUtil;
@@ -27,10 +28,11 @@ import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.query.WhereCondition;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
@@ -41,7 +43,6 @@ public class HistoryActivity extends AppCompatActivity {
     private TextView maxValue;
     private TextView minValue;
     private TextView avgValue;
-    private ListView historyLV;
 
     private List<DetectInfo> detectInfoList;
     private HistoryAdapter historyAdapter;
@@ -54,7 +55,6 @@ public class HistoryActivity extends AppCompatActivity {
         detectInfoList = new ArrayList<>();
         setupActionBar();
         initView();
-//        initMediaScanner();
     }
 
     private void setupActionBar() {
@@ -86,6 +86,7 @@ public class HistoryActivity extends AppCompatActivity {
         List<DetectInfo> detectInfoList = null;
         try {
             detectInfoList = DBManager.getInstance().getReadableSession().getDetectInfoDao().queryBuilder().limit(100).list();
+            Collections.reverse(detectInfoList);
         } catch (Exception e) {
             ToastUtil.toastWithoutLog("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "DetectInfoDao");
@@ -158,14 +159,37 @@ public class HistoryActivity extends AppCompatActivity {
             }
         });
 
-        historyLV = findViewById(R.id.historyList);
+        ListView historyLv = findViewById(R.id.historyList);
         historyAdapter = new HistoryAdapter(this, detectInfoList);
         unitPpm = SPUtil.get(this, "unit", getResources().getString(R.string.detect_value_unit_ppm)).toString().equals(getResources().getString(R.string.detect_value_unit_ppm));
         historyAdapter.setUnitPpm(unitPpm);
-        historyLV.setAdapter(historyAdapter);
-        historyLV.setOnItemClickListener((parent, view, position, id) -> {
+        historyLv.setAdapter(historyAdapter);
+        historyLv.setOnItemClickListener((parent, view, position, id) -> {
             historyAdapter.setSelectItem(position);
             historyAdapter.notifyDataSetChanged();
+        });
+        historyLv.setOnItemLongClickListener((parent, view, position, id) -> {
+            CommonDialog.getDialog(this, "删除此条记录？", () -> {
+                DetectInfo detectInfo = detectInfoList.get(position);
+                detectInfoList.remove(position);
+                try {
+                    DBManager.getInstance().getWritableSession().getDetectInfoDao().delete(detectInfo);
+                    File video = new File(detectInfo.getVideoPath());
+                    if (video.exists() && !video.isDirectory()) {
+                        if (video.delete()) {
+                            LogUtil.infoOut(TAG, "文件已删除");
+                        } else {
+                            LogUtil.warnOut(TAG, null,"文件删除失败：" + video.getPath());
+                        }
+                    }
+                } catch (Exception e) {
+                    ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                    LogUtil.assertOut(TAG, e, "DetectInfoDao");
+                }
+                historyAdapter.setSelectItem(position);
+                historyAdapter.notifyDataSetChanged();
+            }).show();
+            return true;
         });
     }
 
