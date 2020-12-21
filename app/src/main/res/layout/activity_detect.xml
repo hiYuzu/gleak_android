@@ -25,7 +25,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_operation"
-            android:minWidth="65dp"
+            android:minWidth="88dp"
+            android:layout_marginLeft="@dimen/dimen_16sp"
             android:minHeight="@dimen/dimen_35dp"
             android:onClick="setVideoIp"
             android:text="@string/videoIp"
@@ -76,6 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_operation"
+            android:layout_marginLeft="@dimen/dimen_16sp"
             android:minWidth="@dimen/dimen_50dp"
             android:minHeight="@dimen/dimen_35dp"
             android:onClick="connectClick"
@@ -128,7 +130,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dimen_10dp"
-        android:gravity="center_horizontal"
+        android:layout_marginLeft="@dimen/dimen_25dp"
+        android:gravity="left"
         android:orientation="horizontal">
 
         <TextView
@@ -148,7 +151,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:layout_marginLeft="@dimen/dimen_25dp"
+        android:gravity="left"
         android:orientation="horizontal">
 
         <TextView
@@ -198,12 +202,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:layout_marginLeft="@dimen/dimen_25dp"
+        android:gravity="left"
         android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/dimen_10dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -310,7 +315,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/dimen_100dp"
+            android:layout_marginStart="@dimen/dimen_40dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -410,8 +415,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/fab_margin"
             android:background="@drawable/button_cycle"
-            android:minWidth="65dp"
-            android:minHeight="65dp"
+            android:minWidth="@dimen/dimen_50dp"
+            android:minHeight="@dimen/dimen_50dp"
             android:text="@string/startRecord"
             android:textColor="@color/white" />
 
@@ -422,8 +427,8 @@
             android:layout_marginStart="@dimen/fab_margin"
             android:background="@drawable/button_cycle"
             android:enabled="false"
-            android:minWidth="65dp"
-            android:minHeight="65dp"
+            android:minWidth="@dimen/dimen_50dp"
+            android:minHeight="@dimen/dimen_50dp"
             android:onClick="uploadVideo"
             android:text="@string/uploadVideo"
             android:textColor="@color/white" />
