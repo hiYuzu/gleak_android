@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal" android:background="@color/baike_title_backgrount"
+              android:paddingLeft="5.0dip" android:paddingTop="2.0dip" android:paddingRight="5.0dip"
+              android:paddingBottom="2.0dip" android:descendantFocusability="blocksDescendants"
+              android:layout_width="fill_parent" android:layout_height="wrap_content"
+              xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="4.0">
+        <TextView android:id="@id/ctvCurveName" android:layout_width="fill_parent" android:layout_height="wrap_content"
+                  android:layout_marginLeft="2.0dip" android:singleLine="false" android:layout_weight="1.0"
+                  android:layout_alignParentLeft="true" android:layout_centerVertical="true"
+                  style="@style/text_style_16_default"/>
+    </RelativeLayout>
+    <RelativeLayout android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="2.0">
+        <TextView android:id="@id/ctvLimitValue" android:layout_width="fill_parent" android:layout_height="wrap_content"
+                  android:layout_marginLeft="2.0dip" android:singleLine="false" android:layout_weight="2.0"
+                  android:layout_alignParentLeft="true" android:layout_centerVertical="true"
+                  style="@style/text_style_16_default"/>
+    </RelativeLayout>
+</LinearLayout>

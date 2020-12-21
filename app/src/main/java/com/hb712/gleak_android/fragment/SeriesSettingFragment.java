@@ -47,6 +47,15 @@ public class SeriesSettingFragment extends Fragment {
 
     private void initView(View fragment) {
         newSeriesNameEt = fragment.findViewById(R.id.seriesNameSetting);
+        seriesInfoList = SeriesInfoController.getAllEdits();
+        ListView listView = fragment.findViewById(R.id.seriesNameList);
+        seriesInfoAdapter = new SeriesInfoAdapter(getContext(), seriesInfoList);
+        listView.setAdapter(seriesInfoAdapter);
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            selectIndex = position;
+            seriesInfoAdapter.setSelectItem(position);
+            seriesInfoAdapter.notifyDataSetChanged();
+        });
         Button addNewSeriesBtn = fragment.findViewById(R.id.addNewSeriesSetting);
         addNewSeriesBtn.setOnClickListener(v -> {
             String seriesName = newSeriesNameEt.getText().toString().trim();
@@ -74,7 +83,6 @@ public class SeriesSettingFragment extends Fragment {
                 ToastUtil.toastWithoutLog("本地数据库发生错误！");
                 LogUtil.assertOut(TAG, e, "SeriesInfoDao");
             }
-
             selectIndex = -1;
             seriesInfoAdapter.setSelectItem(selectIndex);
             seriesInfoAdapter.notifyDataSetChanged();
@@ -102,15 +110,6 @@ public class SeriesSettingFragment extends Fragment {
                 return;
             }
             ToastUtil.toastWithoutLog("请选择要删除的项目！");
-        });
-        seriesInfoList = SeriesInfoController.getAllEdits();
-        ListView listView = fragment.findViewById(R.id.seriesNameList);
-        seriesInfoAdapter = new SeriesInfoAdapter(getContext(), seriesInfoList);
-        listView.setAdapter(seriesInfoAdapter);
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-            selectIndex = position;
-            seriesInfoAdapter.setSelectItem(position);
-            seriesInfoAdapter.notifyDataSetChanged();
         });
     }
 

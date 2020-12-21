@@ -74,11 +74,11 @@ public class SeriesInfoAdapter extends BaseAdapter {
         }
         SeriesInfo seriesInfo = seriesInfoList.get(position);
         viewHolder.seriesName.setText(seriesInfo.getSeriesName());
-        convertView.setBackgroundColor(Color.parseColor("#FFFFFF"));
         if (position == selectIndex) {
             convertView.setBackgroundColor(context.getResources().getColor(R.color.ff80cbc4, null));
             return convertView;
         }
+        convertView.setBackgroundColor(Color.parseColor("#FFFFFF"));
         return convertView;
     }
 
