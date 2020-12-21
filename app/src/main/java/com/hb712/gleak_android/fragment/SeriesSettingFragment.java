@@ -95,7 +95,7 @@ public class SeriesSettingFragment extends Fragment {
                         ToastUtil.toastWithoutLog("本地数据库发生错误！");
                         LogUtil.assertOut(TAG, e, "SeriesInfoDao");
                     }
-                    deleteInvokeSeiresData(seriesInfo);
+                    deleteInvokeSeriesData(seriesInfo);
                     seriesInfoAdapter.setSelectItem(selectIndex);
                     seriesInfoAdapter.notifyDataSetChanged();
                 }
@@ -114,7 +114,7 @@ public class SeriesSettingFragment extends Fragment {
         });
     }
 
-    private void deleteInvokeSeiresData(SeriesInfo seriesInfo) {
+    private void deleteInvokeSeriesData(SeriesInfo seriesInfo) {
         try {
             DBManager.getInstance().getWritableSession().getSeriesLimitInfoDao().queryBuilder().where(SeriesLimitInfoDao.Properties.SERIES_ID.eq(seriesInfo.getId()), new WhereCondition[0]).buildDelete().executeDeleteWithoutDetachingEntities();
             DBManager.getInstance().getWritableSession().getCalibrationInfoDao().queryBuilder().where(CalibrationInfoDao.Properties.SERIES_ID.eq(seriesInfo.getId()), new WhereCondition[0]).buildDelete().executeDeleteWithoutDetachingEntities();
@@ -122,5 +122,11 @@ public class SeriesSettingFragment extends Fragment {
             ToastUtil.toastWithoutLog("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "SeriesLimitInfoDao | CalibrationInfoDao");
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        seriesInfoAdapter.notifyDataSetChanged();
     }
 }
