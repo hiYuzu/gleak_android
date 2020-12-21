@@ -1,7 +1,10 @@
 package com.hb712.gleak_android.util;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.Nullable;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -48,5 +51,23 @@ public class DateUtil {
     @SuppressLint("SimpleDateFormat")
     public static String getDateString(Date date, String format) {
         return new SimpleDateFormat(format).format(date);
+    }
+
+    /**
+     * 将字符串格式的日期转为 {@link Date} 格式
+     * @param dateStr 日期字符串
+     * @param format 时间格式
+     * @return {@link Date}
+     */
+    @SuppressLint("SimpleDateFormat")
+    @Nullable
+    public static Date parseDate(String dateStr, String format) {
+        Date date = null;
+        try {
+            date = new SimpleDateFormat(format).parse(dateStr);
+        } catch (ParseException pe) {
+            ToastUtil.toastWithLog("日期格式有误！");
+        }
+        return null;
     }
 }
