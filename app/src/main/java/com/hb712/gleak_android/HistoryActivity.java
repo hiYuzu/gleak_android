@@ -166,6 +166,7 @@ public class HistoryActivity extends AppCompatActivity {
         historyLv.setOnItemClickListener((parent, view, position, id) -> {
             historyAdapter.setSelectItem(position);
             historyAdapter.notifyDataSetChanged();
+            // TODO: hiYuzu 2020/12/22 添加视频播放dialog 
         });
         historyLv.setOnItemLongClickListener((parent, view, position, id) -> {
             CommonDialog.getDialog(this, "删除此条记录？", () -> {
