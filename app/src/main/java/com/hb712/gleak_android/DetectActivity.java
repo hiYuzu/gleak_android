@@ -462,8 +462,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private void saveData() {
-        String maxValue = new DecimalFormat("0.00").format(saveMaxValue);
-        CommonDialog.infoDialog(this, "测量结束：\n时间：" + saveTime + "\n漏点名：" + selectedLeakName + "\n最大值：" + maxValue);
+        saveMaxValue = Double.parseDouble(new DecimalFormat("0.00").format(saveMaxValue));
+        CommonDialog.infoDialog(this, "测量结束：\n时间：" + saveTime + "\n漏点名：" + selectedLeakName + "\n最大值：" + saveMaxValue);
 
         if (seriesLimitInfo == null) {
             ToastUtil.toastWithoutLog("无限值数据，本次测量不保存");
@@ -667,7 +667,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private void showValueBySeriesLimit(double currentPpm) {
-        detectValueET.setText(new DecimalFormat("0.0").format(currentPpm));
+        detectValueET.setText(new DecimalFormat("0.00").format(currentPpm));
         if (seriesLimitInfo != null) {
             if (currentPpm > seriesLimitInfo.getMaxValue()) {
                 detectValueET.setTextColor(getResources().getColor(R.color.red, null));
@@ -692,7 +692,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 detectMaxvalueMg = currentPpm;
             }
         }
-        detectMaxvalueET.setText(new DecimalFormat("0.0").format(detectMaxvaluePPM));
+        detectMaxvalueET.setText(new DecimalFormat("0.00").format(detectMaxvaluePPM));
     }
 
     public void selectSeries(View view) {

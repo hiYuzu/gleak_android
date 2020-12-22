@@ -210,10 +210,10 @@ public class CalibrateActivity extends AppCompatActivity {
         runOnUiThread(() -> {
             DeviceController.Voc3000Status status = deviceController.getStatus();
             if (status != null) {
-                currentSignal.setText(new DecimalFormat("0.0").format(deviceController.getMicroCurrent()));
+                currentSignal.setText(new DecimalFormat("0.00").format(deviceController.getMicroCurrent()));
                 doCalibrateRecord(status);
             }
-            currentPpm.setText(new DecimalFormat("0.0").format(deviceController.getCurrentValue()));
+            currentPpm.setText(new DecimalFormat("0.00").format(deviceController.getCurrentValue()));
         });
     }
 
