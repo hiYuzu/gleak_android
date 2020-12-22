@@ -1,22 +1,17 @@
 package com.hb712.gleak_android;
 
 import android.annotation.TargetApi;
-import android.app.ActivityManager;
-import android.app.AlertDialog;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
-import android.preference.Preference;
 import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.view.MenuItem;
 
-import com.hb712.gleak_android.base.BaseApplication;
 import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.service.UploadPositionService;
 import com.hb712.gleak_android.util.LogUtil;
@@ -25,7 +20,6 @@ import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.SPUtil;
 
 import java.util.List;
-import java.util.Objects;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
@@ -59,7 +53,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     /**
-     * 验证，组织未知的fragment启动
+     * 验证，阻止未知的fragment启动
      */
     @Override
     protected boolean isValidFragment(String fragmentName) {
@@ -277,16 +271,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
             return true;
         }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
-        }
     }
 
     /**
@@ -311,16 +295,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_about);
             setHasOptionsMenu(true);
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
         }
     }
 }
