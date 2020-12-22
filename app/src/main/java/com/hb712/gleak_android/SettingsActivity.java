@@ -204,9 +204,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         serveIp.setSummary(ip);
                         SPUtil.put(mainApp, GlobalParam.SERVE_IP, ip);
                         CommonDialog.getDialog(getContext(), "是否重启？", "服务器地址已更改，重启应用生效", () -> {
-                            Intent intent = mainApp.getPackageManager().getLaunchIntentForPackage(mainApp.getPackageName());
-                            Objects.requireNonNull(intent).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            Intent intent = new Intent(mainApp, LaunchActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             mainApp.startActivity(intent);
+                            android.os.Process.killProcess(android.os.Process.myPid());
                         }).show();
                     } else {
                         ToastUtil.toastWithLog("请输入正确的IP格式");
@@ -224,9 +225,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         servePort.setSummary(port);
                         SPUtil.put(mainApp, GlobalParam.SERVE_PORT, port);
                         CommonDialog.getDialog(getContext(), "是否重启？", "服务器地址已更改，重启应用生效", () -> {
-                            Intent intent = mainApp.getPackageManager().getLaunchIntentForPackage(mainApp.getPackageName());
-                            Objects.requireNonNull(intent).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            Intent intent = new Intent(mainApp, LaunchActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             mainApp.startActivity(intent);
+                            android.os.Process.killProcess(android.os.Process.myPid());
                         }).show();
                     } else {
                         ToastUtil.toastWithLog("请输入正确的Port格式");
