@@ -206,7 +206,7 @@ public class LeakMapActivity extends BaseActivity {
     @SuppressLint({"SetTextI18n", "InflateParams", "DefaultLocale"})
     public void addNewPoint(View view) {
         if (newLeakLat == 0 || newLeakLon == 0) {
-            CommonDialog.infoDialog("请移动地图确认新增漏点位置！");
+            CommonDialog.infoDialog(this, "请移动地图确认新增漏点位置！");
             return;
         }
         System.out.println("Lon:" + newLeakLon + "Lat:" + newLeakLat);

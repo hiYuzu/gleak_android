@@ -52,19 +52,21 @@ public class CommonDialog {
         return alertDialog;
     }
 
-    public static void infoDialog(String message) {
-        new AlertDialog.Builder(MainApplication.getInstance())
+    public static void infoDialog(Context context, String message) {
+        new AlertDialog.Builder(context)
                 .setTitle("提示")
                 .setMessage(message)
-                .setPositiveButton("确定", null)
+                .setPositiveButton("确定", (dialog, which) -> dialog.dismiss())
+                .create()
                 .show();
     }
 
-    public static void warnDialog(String message) {
-        new AlertDialog.Builder(MainApplication.getInstance())
+    public static void warnDialog(Context context, String message) {
+        new AlertDialog.Builder(context)
                 .setTitle("警告")
                 .setMessage(message)
-                .setPositiveButton("确定", null)
+                .setPositiveButton("确定", (dialog, which) -> dialog.dismiss())
+                .create()
                 .show();
     }
 

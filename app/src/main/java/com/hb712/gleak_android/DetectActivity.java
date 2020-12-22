@@ -493,7 +493,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             ToastUtil.toastWithoutLog("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "DetectInfoDao");
         }
-        CommonDialog.infoDialog("测量结束：" + "\n时间：" + saveTime + "\n漏点名：" + selectedLeakName + "\n最大值：" + saveMaxValue);
+        CommonDialog.infoDialog(this, "测量结束：\n时间：" + saveTime + "\n漏点名：" + selectedLeakName + "\n最大值：" + saveMaxValue);
         saveMaxValue = 0;
     }
 
