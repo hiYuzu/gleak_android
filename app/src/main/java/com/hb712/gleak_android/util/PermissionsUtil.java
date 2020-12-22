@@ -12,10 +12,28 @@ import android.support.v4.app.ActivityCompat;
  * @date 2020/12/14 11:23
  */
 public class PermissionsUtil {
-    public static void requestWriteExternalStorage(Context context, Activity activity) {
-        String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (ActivityCompat.checkSelfPermission(context, permissions[0]) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, permissions, 1234);
+    /**
+     * 请求权限(multi)
+     * @param context used in {@link ActivityCompat#checkSelfPermission}
+     * @param activity used in {@link ActivityCompat#requestPermissions}
+     * @param permissions {@link String} Array, type is {@link Manifest.permission}
+     */
+    public static void requestPermissions(Context context, Activity activity, String[] permissions) {
+        for (int i = 0; i < permissions.length; i++) {
+            if (ActivityCompat.checkSelfPermission(context, permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity, permissions, i);
+            }
         }
+    }
+
+    /**
+     * 请求权限(single)
+     * @param context used in {@link ActivityCompat#checkSelfPermission}
+     * @param activity used in {@link ActivityCompat#requestPermissions}
+     * @param permission {@link Manifest.permission}
+     */
+    public static void requestPermission(Context context, Activity activity, String permission) {
+        String[] permissions = new String[] {permission};
+        requestPermissions(context, activity, permissions);
     }
 }

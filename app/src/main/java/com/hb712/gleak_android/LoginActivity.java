@@ -1,5 +1,6 @@
 package com.hb712.gleak_android;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -76,7 +77,7 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
             mMessageText.setVisibility(View.GONE);
             mResultText.setVisibility(View.GONE);
             mLoadingImage.setVisibility(View.GONE);
-            PermissionsUtil.requestWriteExternalStorage(this, this);
+            PermissionsUtil.requestPermission(this, this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
             MainApplication.getInstance().removeUserPwd();
 
             mLoginButton.setOnClickListener(v -> {
@@ -95,10 +96,9 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
 
                 if (username.isEmpty() || password.isEmpty()) {
                     onLoginFailed("请输入登录账号或密码");
-                    return;
+                } else {
+                    startLoginAction(username, password);
                 }
-
-                startLoginAction(username, password);
             });
         }
     }

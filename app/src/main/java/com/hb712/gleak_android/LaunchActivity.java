@@ -1,5 +1,6 @@
 package com.hb712.gleak_android;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -47,7 +48,7 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
         View mContentView = findViewById(R.id.fullscreen_content);
-        PermissionsUtil.requestWriteExternalStorage(this, this);
+        PermissionsUtil.requestPermission(this, this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         mMessage = findViewById(R.id.launch_message);
         TextView mVersion = findViewById(R.id.version_text);
         PackageInfo info;
