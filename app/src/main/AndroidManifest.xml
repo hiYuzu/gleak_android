@@ -56,7 +56,8 @@
             android:name=".LeakMapActivity"
             android:label="@string/select_leak" />
         <activity
-            android:name=".SeriesSettingActivity"/>
+            android:name=".SeriesSettingActivity"
+            android:label="@string/settings_device" />
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="BpPnFERqEuxQtdvEuPp4eW8ouHv6LeKR" />
