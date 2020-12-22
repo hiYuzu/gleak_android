@@ -28,7 +28,6 @@ import java.util.List;
 
 public class SeriesSettingFragment extends Fragment {
     private static final String TAG = SeriesSettingFragment.class.getSimpleName();
-    private View fragment;
     private EditText newSeriesNameEt;
 
     private List<SeriesInfo> seriesInfoList;
@@ -40,7 +39,7 @@ public class SeriesSettingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        fragment = inflater.inflate(R.layout.fragment_series_setting, container, false);
+        View fragment = inflater.inflate(R.layout.fragment_series_setting, container, false);
         initView(fragment);
         return fragment;
     }
@@ -86,6 +85,7 @@ public class SeriesSettingFragment extends Fragment {
             selectIndex = -1;
             seriesInfoAdapter.setSelectItem(selectIndex);
             seriesInfoAdapter.notifyDataSetChanged();
+            newSeriesNameEt.setText("");
         });
         Button deleteSeriesBtn = fragment.findViewById(R.id.deleteSeriesSetting);
         deleteSeriesBtn.setOnClickListener(v -> {
