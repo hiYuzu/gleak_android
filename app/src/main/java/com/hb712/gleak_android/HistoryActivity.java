@@ -172,7 +172,7 @@ public class HistoryActivity extends AppCompatActivity {
         historyLv.setOnItemClickListener((parent, view, position, id) -> {
             historyAdapter.setSelectItem(position);
             historyAdapter.notifyDataSetChanged();
-            showVideo(detectInfoList.get(position).getVideoPath());
+            new VideoDialog(this, this).showVideo(detectInfoList.get(position).getVideoPath());
         });
         historyLv.setOnItemLongClickListener((parent, view, position, id) -> {
             CommonDialog.getDialog(this, "删除此条记录？", () -> {
@@ -196,22 +196,6 @@ public class HistoryActivity extends AppCompatActivity {
             }).show();
             return true;
         });
-    }
-
-    private void showVideo(String videoPath) {
-        String[] permissions = new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-        PermissionsUtil.requestPermissions(this, this, permissions);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            File video = new File(videoPath);
-            if (!video.isDirectory() && video.exists()) {
-                VideoDialog videoDialog = new VideoDialog(this, videoPath);
-                videoDialog.showVideo();
-            } else {
-                ToastUtil.toastWithoutLog("视频不存在");
-            }
-        } else {
-            ToastUtil.toastWithoutLog("权限不足");
-        }
     }
 
     private void showDatePickDialog() {
