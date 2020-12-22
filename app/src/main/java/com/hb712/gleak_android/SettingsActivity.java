@@ -2,6 +2,8 @@ package com.hb712.gleak_android;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -201,10 +203,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (isCorrectIp(ip)) {
                         serveIp.setSummary(ip);
                         SPUtil.put(mainApp, GlobalParam.SERVE_IP, ip);
-                        CommonDialog.getDialog(mainApp, "是否重启？", "服务器地址已更改，重启应用生效", () -> {
-                            Intent intent = BaseApplication.baseApplication.getPackageManager().getLaunchIntentForPackage(BaseApplication.baseApplication.getPackageName());
+                        CommonDialog.getDialog(getContext(), "是否重启？", "服务器地址已更改，重启应用生效", () -> {
+                            Intent intent = mainApp.getPackageManager().getLaunchIntentForPackage(mainApp.getPackageName());
                             Objects.requireNonNull(intent).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            BaseApplication.baseApplication.startActivity(intent);
+                            mainApp.startActivity(intent);
                         }).show();
                     } else {
                         ToastUtil.toastWithLog("请输入正确的IP格式");
@@ -221,10 +223,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (isCorrectPort(port)) {
                         servePort.setSummary(port);
                         SPUtil.put(mainApp, GlobalParam.SERVE_PORT, port);
-                        CommonDialog.getDialog(mainApp, "是否重启？", "服务器地址已更改，重启应用生效", () -> {
-                            Intent intent = BaseApplication.baseApplication.getPackageManager().getLaunchIntentForPackage(BaseApplication.baseApplication.getPackageName());
+                        CommonDialog.getDialog(getContext(), "是否重启？", "服务器地址已更改，重启应用生效", () -> {
+                            Intent intent = mainApp.getPackageManager().getLaunchIntentForPackage(mainApp.getPackageName());
                             Objects.requireNonNull(intent).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            BaseApplication.baseApplication.startActivity(intent);
+                            mainApp.startActivity(intent);
                         }).show();
                     } else {
                         ToastUtil.toastWithLog("请输入正确的Port格式");
