@@ -461,11 +461,13 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private void saveData() {
-        // TODO: hiYuzu 2020/12/4 无曲线信息则不保存本次数据
-//        if (seriesLimitInfo == null) {
-//            LogUtil.warnOut(TAG, null, "曲线信息为空");
-//            return;
-//        }
+        CommonDialog.infoDialog(this, "测量结束：\n时间：" + saveTime + "\n漏点名：" + selectedLeakName + "\n最大值：" + saveMaxValue);
+
+        if (seriesLimitInfo == null) {
+            ToastUtil.toastWithoutLog("无限值数据，本次测量不保存");
+            LogUtil.warnOut(TAG, null, "曲线信息为空");
+            return;
+        }
 
         // 如果已登录，则上传可用
         if (mainApp.isLogin()) {
@@ -473,11 +475,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         }
 
         String userId = mainApp.getUserId();
-        // TODO: hiYuzu 2020/12/4 超标状态由当前选择的限值决定，0超标，1正常
-//        boolean standard = saveMaxValue <= seriesLimitInfo.getMaxValue();
-        boolean standard = true;
-//        int monitorStatus = saveMaxValue > seriesLimitInfo.getMaxValue() ? 0 : 1;
-        int monitorStatus = 1;
+        boolean standard = saveMaxValue <= seriesLimitInfo.getMaxValue();
+        int monitorStatus = saveMaxValue > seriesLimitInfo.getMaxValue() ? 0 : 1;
         MonitorData monitorData = new MonitorData(saveTime, saveMaxValue, monitorStatus);
         lastedLeakData = new LeakData(selectedLeakId, userId, monitorData);
         try {
@@ -495,7 +494,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             ToastUtil.toastWithoutLog("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "DetectInfoDao");
         }
-        CommonDialog.infoDialog(this, "测量结束：\n时间：" + saveTime + "\n漏点名：" + selectedLeakName + "\n最大值：" + saveMaxValue);
         saveMaxValue = 0;
     }
 
