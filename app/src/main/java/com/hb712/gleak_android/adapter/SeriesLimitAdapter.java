@@ -21,8 +21,8 @@ import java.util.List;
  * @date 2020/12/21 14:57
  */
 public class SeriesLimitAdapter extends BaseAdapter {
-    private Context context;
-    private List<SeriesLimitInfo> seriesLimitInfoList;
+    private final Context context;
+    private final List<SeriesLimitInfo> seriesLimitInfoList;
     private int selectIndex = -1;
 
     public SeriesLimitAdapter(Context context, List<SeriesLimitInfo> seriesLimitInfoList) {
@@ -62,27 +62,22 @@ public class SeriesLimitAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         class ViewHolder {
-            public TextView seriesName;
-            public TextView limitValue;
+            public TextView seriesNameTv;
+            public TextView limitValueTv;
         }
         ViewHolder viewHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.series_info_content, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.series_limit_content, null);
             viewHolder = new ViewHolder();
-            viewHolder.seriesName = convertView.findViewById(R.id.seriesNameTv);
-            viewHolder.limitValue = convertView.findViewById(R.id.seriesLimitTv);
+            viewHolder.seriesNameTv = convertView.findViewById(R.id.seriesNameTv);
+            viewHolder.limitValueTv = convertView.findViewById(R.id.seriesLimitTv);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         SeriesLimitInfo seriesLimitInfo = seriesLimitInfoList.get(position);
-        if (seriesLimitInfo.getSeriesInfo() == null) {
-            viewHolder.seriesName.setText("");
-        } else {
-            viewHolder.seriesName.setText(seriesLimitInfo.getSeriesInfo().getSeriesName());
-        }
-        viewHolder.limitValue.setText(String.valueOf(seriesLimitInfo.getMaxValue()));
-        convertView.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        viewHolder.seriesNameTv.setText(seriesLimitInfo.getSeriesInfo().getSeriesName());
+        viewHolder.limitValueTv.setText(String.valueOf(seriesLimitInfo.getMaxValue()));
         if (position == selectIndex) {
             convertView.setBackgroundColor(context.getResources().getColor(R.color.ff80cbc4, null));
             return convertView;

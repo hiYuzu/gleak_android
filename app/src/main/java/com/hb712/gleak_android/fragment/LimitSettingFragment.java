@@ -13,8 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
-import android.widget.TextView;
 
 import com.hb712.gleak_android.R;
 import com.hb712.gleak_android.adapter.SeriesLimitAdapter;
@@ -29,8 +27,7 @@ import java.util.List;
 
 public class LimitSettingFragment extends Fragment {
     private static final String TAG = LimitSettingFragment.class.getSimpleName();
-
-    private ListView seriesLimitList;
+    private View fragment;
     private Spinner seriesSettingSp;
     private EditText limitValue;
 
@@ -43,7 +40,7 @@ public class LimitSettingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View fragment = inflater.inflate(R.layout.fragment_limit_setting, container, false);
+        fragment = inflater.inflate(R.layout.fragment_limit_setting, container, false);
         initView(fragment);
         return fragment;
     }
@@ -51,13 +48,12 @@ public class LimitSettingFragment extends Fragment {
     private void initView(View fragment) {
         seriesInfoList = SeriesInfoController.getAll();
         String[] seriesNames = new String[seriesInfoList.size()];
-        int i = 0;
-        for (SeriesInfo temp : seriesInfoList) {
-            seriesNames[i] = temp.getSeriesName();
+        for (int i = 0; i < seriesInfoList.size(); i++) {
+            seriesNames[i] = seriesInfoList.get(i).getSeriesName();
         }
         seriesSettingSp = fragment.findViewById(R.id.seriesSettingSp);
-        SpinnerAdapter spinnerAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_normal, seriesNames);
-        seriesSettingSp.setAdapter(spinnerAdapter);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_normal, seriesNames);
+        seriesSettingSp.setAdapter(arrayAdapter);
         limitValue = fragment.findViewById(R.id.limitValue);
         try {
             seriesLimitInfoList = DBManager.getInstance().getReadableSession().getSeriesLimitInfoDao().loadAll();
@@ -65,7 +61,7 @@ public class LimitSettingFragment extends Fragment {
             ToastUtil.toastWithoutLog("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "SeriesLimitInfoDao");
         }
-        seriesLimitList = fragment.findViewById(R.id.seriesLimitList);
+        ListView seriesLimitList = fragment.findViewById(R.id.seriesLimitList);
         seriesLimitAdapter = new SeriesLimitAdapter(getContext(), seriesLimitInfoList);
         seriesLimitList.setAdapter(seriesLimitAdapter);
         seriesLimitList.setOnItemClickListener((parent, view, position, id) -> {
@@ -88,7 +84,7 @@ public class LimitSettingFragment extends Fragment {
             seriesLimitInfo.setMaxValue(d);
             boolean isHave = false;
             for (SeriesLimitInfo temp : seriesLimitInfoList) {
-                if (temp.getSeriesInfo().getId().equals(seriesLimitInfo.getSeriesId())) {
+                if (temp.getSeriesId() == seriesLimitInfo.getSeriesId()) {
                     temp.setMaxValue(seriesLimitInfo.getMaxValue());
                     seriesLimitInfo.setId(temp.getId());
                     isHave = true;
@@ -98,13 +94,13 @@ public class LimitSettingFragment extends Fragment {
             if (!isHave) {
                 seriesLimitInfoList.add(seriesLimitInfo);
             }
-            selectIndex = -1;
             try {
                 DBManager.getInstance().getWritableSession().getSeriesLimitInfoDao().save(seriesLimitInfo);
             } catch (Exception e) {
                 ToastUtil.toastWithoutLog("本地数据库发生错误！");
                 LogUtil.assertOut(TAG, e, "SeriesInfoDao");
             }
+            selectIndex = -1;
             seriesLimitAdapter.setSelectItem(selectIndex);
             seriesLimitAdapter.notifyDataSetChanged();
         });
@@ -132,5 +128,13 @@ public class LimitSettingFragment extends Fragment {
     public void onResume() {
         super.onResume();
         seriesLimitAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            initView(fragment);
+        }
     }
 }
