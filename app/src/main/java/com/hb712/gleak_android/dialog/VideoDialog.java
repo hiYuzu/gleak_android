@@ -39,11 +39,11 @@ public class VideoDialog {
     private void showVideo() {
         VideoView videoView = videoDialogView.findViewById(R.id.historyVideoView);
         videoView.setVideoPath(video.getAbsolutePath());
-        System.out.println(video.getAbsolutePath());
         new AlertDialog.Builder(context)
                 .setView(videoDialogView)
                 .create()
                 .show();
+        videoView.start();
     }
 
     public void showVideo(String videoPath) {
