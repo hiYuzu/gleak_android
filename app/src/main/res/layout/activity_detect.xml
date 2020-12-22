@@ -8,10 +8,17 @@
 
     <com.hb712.gleak_android.rtsp.widget.IjkVideoView
         android:id="@+id/videoView"
-        android:layout_width="1280px"
-        android:layout_height="720px">
+        android:layout_width="wrap_content"
+        android:layout_height="650px">
+        <TextView
+            android:id="@+id/videoPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="30sp"
+            android:visibility="gone"
+            android:text="@string/pause_video"/>
     </com.hb712.gleak_android.rtsp.widget.IjkVideoView>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

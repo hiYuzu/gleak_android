@@ -61,7 +61,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private static final String TAG = DetectActivity.class.getSimpleName();
 
     private ImageView fireImage;
-
+    private TextView videoPauseView;
     private Button startRecordBtn;
     private Button uploadVideoBtn;
 
@@ -151,7 +151,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     private void initView() {
         fireImage = findViewById(R.id.ioFire);
-
+        videoPauseView = findViewById(R.id.videoPause);
         startRecordBtn = findViewById(R.id.startRecordBtn);
         startRecordBtn.setOnClickListener((p) -> {
             if (!mainApp.isLogin()) {
@@ -334,10 +334,12 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
     public void videoStartClick(View view) {
         mRtspPlayer.startPlay();
+        videoPauseView.setVisibility(View.GONE);
     }
 
     public void videoStopClick(View view) {
         mRtspPlayer.stopPlay();
+        videoPauseView.setVisibility(View.VISIBLE);
     }
 
     public void connectClick(View view) {
