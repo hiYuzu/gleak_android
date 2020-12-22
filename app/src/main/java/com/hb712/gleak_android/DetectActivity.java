@@ -280,6 +280,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     @Override
     protected void onResume() {
         super.onResume();
+        showSeriesName();
         mRtspPlayer.startPlay();
     }
 
