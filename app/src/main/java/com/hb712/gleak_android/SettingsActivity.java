@@ -1,6 +1,7 @@
 package com.hb712.gleak_android;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -13,6 +14,7 @@ import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.view.MenuItem;
 
+import com.hb712.gleak_android.base.BaseApplication;
 import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.service.UploadPositionService;
 import com.hb712.gleak_android.util.LogUtil;
@@ -21,6 +23,7 @@ import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.SPUtil;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
@@ -198,8 +201,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (isCorrectIp(ip)) {
                         serveIp.setSummary(ip);
                         SPUtil.put(mainApp, GlobalParam.SERVE_IP, ip);
-                        ToastUtil.toastWithLog("服务器地址已更改，重启应用生效");
-                        return true;
+                        CommonDialog.getDialog(mainApp, "是否重启？", "服务器地址已更改，重启应用生效", () -> {
+                            Intent intent = BaseApplication.baseApplication.getPackageManager().getLaunchIntentForPackage(BaseApplication.baseApplication.getPackageName());
+                            Objects.requireNonNull(intent).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            BaseApplication.baseApplication.startActivity(intent);
+                        }).show();
                     } else {
                         ToastUtil.toastWithLog("请输入正确的IP格式");
                     }
@@ -215,8 +221,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (isCorrectPort(port)) {
                         servePort.setSummary(port);
                         SPUtil.put(mainApp, GlobalParam.SERVE_PORT, port);
-                        ToastUtil.toastWithLog("服务器地址已更改，重启应用生效");
-                        return true;
+                        CommonDialog.getDialog(mainApp, "是否重启？", "服务器地址已更改，重启应用生效", () -> {
+                            Intent intent = BaseApplication.baseApplication.getPackageManager().getLaunchIntentForPackage(BaseApplication.baseApplication.getPackageName());
+                            Objects.requireNonNull(intent).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            BaseApplication.baseApplication.startActivity(intent);
+                        }).show();
                     } else {
                         ToastUtil.toastWithLog("请输入正确的Port格式");
                     }
