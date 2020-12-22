@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class SeriesInfoAdapter extends BaseAdapter {
     private final Context context;
-    public List<SeriesInfo> seriesInfoList;
+    private final List<SeriesInfo> seriesInfoList;
     private int selectIndex = -1;
 
     public SeriesInfoAdapter(Context context, List<SeriesInfo> seriesInfoList) {
