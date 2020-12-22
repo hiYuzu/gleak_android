@@ -1,24 +1,31 @@
 package com.hb712.gleak_android;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.hb712.gleak_android.adapter.HistoryAdapter;
 import com.hb712.gleak_android.dao.DBManager;
 import com.hb712.gleak_android.dao.DaoSession;
 import com.hb712.gleak_android.dao.DetectInfoDao;
 import com.hb712.gleak_android.dialog.CommonDialog;
+import com.hb712.gleak_android.dialog.VideoDialog;
 import com.hb712.gleak_android.entity.DetectInfo;
 import com.hb712.gleak_android.util.DateUtil;
 import com.hb712.gleak_android.util.LogUtil;
+import com.hb712.gleak_android.util.PermissionsUtil;
 import com.hb712.gleak_android.util.SPUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.UnitUtil;
@@ -32,7 +39,6 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
@@ -128,7 +134,7 @@ public class HistoryActivity extends AppCompatActivity {
                 max = UnitUtil.getMg(max);
                 min = UnitUtil.getMg(min);
             }
-            DecimalFormat df = new DecimalFormat("0.0");
+            DecimalFormat df = new DecimalFormat("0.00");
             maxValue = df.format(max);
             minValue = df.format(min);
             avgValue = df.format(avg);
@@ -166,7 +172,7 @@ public class HistoryActivity extends AppCompatActivity {
         historyLv.setOnItemClickListener((parent, view, position, id) -> {
             historyAdapter.setSelectItem(position);
             historyAdapter.notifyDataSetChanged();
-            // TODO: hiYuzu 2020/12/22 添加视频播放dialog 
+            showVideo(detectInfoList.get(position).getVideoPath());
         });
         historyLv.setOnItemLongClickListener((parent, view, position, id) -> {
             CommonDialog.getDialog(this, "删除此条记录？", () -> {
@@ -190,6 +196,22 @@ public class HistoryActivity extends AppCompatActivity {
             }).show();
             return true;
         });
+    }
+
+    private void showVideo(String videoPath) {
+        String[] permissions = new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        PermissionsUtil.requestPermissions(this, this, permissions);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            File video = new File(videoPath);
+            if (!video.isDirectory() && video.exists()) {
+                VideoDialog videoDialog = new VideoDialog(this, videoPath);
+                videoDialog.showVideo();
+            } else {
+                ToastUtil.toastWithoutLog("视频不存在");
+            }
+        } else {
+            ToastUtil.toastWithoutLog("权限不足");
+        }
     }
 
     private void showDatePickDialog() {
