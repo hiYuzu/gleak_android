@@ -7,7 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
@@ -25,7 +25,7 @@ import java.util.Objects;
 public class LaunchActivity extends BaseActivity implements HttpInterface {
 
     private static final String TAG = LaunchActivity.class.getSimpleName();
-    private static final int LauncherDelay = 2000;
+    private static final int LAUNCHER_DELAY = 2000;
     private TextView mMessage;
 
     private final Handler mLoginHandle = new Handler();
@@ -46,8 +46,8 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_launch);
-        View mContentView = findViewById(R.id.fullscreen_content);
         PermissionsUtil.requestPermission(this, this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         mMessage = findViewById(R.id.launch_message);
         TextView mVersion = findViewById(R.id.version_text);
@@ -61,18 +61,12 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         doLoginAction();
     }
 
     private void doLoginAction() {
         mLoginHandle.removeCallbacks(mLoginAction);
-        mLoginHandle.postDelayed(mLoginAction, LauncherDelay);
+        mLoginHandle.postDelayed(mLoginAction, LAUNCHER_DELAY);
     }
 
     private void gotoLoginActivity() {

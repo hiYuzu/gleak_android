@@ -1,7 +1,7 @@
 <resources>
 
     <string name="blank" />
-    <string name="app_name">泄漏检测</string>
+    <string name="app_name">Explorer</string>
     <string name="title_activity_detect">检测</string>
     <string name="title_activity_calibrate">校准</string>
     <string name="title_activity_history">历史记录</string>
