@@ -461,7 +461,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private void saveData() {
-        CommonDialog.infoDialog(this, "测量结束：\n时间：" + saveTime + "\n漏点名：" + selectedLeakName + "\n最大值：" + saveMaxValue);
+        String maxValue = new DecimalFormat("0.00").format(saveMaxValue);
+        CommonDialog.infoDialog(this, "测量结束：\n时间：" + saveTime + "\n漏点名：" + selectedLeakName + "\n最大值：" + maxValue);
 
         if (seriesLimitInfo == null) {
             ToastUtil.toastWithoutLog("无限值数据，本次测量不保存");
