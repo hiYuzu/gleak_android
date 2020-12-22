@@ -17,7 +17,6 @@ import com.hb712.gleak_android.adapter.SeriesInfoAdapter;
 import com.hb712.gleak_android.controller.SeriesInfoController;
 import com.hb712.gleak_android.dao.CalibrationInfoDao;
 import com.hb712.gleak_android.dao.DBManager;
-import com.hb712.gleak_android.dao.SeriesInfoDao;
 import com.hb712.gleak_android.dao.SeriesLimitInfoDao;
 import com.hb712.gleak_android.entity.SeriesInfo;
 import com.hb712.gleak_android.util.LogUtil;
@@ -29,6 +28,7 @@ import java.util.List;
 
 public class SeriesSettingFragment extends Fragment {
     private static final String TAG = SeriesSettingFragment.class.getSimpleName();
+    private View fragment;
     private EditText newSeriesNameEt;
 
     private List<SeriesInfo> seriesInfoList;
@@ -40,7 +40,7 @@ public class SeriesSettingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View fragment = inflater.inflate(R.layout.fragment_series_setting, container, false);
+        fragment = inflater.inflate(R.layout.fragment_series_setting, container, false);
         initView(fragment);
         return fragment;
     }
