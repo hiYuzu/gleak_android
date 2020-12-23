@@ -1,17 +1,18 @@
 package com.hb712.gleak_android.service;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
 import com.hb712.gleak_android.MainApplication;
 import com.hb712.gleak_android.base.BaseActivity;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.message.net.MyPosition;
-import com.hb712.gleak_android.util.GPSUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
@@ -125,8 +126,24 @@ public class UploadPositionService {
             }
             return;
         }
-        GPSUtil.getBDLocation(locationClient, locationListener);
+        getBdLocation(locationClient, locationListener);
         sendPosition();
+    }
+
+    private void getBdLocation(@NonNull LocationClient mLocationClient, BDAbstractLocationListener listener) {
+        //通过LocationClientOption设置LocationClient相关参数
+        LocationClientOption option = new LocationClientOption();
+        // 打开gps
+        option.setOpenGps(true);
+        // 设置坐标类型
+        option.setCoorType("bd09ll");
+        option.setScanSpan(1000 * ((int) SPUtil.get(MainApplication.getInstance(), GlobalParam.UPLOAD_DELAY_KEY, GlobalParam.UPLOAD_DELAY)));
+        //设置locationClientOption
+        mLocationClient.setLocOption(option);
+        //注册LocationListener监听器
+        mLocationClient.registerLocationListener(listener);
+        //开启地图定位
+        mLocationClient.start();
     }
 
     public void restartUploadPosition() {

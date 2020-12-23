@@ -5,13 +5,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.view.Window;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hb712.gleak_android.base.BaseActivity;
+import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.util.GlobalParam;
@@ -48,7 +52,7 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_launch);
-        PermissionsUtil.requestPermission(this, this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        PermissionsUtil.requestRWPermission(this);
         mMessage = findViewById(R.id.launch_message);
         TextView mVersion = findViewById(R.id.version_text);
         PackageInfo info;

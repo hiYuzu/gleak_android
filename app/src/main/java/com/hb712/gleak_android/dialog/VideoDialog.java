@@ -24,22 +24,20 @@ import java.io.File;
  */
 public class VideoDialog {
 
-    private final Context context;
     private final Activity activity;
     private File video;
     private final View videoDialogView;
 
     @SuppressLint("InflateParams")
-    public VideoDialog(Context context, Activity activity) {
-        this.context = context;
+    public VideoDialog(Activity activity) {
         this.activity = activity;
-        videoDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_video, null);
+        videoDialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_video, null);
     }
 
     private void showVideo() {
         VideoView videoView = videoDialogView.findViewById(R.id.historyVideoView);
         videoView.setVideoPath(video.getAbsolutePath());
-        new AlertDialog.Builder(context)
+        new AlertDialog.Builder(activity)
                 .setView(videoDialogView)
                 .create()
                 .show();
@@ -47,9 +45,8 @@ public class VideoDialog {
     }
 
     public void showVideo(String videoPath) {
-        String[] permissions = new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-        PermissionsUtil.requestPermissions(context, activity, permissions);
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             video = new File(videoPath);
             if (!video.isDirectory() && video.exists()) {
                 showVideo();

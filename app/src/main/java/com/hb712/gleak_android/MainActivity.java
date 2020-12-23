@@ -17,10 +17,10 @@ import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.message.net.InitLeakData;
 import com.hb712.gleak_android.service.UploadPositionService;
-import com.hb712.gleak_android.util.GPSUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
+import com.hb712.gleak_android.util.PermissionsUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 import java.util.List;
 import java.util.Objects;
@@ -42,7 +42,7 @@ public class MainActivity extends BaseActivity implements HttpInterface {
         setContentView(R.layout.activity_main);
         LogUtil.initDirectory();
         DBManager.getInstance().init(this);
-        GPSUtil.requestLocationPower(this);
+        PermissionsUtil.requestLocationPermission(this);
         getAllMonitor();
         UploadPositionService.getInstance().uploadPosition();
     }

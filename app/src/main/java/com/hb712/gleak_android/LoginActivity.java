@@ -1,17 +1,17 @@
 package com.hb712.gleak_android;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -23,8 +23,10 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hb712.gleak_android.base.BaseActivity;
+import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
+import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.PermissionsUtil;
@@ -77,7 +79,7 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
             mMessageText.setVisibility(View.GONE);
             mResultText.setVisibility(View.GONE);
             mLoadingImage.setVisibility(View.GONE);
-            PermissionsUtil.requestPermission(this, this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            PermissionsUtil.requestRWPermission(this);
             MainApplication.getInstance().removeUserPwd();
 
             mLoginButton.setOnClickListener(v -> {
@@ -100,6 +102,27 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
                     startLoginAction(username, password);
                 }
             });
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResult) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResult);
+        if (requestCode == GlobalParam.REQUEST_RW_PERMISSION) {
+            for (int grant : grantResult) {
+                if (grant != PackageManager.PERMISSION_GRANTED) {
+                    CommonDialog.getDialog(this, "", "应用需要开启读写功能，请到 “应用信息 -> 权限” 中授予！", () -> {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.addCategory(Intent.CATEGORY_DEFAULT);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                        startActivity(intent);
+                    }).show();
+                }
+            }
         }
     }
 

@@ -53,7 +53,9 @@ public class GlobalParam {
     public static final int REQUEST_CONNECT_DEVICE = 384;
     public static final int REQUEST_ENABLE_BT = 385;
     public static final int REQUEST_LEAK_DATA = 250;
+
     public static final int REQUEST_LOCATION_PERMISSION = 100;
+    public static final int REQUEST_RW_PERMISSION = 101;
 
     //其他
     public static final String DEVICE_NAME = "device_name";

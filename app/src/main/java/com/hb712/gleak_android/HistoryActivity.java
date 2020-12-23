@@ -1,20 +1,20 @@
 package com.hb712.gleak_android;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
+import android.net.Uri;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.hb712.gleak_android.adapter.HistoryAdapter;
 import com.hb712.gleak_android.dao.DBManager;
@@ -24,6 +24,7 @@ import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.dialog.VideoDialog;
 import com.hb712.gleak_android.entity.DetectInfo;
 import com.hb712.gleak_android.util.DateUtil;
+import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.PermissionsUtil;
 import com.hb712.gleak_android.util.SPUtil;
@@ -172,10 +173,11 @@ public class HistoryActivity extends AppCompatActivity {
         historyLv.setOnItemClickListener((parent, view, position, id) -> {
             historyAdapter.setSelectItem(position);
             historyAdapter.notifyDataSetChanged();
-            new VideoDialog(this, this).showVideo(detectInfoList.get(position).getVideoPath());
+            PermissionsUtil.requestRWPermission(this);
+            new VideoDialog(this).showVideo(detectInfoList.get(position).getVideoPath());
         });
         historyLv.setOnItemLongClickListener((parent, view, position, id) -> {
-            CommonDialog.getDialog(this, "删除此条记录？", () -> {
+            CommonDialog.getDialog(this, "删除此条记录？", null, null, null, null,  () -> {
                 DetectInfo detectInfo = detectInfoList.get(position);
                 detectInfoList.remove(position);
                 try {
@@ -196,6 +198,27 @@ public class HistoryActivity extends AppCompatActivity {
             }).show();
             return true;
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResult) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResult);
+        if (requestCode == GlobalParam.REQUEST_RW_PERMISSION) {
+            for (int grant : grantResult) {
+                if (grant != PackageManager.PERMISSION_GRANTED) {
+                    CommonDialog.getDialog(this, "", "应用需要开启读写功能，请到 “应用信息 -> 权限” 中授予！", () -> {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.addCategory(Intent.CATEGORY_DEFAULT);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                        startActivity(intent);
+                    }).show();
+                }
+            }
+        }
     }
 
     private void showDatePickDialog() {
@@ -252,7 +275,7 @@ public class HistoryActivity extends AppCompatActivity {
     public void exportHistory(View view) {
         if (historyAdapter.detectInfoViewList.size() > 0) {
             // TODO: hiYuzu 2020/12/18 导出功能
-//            mLoading.setText(paramString2);
+//            mLoading.setText("导出历史数据");
 //            mTask = new MyTask();
 //            mTask.execute(new String[0]);
             return;
