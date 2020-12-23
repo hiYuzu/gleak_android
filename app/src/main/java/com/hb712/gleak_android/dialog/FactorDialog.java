@@ -107,7 +107,7 @@ public class FactorDialog {
             setSelectedValue();
             adapter.notifyDataSetChanged();
         });
-        AlertDialog dialog = CommonDialog.getDialog(context, title, null, factorDialogView, () -> {
+        AlertDialog dialog = CommonDialog.getDialog(context, title, null, factorDialogView, null, null, () -> {
             if (ckbNo.isChecked()) {
                 factorAddSuccessCallback.onSave(null);
             } else {

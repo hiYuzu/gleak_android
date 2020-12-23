@@ -206,7 +206,7 @@ public class HistoryActivity extends AppCompatActivity {
         if (requestCode == GlobalParam.REQUEST_RW_PERMISSION) {
             for (int grant : grantResult) {
                 if (grant != PackageManager.PERMISSION_GRANTED) {
-                    CommonDialog.getDialog(this, "", "应用需要开启读写功能，请到 “应用信息 -> 权限” 中授予！", () -> {
+                    CommonDialog.getDialog(this, "权限不足", "应用需要开启读写功能，请到 “应用信息 -> 权限” 中授予！", null, null, "拒绝", () -> {
                         Intent intent = new Intent();
                         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                         intent.addCategory(Intent.CATEGORY_DEFAULT);

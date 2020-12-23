@@ -53,7 +53,7 @@ public class MainActivity extends BaseActivity implements HttpInterface {
         if (requestCode == GlobalParam.REQUEST_LOCATION_PERMISSION) {
             for (int grant : grantResult) {
                 if (grant != PackageManager.PERMISSION_GRANTED) {
-                    CommonDialog.getDialog(this, "", "地图需要开启定位功能，请到 “应用信息 -> 权限” 中授予！", () -> {
+                    CommonDialog.getDialog(this, null, "地图需要开启定位功能，请到 “应用信息 -> 权限” 中授予！",null, null, null, () -> {
                         Intent intent = new Intent();
                         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                         intent.addCategory(Intent.CATEGORY_DEFAULT);

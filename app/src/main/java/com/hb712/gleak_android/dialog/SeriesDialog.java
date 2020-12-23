@@ -48,7 +48,7 @@ public class SeriesDialog {
     public void showDialog() {
         @SuppressLint("InflateParams")
         View seriesDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_select_series, null);
-        AlertDialog dialog = CommonDialog.getDialog(context, title, null, seriesDialogView, () -> {
+        AlertDialog dialog = CommonDialog.getDialog(context, title, null, seriesDialogView, null, null, () -> {
             if (seriesAddSuccessCallback != null) {
                 try {
                     seriesAddSuccessCallback.onSave(seriesInfoList.get(seriesSp.getSelectedItemPosition()));

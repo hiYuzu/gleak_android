@@ -217,7 +217,7 @@ public class LeakMapActivity extends BaseActivity {
         newLeakCode = newLeakDialogView.findViewById(R.id.newLeakCode);
         newLeakPeriod = newLeakDialogView.findViewById(R.id.newLeakPeriod);
 
-        AlertDialog dialog = CommonDialog.getDialog(this, "新增漏点", null, newLeakDialogView, () -> {
+        AlertDialog dialog = CommonDialog.getDialog(this, "新增漏点", null, newLeakDialogView, null, null, () -> {
             try {
                 String name = newLeakName.getText().toString().trim();
                 String code = newLeakCode.getText().toString().trim();

@@ -79,7 +79,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     private void backLogin() {
-        CommonDialog.getDialog(this, "提示", "确定登出？", () -> {
+        CommonDialog.getDialog(this, "登出", "退出并返回登陆界面？", null, "确定", null, () -> {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
@@ -197,7 +197,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (isCorrectIp(ip)) {
                         serveIp.setSummary(ip);
                         SPUtil.put(mainApp, GlobalParam.SERVE_IP, ip);
-                        CommonDialog.getDialog(getContext(), "是否重启？", "服务器地址已更改，重启应用生效", () -> {
+                        CommonDialog.getDialog(getContext(), "重启应用", "服务器地址已更改，重启应用生效", null, "立即重启", "稍后重启", () -> {
                             Intent intent = new Intent(mainApp, LaunchActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             mainApp.startActivity(intent);
@@ -218,7 +218,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     if (isCorrectPort(port)) {
                         servePort.setSummary(port);
                         SPUtil.put(mainApp, GlobalParam.SERVE_PORT, port);
-                        CommonDialog.getDialog(getContext(), "是否重启？", "服务器地址已更改，重启应用生效", () -> {
+                        CommonDialog.getDialog(getContext(), "重启应用", "服务器地址已更改，重启应用生效",null, "立即重启", "稍后重启", () -> {
                             Intent intent = new Intent(mainApp, LaunchActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             mainApp.startActivity(intent);

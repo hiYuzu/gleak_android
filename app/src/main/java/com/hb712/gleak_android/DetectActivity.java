@@ -330,7 +330,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         EditText ipEdit = new EditText(this);
         ipEdit.setText(GlobalParam.VIDEO_URL);
 
-        CommonDialog.getDialog(this, "视频ip地址", null, ipEdit, () -> GlobalParam.VIDEO_URL = ipEdit.getText().toString()).show();
+        CommonDialog.getDialog(this, "视频ip地址", null, ipEdit, null, null, () -> GlobalParam.VIDEO_URL = ipEdit.getText().toString()).show();
     }
 
     public void videoStartClick(View view) {
