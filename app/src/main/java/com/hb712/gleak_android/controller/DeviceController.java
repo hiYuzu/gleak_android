@@ -95,7 +95,7 @@ public class DeviceController {
 
             fireOn = status.isFireOn;
             if (powerPercent < 0) {
-                powerPercent = 0;
+                powerPercent = 1;
             }
             if (fireOn) {
                 currentValue = status.detectValue;
