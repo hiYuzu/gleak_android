@@ -172,8 +172,7 @@ public class LeakMapActivity extends BaseActivity {
 
     private void initMarker() {
         //构建Marker图标
-        bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
-
+        bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_gocding_1);
         for (InitLeakData temp : GlobalParam.initLeakData) {
             Bundle bundle = new Bundle();
             bundle.putString("leakId", temp.getId());
@@ -292,7 +291,7 @@ public class LeakMapActivity extends BaseActivity {
                 firstLoad = false;
                 MapStatus mMapStatus = new MapStatus.Builder()
                         .target(myPosition)
-                        .zoom(16L)
+                        .zoom(18L)
                         .build();
                 //定义MapStatusUpdate对象，以便描述地图状态将要发生的变化
                 MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mMapStatus);
