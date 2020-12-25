@@ -68,7 +68,7 @@ public class UploadPositionService {
             if (!(boolean) SPUtil.get(mainApp, GlobalParam.UPLOAD_POSITION_KEY, GlobalParam.IS_UPLOAD_POSITION)) {
                 return;
             }
-            if (lng == -1 && lat == -1) {
+            if (lng == -1 || lat == -1 || lng == 0.0 || lat == 0.0) {
                 return;
             }
             if (!isOverMinDistance(lng, lat)) {
