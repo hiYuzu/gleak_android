@@ -18,15 +18,16 @@ public class GlobalParam {
     public static String SERVE_IP = "serve_ip";
     public static String SERVE_PORT = "serve_port";
 
-    public static final String DEFAULT_IP = "192.168.3.126";
+    public static final String DEFAULT_IP = "114.116.239.55";
     public static final String DEFAULT_PORT = "3000";
 
     public static final String KEY_USERTOKEN = "Authorization";
 
-    private static final String DEVICE_ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "/EnpromiLDAR";
-    public static final String VIDEO_RECORD_PATH = DEVICE_ROOT_PATH + File.separator + "/ijkplayer/video";
-    public static final String SNAPSHOT_PATH = DEVICE_ROOT_PATH + File.separator + "ijkplayer/snapshot";
-    public static final String LOG_PATH = DEVICE_ROOT_PATH + File.separator + "/log";
+    private static final String DEVICE_ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/EnpromiLDAR";
+    public static final String VIDEO_RECORD_PATH = DEVICE_ROOT_PATH + "/ijkplayer/video";
+    public static final String SNAPSHOT_PATH = DEVICE_ROOT_PATH + "/ijkplayer/snapshot";
+    public static final String LOG_PATH = DEVICE_ROOT_PATH + "/log";
+    public static final String EXCEL_PATH = DEVICE_ROOT_PATH + "/files/excel";
 
     public static boolean rememberPwd = false;
 

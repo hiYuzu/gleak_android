@@ -123,6 +123,6 @@ public class HistoryAdapter extends BaseAdapter {
 
     public static class DetectInfoView {
         public int number;
-        DetectInfo detectInfo = new DetectInfo();
+        public DetectInfo detectInfo = new DetectInfo();
     }
 }

@@ -2,12 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ProgressBar
-        style="@android:style/Widget.ProgressBar.Horizontal"
+    <com.hb712.gleak_android.widget.CirclePgBar
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dimen_35dp"
-        android:layout_marginStart="@dimen/dimen_10dp"
-        android:layout_marginEnd="@dimen/dimen_10dp"
-        android:layout_gravity="center"
-        android:indeterminate="true"/>
+        android:layout_height="match_parent"/>
 </LinearLayout>
