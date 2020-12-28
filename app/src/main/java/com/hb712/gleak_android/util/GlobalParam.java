@@ -67,7 +67,9 @@ public class GlobalParam {
     public static final boolean DEVICE_OTHER = false;
 
     @SuppressLint("AuthLeak")
-    public static String VIDEO_URL = "rtsp://admin:tjtcb712@192.168.3.100:554/h264/ch1/main/av_stream";
+    public static String VIDEO_URL = "192.168.3.100:554";
+
+    public static String VIDEO_REAL_URL = "rtsp://admin:tjtcb712@" + VIDEO_URL + "/h264/ch1/main/av_stream";
 
     public static List<InitLeakData> initLeakData = new ArrayList<>();
 }

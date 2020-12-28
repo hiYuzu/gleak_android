@@ -50,7 +50,7 @@ public class RtspPlayer {
 
     public void startPlay() {
         mLoadingView.showLoading();
-        mVideoView.setVideoPath(GlobalParam.VIDEO_URL);
+        mVideoView.setVideoPath(GlobalParam.VIDEO_REAL_URL);
         mVideoView.start();
     }
 
