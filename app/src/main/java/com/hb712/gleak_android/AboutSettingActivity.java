@@ -49,11 +49,5 @@ public class AboutSettingActivity extends AppCompatActivity {
 
         TextView updateDate = findViewById(R.id.updateDate);
         updateDate.setText(DateUtil.getDefaultTime());
-
-        // TODO: hiYuzu 2020/12/25 检测更新，if can update：
-        CommonDialog.getDialog(this, "更新", "有新版本，是否更新？", null, "更新", "取消", () -> {
-            // TODO: hiYuzu 2020/12/25 下载更新
-
-        }).show();
     }
 }
