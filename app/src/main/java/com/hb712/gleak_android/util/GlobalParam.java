@@ -15,6 +15,8 @@ import java.util.List;
  * @date 2020/9/30 13:38
  */
 public class GlobalParam {
+    public static String versionName = "1.0";
+
     public static String SERVE_IP = "serve_ip";
     public static String SERVE_PORT = "serve_port";
 

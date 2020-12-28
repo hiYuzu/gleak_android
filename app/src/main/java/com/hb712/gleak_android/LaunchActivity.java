@@ -61,6 +61,7 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
             String versionStr = info.versionName;
             if (!versionStr.isEmpty()) {
                 mVersion.setText(String.format("Version: %s", versionStr));
+                GlobalParam.versionName = versionStr;
             }
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
