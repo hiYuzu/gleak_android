@@ -16,11 +16,11 @@ import com.hb712.gleak_android.fragment.SeriesSettingFragment;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class SeriesSettingActivity extends BaseActivity {
+public class DeviceSettingActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_series_setting);
+        setContentView(R.layout.activity_device_setting);
         setupActionBar();
         initView();
     }

@@ -281,7 +281,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            startActivity(new Intent(getContext(), SeriesSettingActivity.class));
+            startActivity(new Intent(getContext(), DeviceSettingActivity.class));
         }
     }
 
@@ -293,8 +293,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_about);
-            setHasOptionsMenu(true);
+            startActivity(new Intent(getContext(), AboutSettingActivity.class));
         }
     }
 }
