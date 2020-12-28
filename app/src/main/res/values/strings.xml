@@ -99,9 +99,8 @@
     <string name="select_leak">选择漏点</string>
     <string name="confirm">确认</string>
     <string name="add_new">新增</string>
-    <string name="leak_point">检测点：</string>
-    <string name="open_bracket">(</string>
-    <string name="close_bracket">)</string>
+    <string name="leak_name_1">漏点名称：</string>
+    <string name="leak_code_1">漏点编号：</string>
 
     <string name="leak_name">漏点名称</string>
     <string name="leak_code">漏点编号</string>
