@@ -97,7 +97,7 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
                 mSaveUsernameCheckBox.setEnabled(false);
 
                 if (username.isEmpty() || password.isEmpty()) {
-                    onLoginFailed("请输入登录账号或密码");
+                    onLoginFailed("请输入登录账号及密码");
                 } else {
                     startLoginAction(username, password);
                 }
