@@ -221,6 +221,8 @@ public class LeakMapActivity extends BaseActivity {
 
         AlertDialog dialog = CommonDialog.getDialog(this, "新增漏点", null, newLeakDialogView, null, null, () -> {
             try {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(newLeakName.getWindowToken(), 0);
                 String name = newLeakName.getText().toString().trim();
                 String code = newLeakCode.getText().toString().trim();
                 int period = Integer.parseInt(newLeakPeriod.getText().toString().trim());
