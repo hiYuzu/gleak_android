@@ -568,8 +568,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     public void fireClick(View view) {
         if (isConnected()) {
+            ToastUtil.toastWithLog("点火中...");
             mBluetooth.openFire();
-            changeFirePic(true);
         }
     }
 
@@ -580,8 +580,8 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      */
     public void fireClick2(View view) {
         if (isConnected()) {
+            ToastUtil.toastWithLog("点火中...");
             mBluetooth.openFire2();
-            changeFirePic(true);
         }
     }
 
@@ -593,20 +593,21 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     public void ceasefireClick(View view) {
         if (isConnected()) {
             mBluetooth.closeFire();
-            changeFirePic(false);
         }
     }
 
-    boolean lastStatus = false;
+    boolean lastFireStatus = false;
 
     private void changeFirePic(boolean isFire) {
-        if (lastStatus == isFire) {
+        if (lastFireStatus == isFire) {
             return;
         }
-        lastStatus = isFire;
+        lastFireStatus = isFire;
         if (isFire) {
+            ToastUtil.toastWithoutLog("点火成功");
             fireImage.setImageResource(R.drawable.fire_on);
         } else {
+            ToastUtil.toastWithoutLog("已关火");
             fireImage.setImageResource(R.drawable.fire_off);
         }
     }

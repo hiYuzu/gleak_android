@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="horizontal" android:padding="20.0dip" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_margin="20.0dip"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:layout_width="@dimen/dimen_80dp" android:text="@string/curve" style="@style/aboutText" />
-    <Spinner android:id="@+id/seriesSp" android:layout_width="@dimen/dimen_180dp" android:layout_height="wrap_content" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/fab_margin"
+    android:orientation="horizontal"
+    android:padding="@dimen/fab_margin">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/curve"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/seriesSp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>
