@@ -110,7 +110,6 @@
 
     <!--settingsActivity-->
     <string name="settings_general">通用设置</string>
-    <string name="settings_general_remember">记住密码</string>
     <string name="settings_upload_position">位置上传</string>
     <string name="settings_upload_position_period">上传周期(秒)</string>
     <string name="settings_upload_position_period_summary">建议范围：1 – 20 秒，默认为 10 秒</string>

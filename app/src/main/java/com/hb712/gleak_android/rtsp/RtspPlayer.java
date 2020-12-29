@@ -29,6 +29,7 @@ public class RtspPlayer {
     private String videoPath;
 
     private boolean recording = false;
+    public boolean isStop;
 
     static {
         IjkMediaPlayer.loadLibrariesOnce(null);
@@ -52,10 +53,14 @@ public class RtspPlayer {
         mLoadingView.showLoading();
         mVideoView.setVideoPath(GlobalParam.VIDEO_REAL_URL);
         mVideoView.start();
+        isStop = false;
     }
 
     public void stopPlay() {
         mVideoView.stopPlayback();
+        if (mVideoView.isPlaying()) {
+            isStop = true;
+        }
     }
 
     public void release() {

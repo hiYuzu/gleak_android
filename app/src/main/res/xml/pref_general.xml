@@ -3,7 +3,7 @@
     <SwitchPreference
         android:defaultValue="true"
         android:key="general_remember"
-        android:title="@string/settings_general_remember" />
+        android:title="@string/save_username_pwd" />
     <SwitchPreference
         android:defaultValue="false"
         android:key="upload_position"

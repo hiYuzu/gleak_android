@@ -3,6 +3,7 @@ package com.hb712.gleak_android;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -195,9 +197,10 @@ public class LeakMapActivity extends BaseActivity {
 
     public void confirmPoint(View view) {
         Intent intent = new Intent();
-        intent.putExtra("leakId", selectedLeakId);
-        intent.putExtra("leakName", selectedLeakName);
-
+        if (selectedLeakId != null && selectedLeakName != null) {
+            intent.putExtra("leakId", selectedLeakId);
+            intent.putExtra("leakName", selectedLeakName);
+        }
         setResult(Activity.RESULT_OK, intent);
         finish();
     }

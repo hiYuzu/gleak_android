@@ -3,6 +3,7 @@ package com.hb712.gleak_android;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -59,6 +61,8 @@ import java.util.concurrent.TimeUnit;
 public class DetectActivity extends BaseActivity implements HttpInterface {
 
     private static final String TAG = DetectActivity.class.getSimpleName();
+
+    private Button videoStopBtn;
 
     private ImageView fireImage;
     private TextView videoPauseView;
@@ -150,15 +154,21 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      * 初始化控件
      */
     private void initView() {
+        videoStopBtn = findViewById(R.id.videoStop);
         fireImage = findViewById(R.id.ioFire);
         videoPauseView = findViewById(R.id.videoPause);
         startRecordBtn = findViewById(R.id.startRecordBtn);
         startRecordBtn.setOnClickListener((p) -> {
             if (!mainApp.isLogin()) {
-                ToastUtil.toastWithLog("当前未登录");
+                ToastUtil.toastWithoutLog("当前未登录");
                 return;
             }
             if (!isConnected()) {
+                ToastUtil.toastWithoutLog("蓝牙未连接");
+                return;
+            }
+            if (mRtspPlayer.isStop) {
+                ToastUtil.toastWithoutLog("请播放视频");
                 return;
             }
             if (!isSaving) {
@@ -445,6 +455,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private boolean startRecord() {
+        videoStopBtn.setEnabled(false);
         if (mRtspPlayer.startRecord() == 0) {
             isSaving = true;
             startRecordBtn.setText(R.string.stopRecord);
@@ -455,6 +466,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private void stopRecord() {
+        videoStopBtn.setEnabled(true);
         if (mRtspPlayer.isRecording()) {
             mRtspPlayer.stopRecord();
         }
