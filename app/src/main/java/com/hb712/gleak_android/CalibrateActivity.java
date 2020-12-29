@@ -19,6 +19,7 @@ import com.hb712.gleak_android.controller.SeriesInfoController;
 import com.hb712.gleak_android.entity.CalibrationInfo;
 import com.hb712.gleak_android.entity.SeriesInfo;
 import com.hb712.gleak_android.util.DateUtil;
+import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.ThreadPoolUtil;
 import com.hb712.gleak_android.util.ToastUtil;
@@ -279,8 +280,12 @@ public class CalibrateActivity extends AppCompatActivity {
             }
         }
 
-        if (currentSignal.getText().toString().isEmpty()) {
-            ToastUtil.toastWithLog("信号错误！");
+        if (!GlobalParam.isConnected) {
+            ToastUtil.toastWithLog("蓝牙未连接！");
+            return;
+        }
+        if (DeviceController.getInstance().isFireOn()) {
+            ToastUtil.toastWithLog("未点火！");
             return;
         }
         if (calibrationInfoController.getCurrentSeries() == null) {
