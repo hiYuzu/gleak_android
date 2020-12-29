@@ -41,7 +41,7 @@
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="2">
+        android:layout_weight="1">
 
         <TextView
             android:id="@+id/monitorValue"
@@ -52,7 +52,6 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/dimen_2dp"
             android:singleLine="false"
-            android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="16sp" />
     </RelativeLayout>
@@ -62,7 +61,7 @@
         style="@style/text_style_16_default"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dimen_2dp"
+        android:layout_marginStart="@dimen/dimen_10dp"
         android:layout_weight="2"
         android:singleLine="false"
         android:textSize="16sp" />

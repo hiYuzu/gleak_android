@@ -88,7 +88,7 @@
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2">
+            android:layout_weight="1">
 
             <TextView
                 style="@style/text_style_16_default"
@@ -106,7 +106,7 @@
             style="@style/text_style_16_default"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
+            android:layout_marginStart="@dimen/dimen_10dp"
             android:layout_weight="2"
             android:singleLine="false"
             android:text="@string/detect_time" />
