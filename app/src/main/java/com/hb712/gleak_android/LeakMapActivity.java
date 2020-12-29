@@ -156,7 +156,7 @@ public class LeakMapActivity extends BaseActivity {
         }
         // 将地理坐标转换成屏幕坐标
         Point point = projection.toScreenLocation(myPosition);
-        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.icon_binding_point);
+        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.icon_position);
         if (null == bitmapDescriptor) {
             return;
         }

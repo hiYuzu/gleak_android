@@ -158,6 +158,9 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
                 ToastUtil.toastWithLog("当前未登录");
                 return;
             }
+            if (!isConnected()) {
+                return;
+            }
             if (!isSaving) {
                 Intent intent = new Intent(getApplicationContext(), LeakMapActivity.class);
                 startActivityForResult(intent, GlobalParam.REQUEST_LEAK_DATA);

@@ -33,9 +33,6 @@ import java.util.Objects;
 public class MainActivity extends BaseActivity implements HttpInterface {
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    public static final String EXTRA_USERNAME = "username";
-    public static final String EXTRA_PASSWORD = "password";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

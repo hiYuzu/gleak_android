@@ -84,7 +84,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     private void backLogin() {
-        CommonDialog.getDialog(this, "登出", "退出并返回登陆界面？", null, "确定", null, () -> {
+        CommonDialog.getDialog(this, "登出", "退出并返回登录界面？", null, "确定", null, () -> {
+            MainApplication.getInstance().setUserId("");
+            MainApplication.getInstance().setToken("");
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

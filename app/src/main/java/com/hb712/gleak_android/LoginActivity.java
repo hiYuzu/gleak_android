@@ -182,16 +182,13 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
 
     private void gotoMainActivity(String username, String password) {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        intent.putExtra(MainActivity.EXTRA_USERNAME, username);
-        intent.putExtra(MainActivity.EXTRA_PASSWORD, password);
         startActivity(intent);
         finish();
     }
 
     public void loginWithoutUser(View view) {
+        MainApplication.getInstance().removeUserPwd();
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        intent.putExtra(MainActivity.EXTRA_USERNAME, "");
-        intent.putExtra(MainActivity.EXTRA_PASSWORD, "");
         startActivity(intent);
         finish();
     }

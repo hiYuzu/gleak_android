@@ -98,7 +98,7 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
                         MainApplication.getInstance().setUserId(json.getJSONObject("data").getString("userId"));
                         MainApplication.getInstance().setToken(json.getJSONObject("data").getString("token"));
 
-                        gotoMainActivity(username, password);
+                        gotoMainActivity();
                     } else {
                         LogUtil.debugOut(TAG, "自动登录失败:" + bundle.getString(HttpUtils.MESSAGE));
                         gotoLoginActivity();
@@ -122,10 +122,8 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
         }
     }
 
-    private void gotoMainActivity(String username, String password) {
+    private void gotoMainActivity() {
         Intent intent = new Intent(LaunchActivity.this, MainActivity.class);
-        intent.putExtra(MainActivity.EXTRA_USERNAME, username);
-        intent.putExtra(MainActivity.EXTRA_PASSWORD, password);
         startActivity(intent);
         LaunchActivity.this.finish();
     }
