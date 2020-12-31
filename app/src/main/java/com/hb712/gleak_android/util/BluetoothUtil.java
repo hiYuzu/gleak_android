@@ -48,21 +48,21 @@ public class BluetoothUtil {
          * @param address 蓝牙设备地址
          */
         default void onDeviceConnected(String name, String address) {
-            ToastUtil.toastWithLog("蓝牙已连接");
+            ToastUtil.toastWithoutLog("蓝牙已连接");
         }
 
         /**
          * 默认方法：蓝牙断开回调
          */
         default void onDeviceDisconnected() {
-            ToastUtil.toastWithLog("蓝牙已断开");
+            ToastUtil.toastWithoutLog("蓝牙已断开");
         }
 
         /**
          * 默认方法：蓝牙连接失败回调
          */
         default void onDeviceConnectionFailed() {
-            ToastUtil.toastWithLog("蓝牙连接失败");
+            ToastUtil.toastWithoutLog("蓝牙连接失败");
         }
 
         /**

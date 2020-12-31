@@ -3,7 +3,6 @@ package com.hb712.gleak_android;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,12 +11,9 @@ import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.service.UploadPositionService;
-import com.hb712.gleak_android.util.DateUtil;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.GlobalParam;
@@ -79,7 +75,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     private void checkUpdate() {
-        ToastUtil.toastWithLog("检查更新中...");
+        ToastUtil.toastWithoutLog("检查更新中...");
         // TODO: hiYuzu 2020/12/2 检查更新功能
     }
 
@@ -148,7 +144,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     return true;
                 } catch (Exception e) {
                     LogUtil.errorOut(TAG, e, null);
-                    ToastUtil.toastWithLog("设置失败！");
+                    ToastUtil.toastWithoutLog("设置失败！");
                 }
                 return false;
 
@@ -168,10 +164,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 } catch (NumberFormatException nfe) {
                     String msg = "请输入正确合理的数字！";
                     LogUtil.warnOut(TAG, nfe, msg);
-                    ToastUtil.toastWithLog(msg);
+                    ToastUtil.toastWithoutLog(msg);
                 } catch (Exception e) {
                     LogUtil.errorOut(TAG, e, null);
-                    ToastUtil.toastWithLog("设置失败！");
+                    ToastUtil.toastWithoutLog("设置失败！");
                 }
                 return false;
             });
@@ -187,7 +183,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     return true;
                 } catch (Exception e) {
                     LogUtil.errorOut(TAG, e, null);
-                    ToastUtil.toastWithLog("设置失败！");
+                    ToastUtil.toastWithoutLog("设置失败！");
                 }
                 return false;
             });
@@ -211,11 +207,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                             android.os.Process.killProcess(android.os.Process.myPid());
                         }).show();
                     } else {
-                        ToastUtil.toastWithLog("请输入正确的IP格式");
+                        ToastUtil.toastWithoutLog("请输入正确的IP格式");
                     }
                 } catch (Exception e) {
                     LogUtil.errorOut(TAG, e, null);
-                    ToastUtil.toastWithLog("设置失败！");
+                    ToastUtil.toastWithoutLog("设置失败！");
                 }
                 return false;
             });
@@ -232,11 +228,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                             android.os.Process.killProcess(android.os.Process.myPid());
                         }).show();
                     } else {
-                        ToastUtil.toastWithLog("请输入正确的Port格式");
+                        ToastUtil.toastWithoutLog("请输入正确的Port格式");
                     }
                 } catch (Exception e) {
                     LogUtil.errorOut(TAG, e, null);
-                    ToastUtil.toastWithLog("设置失败！");
+                    ToastUtil.toastWithoutLog("设置失败！");
                 }
                 return false;
             });

@@ -23,7 +23,6 @@ import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.query.QueryBuilder;
 import org.greenrobot.greendao.query.WhereCondition;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -112,7 +111,7 @@ public class FactorDialog {
                 factorAddSuccessCallback.onSave(null);
             } else {
                 if (selectIndex < 0) {
-                    ToastUtil.toastWithLog("请选择响应因子");
+                    ToastUtil.toastWithoutLog("请选择响应因子");
                     return;
                 }
                 if (factorAddSuccessCallback != null) {

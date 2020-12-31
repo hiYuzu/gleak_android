@@ -306,7 +306,7 @@ public class HistoryActivity extends AppCompatActivity {
                 isExporting = false;
                 mLoading.hideLoading();
                 Looper.prepare();
-                ToastUtil.toastWithLog("导出成功：" + bundle.getString("result"));
+                ToastUtil.toastWithoutLog("导出成功：" + bundle.getString("result"));
                 Looper.loop();
             }
 

@@ -1,21 +1,16 @@
 package com.hb712.gleak_android;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.view.Window;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hb712.gleak_android.base.BaseActivity;
-import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 import com.hb712.gleak_android.util.GlobalParam;
@@ -107,13 +102,13 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
 
                 @Override
                 public void onServiceError(Bundle bundle) {
-                    ToastUtil.toastWithLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    ToastUtil.toastWithoutLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                     gotoLoginActivity();
                 }
 
                 @Override
                 public void onNetworkError(Bundle bundle) {
-                    ToastUtil.toastWithLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    ToastUtil.toastWithoutLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                     gotoLoginActivity();
                 }
             });

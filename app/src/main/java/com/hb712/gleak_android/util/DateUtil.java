@@ -3,7 +3,6 @@ package com.hb712.gleak_android.util;
 import android.annotation.SuppressLint;
 import android.support.annotation.Nullable;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -66,7 +65,7 @@ public class DateUtil {
         try {
             date = new SimpleDateFormat(format).parse(dateStr);
         } catch (ParseException pe) {
-            ToastUtil.toastWithLog("日期格式有误！");
+            ToastUtil.toastWithoutLog("日期格式有误！");
         }
         return null;
     }
