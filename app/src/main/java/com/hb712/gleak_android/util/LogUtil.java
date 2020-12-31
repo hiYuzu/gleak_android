@@ -30,15 +30,15 @@ public class LogUtil {
     public static void initDirectory() {
         logFilePath = GlobalParam.LOG_PATH + File.separator + "log-" + DateUtil.getCurrentTime(DateUtil.DATE_SERIES) + ".txt";
         File logFileDir = new File(GlobalParam.LOG_PATH);
-        if (logFileDir.exists()) {
+        File file = new File(logFilePath);
+        if (file.exists()) {
             isSave = true;
             return;
         }
-        if (!logFileDir.mkdirs()) {
+        if (!logFileDir.exists() && !logFileDir.mkdirs()) {
             Log.w(TAG, "日志文件夹创建失败");
         }
         try {
-            File file = new File(logFilePath);
             if (file.createNewFile()) {
                 isSave = true;
             }
