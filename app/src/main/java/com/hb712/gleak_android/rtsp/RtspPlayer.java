@@ -48,11 +48,6 @@ public class RtspPlayer {
         mVideoView.setOnCompletionListener(iMediaPlayer -> mVideoView.resume());
     }
 
-    public void startPlay() {
-        mVideoView.start();
-        isStop = false;
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void startPlay(String videoUrl) {
         mVideoView.setVideoPath("rtsp://" + videoUrl + "/live");

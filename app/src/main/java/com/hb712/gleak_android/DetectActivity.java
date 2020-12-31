@@ -293,6 +293,9 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         super.onResume();
         showSeriesName();
         mRtspPlayer.startPlay((String) SPUtil.get(this, videoUrl, defaultVideoUrl));
+        if (videoPauseView != null) {
+            videoPauseView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -347,13 +350,13 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             imm.hideSoftInputFromWindow(ipEdit.getWindowToken(), 0);
             String url = ipEdit.getText().toString();
             SPUtil.put(this, videoUrl, url);
-            videoPauseView.setVisibility(View.GONE);
-            mRtspPlayer.startPlay(url);
+            videoStartClick(null);
         }).show();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void videoStartClick(View view) {
-        mRtspPlayer.startPlay();
+        mRtspPlayer.startPlay((String) SPUtil.get(this, videoUrl, defaultVideoUrl));
         videoPauseView.setVisibility(View.GONE);
     }
 
