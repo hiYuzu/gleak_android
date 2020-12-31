@@ -25,7 +25,6 @@ public class RtspPlayer {
 
     private static final String TAG = RtspPlayer.class.getSimpleName();
     private IjkVideoView mVideoView;
-    private BaseLoadingView mLoadingView;
 
     private String videoPath;
 
@@ -37,8 +36,7 @@ public class RtspPlayer {
         IjkMediaPlayer.native_profileBegin("libijkplayer.so");
     }
 
-    public void init(Activity activity, BaseLoadingView loadingView) {
-        mLoadingView = loadingView;
+    public void init(Activity activity) {
 
         mVideoView = activity.findViewById(R.id.videoView);
         ViewGroup.LayoutParams lp = mVideoView.getLayoutParams();
@@ -46,16 +44,9 @@ public class RtspPlayer {
         lp.height = 864;
         mVideoView.setLayoutParams(lp);
         mVideoView.setOnCompletionListener(iMediaPlayer -> mVideoView.resume());
-        mVideoView.setOnInfoListener((iMediaPlayer, i, i1) -> {
-            if (i == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                mLoadingView.dismissLoading();
-            }
-            return true;
-        });
     }
 
     public void startPlay() {
-        mLoadingView.showLoading();
         mVideoView.setVideoPath(GlobalParam.VIDEO_REAL_URL);
         mVideoView.start();
         isStop = false;
@@ -152,11 +143,5 @@ public class RtspPlayer {
 
     public boolean isRecording() {
         return recording;
-    }
-
-    public abstract static class BaseLoadingView {
-        public abstract void showLoading();
-
-        public abstract void dismissLoading();
     }
 }

@@ -275,17 +275,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
     private void loadRtsp() {
         mRtspPlayer = new RtspPlayer();
-        mRtspPlayer.init(DetectActivity.this, new RtspPlayer.BaseLoadingView() {
-            @Override
-            public void showLoading() {
-
-            }
-
-            @Override
-            public void dismissLoading() {
-
-            }
-        });
+        mRtspPlayer.init(this);
     }
 
     @Override
