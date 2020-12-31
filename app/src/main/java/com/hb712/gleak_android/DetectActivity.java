@@ -3,13 +3,16 @@ package com.hb712.gleak_android;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -55,6 +58,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
+import androidx.annotation.RequiresApi;
 
 public class DetectActivity extends BaseActivity implements HttpInterface {
 
@@ -116,6 +121,9 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private RtspPlayer mRtspPlayer;
     private MainApplication mainApp;
     private Future<?> future;
+
+    private final String videoUrl = "videoUrl";
+    private final String defaultVideoUrl = "192.168.3.137";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -273,16 +281,18 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void loadRtsp() {
         mRtspPlayer = new RtspPlayer();
         mRtspPlayer.init(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onResume() {
         super.onResume();
         showSeriesName();
-        mRtspPlayer.startPlay();
+        mRtspPlayer.startPlay((String) SPUtil.get(this, videoUrl, defaultVideoUrl));
     }
 
     @Override
@@ -327,11 +337,19 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void setVideoIp(View view) {
         EditText ipEdit = new EditText(this);
-        ipEdit.setText(GlobalParam.VIDEO_URL);
+        ipEdit.setText((String) SPUtil.get(this, videoUrl, defaultVideoUrl));
 
-        CommonDialog.getDialog(this, "视频ip地址", null, ipEdit, null, null, () -> GlobalParam.VIDEO_URL = ipEdit.getText().toString()).show();
+        CommonDialog.getDialog(this, "视频ip地址", null, ipEdit, null, null, () -> {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(ipEdit.getWindowToken(), 0);
+            String url = ipEdit.getText().toString();
+            SPUtil.put(this, videoUrl, url);
+            videoPauseView.setVisibility(View.GONE);
+            mRtspPlayer.startPlay(url);
+        }).show();
     }
 
     public void videoStartClick(View view) {

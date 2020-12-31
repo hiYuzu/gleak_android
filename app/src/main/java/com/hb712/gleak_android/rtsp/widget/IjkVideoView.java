@@ -1,15 +1,9 @@
 package com.hb712.gleak_android.rtsp.widget;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -33,9 +27,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
+import androidx.annotation.RequiresApi;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 import tv.danmaku.ijk.media.player.misc.IMediaDataSource;
@@ -49,7 +43,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
 
     private static final String TAG = IjkVideoView.class.getSimpleName();
     private Uri mUri;
-    private Map<String, String> mHeaders;
 
     private static final int STATE_ERROR = -1;
     private static final int STATE_IDLE = 0;
@@ -265,10 +258,12 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void resume() {
         openVideo();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void openVideo() {
         if (mUri == null || mSurfaceHolder == null) {
             // 未准备，稍后再试
@@ -278,7 +273,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         release(false);
 
         AudioManager am = (AudioManager) mAppContext.getSystemService(Context.AUDIO_SERVICE);
-        Objects.requireNonNull(am).requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        am.requestAudioFocus(new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).build());
 
         try {
             mMediaPlayer = createPlayer();
@@ -292,11 +287,11 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             mMediaPlayer.setOnTimedTextListener(mOnTimedTextListener);
             mCurrentBufferPercentage = 0;
             String scheme = mUri.getScheme();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && (TextUtils.isEmpty(scheme) || scheme.equalsIgnoreCase("file"))) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && (TextUtils.isEmpty(scheme) || "file".equalsIgnoreCase(scheme))) {
                 IMediaDataSource dataSource = new FileMediaDataSource(new File(mUri.toString()));
                 mMediaPlayer.setDataSource(dataSource);
             } else {
-                mMediaPlayer.setDataSource(mAppContext, mUri, mHeaders);
+                mMediaPlayer.setDataSource(mAppContext, mUri, null);
             }
             bindSurfaceHolder(mMediaPlayer, mSurfaceHolder);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -618,17 +613,9 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         mOnInfoListener = l;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void setVideoPath(String path) {
-        setVideoURI(Uri.parse(path));
-    }
-
-    public void setVideoURI(Uri uri) {
-        setVideoURI(uri, null);
-    }
-
-    private void setVideoURI(Uri uri, Map<String, String> headers) {
-        mUri = uri;
-        mHeaders = headers;
+        mUri = Uri.parse(path);
         mSeekWhenPrepared = 0;
         openVideo();
         requestLayout();

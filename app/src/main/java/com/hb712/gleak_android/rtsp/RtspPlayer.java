@@ -1,18 +1,19 @@
 package com.hb712.gleak_android.rtsp;
 
 import android.app.Activity;
-import android.os.Environment;
+import android.os.Build;
 import android.view.ViewGroup;
 
 import com.hb712.gleak_android.R;
 
+import androidx.annotation.RequiresApi;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 import com.hb712.gleak_android.rtsp.widget.IjkVideoView;
 import com.hb712.gleak_android.util.DateUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.LogUtil;
+import com.hb712.gleak_android.util.SPUtil;
 
 import java.io.File;
 
@@ -36,6 +37,7 @@ public class RtspPlayer {
         IjkMediaPlayer.native_profileBegin("libijkplayer.so");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void init(Activity activity) {
 
         mVideoView = activity.findViewById(R.id.videoView);
@@ -47,7 +49,13 @@ public class RtspPlayer {
     }
 
     public void startPlay() {
-        mVideoView.setVideoPath(GlobalParam.VIDEO_REAL_URL);
+        mVideoView.start();
+        isStop = false;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void startPlay(String videoUrl) {
+        mVideoView.setVideoPath("rtsp://" + videoUrl + "/live");
         mVideoView.start();
         isStop = false;
     }

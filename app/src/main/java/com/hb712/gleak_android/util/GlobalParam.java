@@ -5,7 +5,6 @@ import android.os.Environment;
 
 import com.hb712.gleak_android.message.net.InitLeakData;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,11 +64,6 @@ public class GlobalParam {
     public static final String DEVICE_ADDRESS = "device_address";
     public static final boolean DEVICE_ANDROID = true;
     public static final boolean DEVICE_OTHER = false;
-
-    @SuppressLint("AuthLeak")
-    public static String VIDEO_URL = "192.168.8.104";
-
-    public static String VIDEO_REAL_URL = "rtsp://" + VIDEO_URL + "/live";
 
     public static List<InitLeakData> initLeakData = new ArrayList<>();
 }
