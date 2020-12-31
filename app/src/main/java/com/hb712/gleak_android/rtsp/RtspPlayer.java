@@ -2,6 +2,7 @@ package com.hb712.gleak_android.rtsp;
 
 import android.app.Activity;
 import android.os.Environment;
+import android.view.ViewGroup;
 
 import com.hb712.gleak_android.R;
 
@@ -40,6 +41,10 @@ public class RtspPlayer {
         mLoadingView = loadingView;
 
         mVideoView = activity.findViewById(R.id.videoView);
+        ViewGroup.LayoutParams lp = mVideoView.getLayoutParams();
+        // 864 = 1080 * 0.8
+        lp.height = 864;
+        mVideoView.setLayoutParams(lp);
         mVideoView.setOnCompletionListener(iMediaPlayer -> mVideoView.resume());
         mVideoView.setOnInfoListener((iMediaPlayer, i, i1) -> {
             if (i == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {

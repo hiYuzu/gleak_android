@@ -8,8 +8,8 @@
 
     <com.hb712.gleak_android.rtsp.widget.IjkVideoView
         android:id="@+id/videoView"
-        android:layout_width="wrap_content"
-        android:layout_height="650px">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <TextView
             android:id="@+id/videoPause"
             android:layout_width="wrap_content"
