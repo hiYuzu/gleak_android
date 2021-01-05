@@ -461,7 +461,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private void startSave() {
         if (deviceController.isFireOn() && mRtspPlayer.isPlaying()) {
             // 视频 + 数据
-            isSaving = startRecord();
+            startRecord();
             saveMode = SaveMode.ALL_DATA.getValue();
         } else if (deviceController.isFireOn()){
             // 数据
@@ -480,11 +480,12 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
         if (deviceController.isFireOn() && mRtspPlayer.isPlaying()) {
             // 视频 + 数据
-            isSaving = startRecord();
+            startRecord();
             saveMode = SaveMode.ALL_DATA.getValue();
         } else if (deviceController.isFireOn()){
             // 数据
             isSaving = true;
+            startRecordBtn.setText(R.string.stopRecord);
             saveMode = SaveMode.ONLY_DETECT.getValue();
         } else {
             // 视频
@@ -493,15 +494,13 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         }
     }
 
-    private boolean startRecord() {
-        boolean isSaving = false;
+    private void startRecord() {
         if (mRtspPlayer.startRecord() == 0) {
             isSaving = true;
             startRecordBtn.setText(R.string.stopRecord);
         } else {
             ToastUtil.toastWithoutLog("无法开启录制");
         }
-        return isSaving;
     }
 
     private void stopRecord() {
@@ -728,7 +727,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         if (maxValue < currentPpm) {
             maxValue = currentPpm;
         }
-        if (isSaving) {
+        if (isSaving && saveMode != SaveMode.ONLY_VIDEO.getValue()) {
             if (saveMaxValue < currentPpm) {
                 saveMaxValue = currentPpm;
             }

@@ -9,13 +9,8 @@ import com.hb712.gleak_android.MainApplication;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 
-import org.apache.http.params.HttpParams;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -39,7 +34,7 @@ public class HttpUtils {
 
     private static boolean isSendVideo = false;
 
-    public static final OkHttpClient mClient = new OkHttpClient.Builder()
+    public static final OkHttpClient CLIENT_CONFIG = new OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
@@ -112,7 +107,7 @@ public class HttpUtils {
                     }
                     Request request = builder.build();
                     LogUtil.debugOut(TAG, request.toString());
-                    Response response = mClient.newCall(request).execute();
+                    Response response = CLIENT_CONFIG.newCall(request).execute();
                     result.putInt(CODE, response.code());
                     result.putBoolean(RESULT, true);
                     if (response.code() != SUCCESS_CODE) {

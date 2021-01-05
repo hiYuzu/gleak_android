@@ -51,6 +51,7 @@ public class VideoDialog {
     public void showVideo(String videoPath) {
         if (videoPath == null) {
             ToastUtil.toastWithoutLog("视频不存在");
+            return;
         }
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {

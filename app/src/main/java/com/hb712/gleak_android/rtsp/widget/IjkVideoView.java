@@ -1,5 +1,6 @@
 package com.hb712.gleak_android.rtsp.widget;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -18,6 +19,8 @@ import android.widget.FrameLayout;
 import android.widget.MediaController;
 import android.widget.TextView;
 
+import com.hb712.gleak_android.DetectActivity;
+import com.hb712.gleak_android.R;
 import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.rtsp.listener.IjkPlayerListener;
 import com.hb712.gleak_android.util.LogUtil;
@@ -30,6 +33,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import androidx.annotation.RequiresApi;
+import androidx.annotation.StringDef;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 import tv.danmaku.ijk.media.player.misc.IMediaDataSource;
@@ -302,7 +306,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             // 保留之前的目标状态
             mCurrentState = STATE_PREPARING;
         } catch (IOException | IllegalArgumentException ex) {
-            LogUtil.warnOut(TAG, ex, "无法打开: " + mUri);
+            LogUtil.warnOut(TAG, ex, "无法打开视频链接: " + mUri);
             mCurrentState = STATE_ERROR;
             mTargetState = STATE_ERROR;
             mErrorListener.onError(mMediaPlayer, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
@@ -420,12 +424,25 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             } else {
                 message = "视频信号连接失败";
             }
+            Context context = getContext();
 
-            CommonDialog.getDialog(getContext(), null, message, null, "重连", null, () -> {
+            CommonDialog.getDialog(context, null, message, null, "重连", null, () -> {
                 if (mOnCompletionListener != null) {
                     mOnCompletionListener.onCompletion(mMediaPlayer);
                 }
             }).show();
+            new AlertDialog.Builder(getContext())
+                    .setMessage(message)
+                    .setPositiveButton("重连", (dialog, which) -> {
+                        if (mOnCompletionListener != null) {
+                            mOnCompletionListener.onCompletion(mMediaPlayer);
+                        }
+                    })
+                    .setNegativeButton("取消", (dialog, which) -> {
+                        dialog.dismiss();
+                        ((DetectActivity) context).findViewById(R.id.noVideoView).setVisibility(VISIBLE);
+                    })
+                    .show();
         }
         return true;
     };
@@ -520,6 +537,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         if (isInPlaybackState()) {
             mMediaPlayer.start();
             mCurrentState = STATE_PLAYING;
+            ((DetectActivity) getContext()).findViewById(R.id.noVideoView).setVisibility(GONE);
         }
         mTargetState = STATE_PLAYING;
     }

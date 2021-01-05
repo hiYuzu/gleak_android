@@ -59,7 +59,7 @@
     <string name="name">名称：</string>
     <string name="search">搜索</string>
     <string name="ckb_no">无响应因子</string>
-    <string name="pause_video">视频已暂停</string>
+    <string name="no_video">无视频信号</string>
     <!--deviceActivity-->
     <string name="paired_devices">已配对设备</string>
     <string name="other_devices">其他可见设备</string>
