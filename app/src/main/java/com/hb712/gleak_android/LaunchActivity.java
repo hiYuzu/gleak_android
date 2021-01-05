@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -19,6 +20,9 @@ import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.PermissionsUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Objects;
 
 public class LaunchActivity extends BaseActivity implements HttpInterface {
@@ -47,6 +51,7 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_launch);
+//        getInfo();
         PermissionsUtil.requestRWPermission(this);
         mMessage = findViewById(R.id.launch_message);
         TextView mVersion = findViewById(R.id.version_text);
@@ -63,6 +68,29 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
         }
         doLoginAction();
     }
+    /// 执行 adb shell命令，如：adb shell ip neigh
+/*
+    private void getInfo() {
+        BufferedReader reader;
+        String content = "";
+        try {
+            Process process = Runtime.getRuntime().exec("ip neigh");
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder output = new StringBuilder();
+            int read;
+            char[] buffer = new char[1024];
+            while ((read = reader.read(buffer)) > 0) {
+                output.append(buffer, 0, read);
+            }
+            reader.close();
+            content = output.toString();
+            Log.d("adb ip neigh", content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+ */
 
     private void doLoginAction() {
         mLoginHandle.removeCallbacks(mLoginAction);
