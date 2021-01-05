@@ -175,6 +175,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     }
 
     IRenderView.IRenderCallback mSHCallback = new IRenderView.IRenderCallback() {
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void onSurfaceCreated(@androidx.annotation.NonNull IRenderView.ISurfaceHolder holder, int width, int height) {
             if (holder.getRenderView() != mRenderView) {

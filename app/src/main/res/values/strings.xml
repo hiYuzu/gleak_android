@@ -24,8 +24,8 @@
     <string name="videoIp">视频地址</string>
     <string name="videoStart">播放</string>
     <string name="videoStop">停止</string>
-    <string name="startRecord">录制</string>
-    <string name="stopRecord">停录</string>
+    <string name="startRecord">记录</string>
+    <string name="stopRecord">结束</string>
     <string name="uploadVideo">上传</string>
     <string name="watermark">水印</string>
     <string name="detect_connect">连接</string>

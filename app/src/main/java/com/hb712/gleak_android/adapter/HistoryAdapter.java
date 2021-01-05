@@ -103,7 +103,12 @@ public class HistoryAdapter extends BaseAdapter {
         DetectInfoView detectInfoView = detectInfoViewList.get(position);
         viewHolder.number.setText(String.valueOf(detectInfoView.number));
         viewHolder.leakName.setText(detectInfoView.detectInfo.getLeakName());
-        viewHolder.monitorValue.setText(new DecimalFormat("0.00").format(getUnitValue(detectInfoView.detectInfo.getMonitorValue())));
+        if (detectInfoView.detectInfo.getMonitorValue() != -1.0D) {
+            viewHolder.monitorValue.setText(new DecimalFormat("0.00").format(getUnitValue(detectInfoView.detectInfo.getMonitorValue())));
+        } else {
+            viewHolder.monitorValue.setText("无数据");
+        }
+
         viewHolder.monitorTime.setText(detectInfoView.detectInfo.getMonitorTime());
         if (position == selectItem) {
             convertView.setBackgroundColor(context.getResources().getColor(R.color.ff80cbc4, null));

@@ -65,10 +65,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
 
     private static final String TAG = DetectActivity.class.getSimpleName();
 
-    private Button videoStopBtn;
-
     private ImageView fireImage;
-    private TextView videoPauseView;
     private Button startRecordBtn;
     private Button uploadVideoBtn;
 
@@ -125,6 +122,32 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private final String videoUrl = "videoUrl";
     private final String defaultVideoUrl = "192.168.3.137";
 
+    private int saveMode;
+    private enum SaveMode {
+        /**
+         * 仅保存上传视频
+         */
+        ONLY_VIDEO(2),
+        /**
+         * 仅保存上传数据
+         */
+        ONLY_DETECT(1),
+        /**
+         * 视频 + 数据
+         */
+        ALL_DATA(0);
+
+        private final int value;
+
+        SaveMode(int value) {
+            this.value = value;
+        }
+
+        private int getValue() {
+            return value;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,21 +183,15 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
      * 初始化控件
      */
     private void initView() {
-        videoStopBtn = findViewById(R.id.videoStop);
         fireImage = findViewById(R.id.ioFire);
-        videoPauseView = findViewById(R.id.videoPause);
         startRecordBtn = findViewById(R.id.startRecordBtn);
         startRecordBtn.setOnClickListener((p) -> {
             if (!mainApp.isLogin()) {
                 ToastUtil.toastWithoutLog("当前未登录");
                 return;
             }
-            if (!isConnected()) {
-                ToastUtil.toastWithoutLog("蓝牙未连接");
-                return;
-            }
-            if (mRtspPlayer.isStop) {
-                ToastUtil.toastWithoutLog("请播放视频");
+            if (!deviceController.isFireOn() && !mRtspPlayer.isPlaying()) {
+                ToastUtil.toastWithoutLog("当前无视频信号且设备未点火");
                 return;
             }
             if (!isSaving) {
@@ -293,9 +310,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         super.onResume();
         showSeriesName();
         mRtspPlayer.startPlay((String) SPUtil.get(this, videoUrl, defaultVideoUrl));
-        if (videoPauseView != null) {
-            videoPauseView.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -357,12 +371,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void videoStartClick(View view) {
         mRtspPlayer.startPlay((String) SPUtil.get(this, videoUrl, defaultVideoUrl));
-        videoPauseView.setVisibility(View.GONE);
-    }
-
-    public void videoStopClick(View view) {
-        mRtspPlayer.stopPlay();
-        videoPauseView.setVisibility(View.VISIBLE);
     }
 
     public void connectClick(View view) {
@@ -451,20 +459,42 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private void startSave() {
-        if (isConnected()) {
+        if (deviceController.isFireOn() && mRtspPlayer.isPlaying()) {
+            // 视频 + 数据
+            isSaving = startRecord();
+            saveMode = SaveMode.ALL_DATA.getValue();
+        } else if (deviceController.isFireOn()){
+            // 数据
+            isSaving = true;
+            saveMode = SaveMode.ONLY_DETECT.getValue();
+        } else {
+            // 视频
             startRecord();
+            saveMode = SaveMode.ONLY_VIDEO.getValue();
         }
     }
 
     private void startSave(@NonNull Bundle bundle) {
-        if (isConnected() && startRecord()) {
-            selectedLeakId = bundle.getString("leakId");
-            selectedLeakName = bundle.getString("leakName");
+        selectedLeakId = bundle.getString("leakId");
+        selectedLeakName = bundle.getString("leakName");
+
+        if (deviceController.isFireOn() && mRtspPlayer.isPlaying()) {
+            // 视频 + 数据
+            isSaving = startRecord();
+            saveMode = SaveMode.ALL_DATA.getValue();
+        } else if (deviceController.isFireOn()){
+            // 数据
+            isSaving = true;
+            saveMode = SaveMode.ONLY_DETECT.getValue();
+        } else {
+            // 视频
+            startRecord();
+            saveMode = SaveMode.ONLY_VIDEO.getValue();
         }
     }
 
     private boolean startRecord() {
-        videoStopBtn.setEnabled(false);
+        boolean isSaving = false;
         if (mRtspPlayer.startRecord() == 0) {
             isSaving = true;
             startRecordBtn.setText(R.string.stopRecord);
@@ -475,7 +505,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private void stopRecord() {
-        videoStopBtn.setEnabled(true);
         if (mRtspPlayer.isRecording()) {
             mRtspPlayer.stopRecord();
         }
@@ -486,8 +515,14 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private void saveData() {
-        saveMaxValue = Double.parseDouble(new DecimalFormat("0.00").format(saveMaxValue));
-        CommonDialog.infoDialog(this, "测量结束：\n时间：" + saveTime + "\n漏点名：" + selectedLeakName + "\n最大值：" + saveMaxValue);
+        if (saveMode == SaveMode.ONLY_VIDEO.getValue()) {
+            saveMaxValue = -1.0D;
+            saveTime = DateUtil.getDefaultTime();
+            CommonDialog.infoDialog(this, "测量结束：\n时间：" + saveTime + "\n漏点名：" + selectedLeakName + "\n最大值：无数据");
+        } else {
+            saveMaxValue = Double.parseDouble(new DecimalFormat("0.00").format(saveMaxValue));
+            CommonDialog.infoDialog(this, "测量结束：\n时间：" + saveTime + "\n漏点名：" + selectedLeakName + "\n最大值：" + saveMaxValue);
+        }
 
         if (seriesLimitInfo == null) {
             ToastUtil.toastWithoutLog("无限值数据，本次测量不保存");
@@ -503,16 +538,21 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
         String userId = mainApp.getUserId();
         boolean standard = saveMaxValue <= seriesLimitInfo.getMaxValue();
         int monitorStatus = saveMaxValue > seriesLimitInfo.getMaxValue() ? 0 : 1;
+
         MonitorData monitorData = new MonitorData(saveTime, saveMaxValue, monitorStatus);
         lastedLeakData = new LeakData(selectedLeakId, userId, monitorData);
         try {
             DetectInfo detectInfo = new DetectInfo();
             detectInfo.setLeakName(selectedLeakName);
-            detectInfo.setMonitorValue(saveMaxValue);
             detectInfo.setMonitorTime(saveTime);
             detectInfo.setStandard(standard);
-            detectInfo.setVideoPath(mRtspPlayer.getVideoPath());
             detectInfo.setOptUser(Long.parseLong(userId));
+            detectInfo.setMonitorValue(saveMaxValue);
+            if (saveMode == SaveMode.ONLY_DETECT.getValue()) {
+                detectInfo.setVideoPath(null);
+            } else {
+                detectInfo.setVideoPath(mRtspPlayer.getVideoPath());
+            }
             DBManager.getInstance().getWritableSession().getDetectInfoDao().save(detectInfo);
         } catch (NumberFormatException nfe) {
             ToastUtil.toastWithoutLog("用户id解析失败");
@@ -524,8 +564,13 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     public void uploadVideo(View view) {
+        // TODO: hiYuzu 2021/1/5 未确定最终方案，需要与后台对接接口
+        File video = null;
+        if (saveMode != SaveMode.ONLY_DETECT.getValue()) {
+            video = new File(mRtspPlayer.getVideoPath());
+        }
         try {
-            HttpUtils.post(this, mainApp.baseUrl + "/video/insert", lastedLeakData, new File(mRtspPlayer.getVideoPath()),
+            HttpUtils.post(this, mainApp.baseUrl + "/video/insert", lastedLeakData, video,
                     new OKHttpListener() {
                         @Override
                         public void onStart() {

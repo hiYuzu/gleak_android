@@ -13,7 +13,6 @@ import com.hb712.gleak_android.rtsp.widget.IjkVideoView;
 import com.hb712.gleak_android.util.DateUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.LogUtil;
-import com.hb712.gleak_android.util.SPUtil;
 
 import java.io.File;
 
@@ -30,7 +29,6 @@ public class RtspPlayer {
     private String videoPath;
 
     private boolean recording = false;
-    public boolean isStop;
 
     static {
         IjkMediaPlayer.loadLibrariesOnce(null);
@@ -52,14 +50,10 @@ public class RtspPlayer {
     public void startPlay(String videoUrl) {
         mVideoView.setVideoPath("rtsp://" + videoUrl + "/live");
         mVideoView.start();
-        isStop = false;
     }
 
     public void stopPlay() {
         mVideoView.stopPlayback();
-        if (mVideoView.isPlaying()) {
-            isStop = true;
-        }
     }
 
     public void release() {
@@ -146,5 +140,9 @@ public class RtspPlayer {
 
     public boolean isRecording() {
         return recording;
+    }
+
+    public boolean isPlaying() {
+        return mVideoView.isPlaying();
     }
 }

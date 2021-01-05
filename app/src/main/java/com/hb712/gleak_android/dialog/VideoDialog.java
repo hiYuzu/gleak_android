@@ -49,13 +49,16 @@ public class VideoDialog {
     }
 
     public void showVideo(String videoPath) {
+        if (videoPath == null) {
+            ToastUtil.toastWithoutLog("视频不存在");
+        }
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             video = new File(videoPath);
             if (!video.isDirectory() && video.exists()) {
                 showVideo();
             } else {
-                ToastUtil.toastWithoutLog("视频不存在");
+                ToastUtil.toastWithoutLog("未找到视频");
             }
         } else {
             ToastUtil.toastWithoutLog("权限不足");

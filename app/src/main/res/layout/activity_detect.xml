@@ -51,18 +51,6 @@
             android:text="@string/videoStart"
             android:textColor="@color/white" />
 
-        <Button
-            android:id="@+id/videoStop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fab_margin"
-            android:background="@drawable/button_operation"
-            android:minWidth="65dp"
-            android:minHeight="@dimen/dimen_35dp"
-            android:onClick="videoStopClick"
-            android:text="@string/videoStop"
-            android:textColor="@color/white" />
-
     </LinearLayout>
 
     <View
