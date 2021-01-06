@@ -563,35 +563,37 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     public void uploadVideo(View view) {
-        // TODO: hiYuzu 2021/1/5 未确定最终方案，需要与后台对接接口
-        File video = null;
-        if (saveMode != SaveMode.ONLY_DETECT.getValue()) {
-            video = new File(mRtspPlayer.getVideoPath());
-        }
+        OKHttpListener mListener = new OKHttpListener() {
+            @Override
+            public void onStart() {
+                ToastUtil.toastWithoutLog("开始上传...");
+            }
+
+            @Override
+            public void onSuccess(Bundle bundle) {
+                ToastUtil.toastWithoutLog("上传成功");
+                uploadVideoBtn.setEnabled(false);
+            }
+
+            @Override
+            public void onServiceError(Bundle bundle) {
+                ToastUtil.toastWithoutLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+            }
+
+            @Override
+            public void onNetworkError(Bundle bundle) {
+                ToastUtil.toastWithoutLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+            }
+        };
+        String httpUrl;
         try {
-            HttpUtils.post(this, mainApp.baseUrl + "/video/insert", lastedLeakData, video,
-                    new OKHttpListener() {
-                        @Override
-                        public void onStart() {
-                            ToastUtil.toastWithoutLog("开始上传...");
-                        }
-
-                        @Override
-                        public void onSuccess(Bundle bundle) {
-                            ToastUtil.toastWithoutLog("上传成功");
-                            uploadVideoBtn.setEnabled(false);
-                        }
-
-                        @Override
-                        public void onServiceError(Bundle bundle) {
-                            ToastUtil.toastWithoutLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
-                        }
-
-                        @Override
-                        public void onNetworkError(Bundle bundle) {
-                            ToastUtil.toastWithoutLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
-                        }
-                    });
+            if (saveMode != SaveMode.ONLY_DETECT.getValue()) {
+                httpUrl = mainApp.baseUrl + "/video/insert";
+                HttpUtils.post(this, httpUrl, lastedLeakData, new File(mRtspPlayer.getVideoPath()), mListener);
+            } else {
+                httpUrl = mainApp.baseUrl + "/api/monitorData/insertWithNullVideoData";
+                HttpUtils.post(this, httpUrl, lastedLeakData.toMap(), mListener);
+            }
         } catch (NullPointerException npe) {
             LogUtil.errorOut(TAG, npe, null);
         }

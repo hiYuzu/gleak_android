@@ -1,5 +1,10 @@
 package com.hb712.gleak_android.message.net;
 
+import android.annotation.SuppressLint;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class MonitorData {
 
     private String monitorTime;
@@ -43,5 +48,13 @@ public class MonitorData {
     @Override
     public String toString() {
         return "{\"monitorTime\":\"" + monitorTime + "\", \"monitorValue\":" + monitorValue + ", \"monitorStatus\":" + monitorStatus + "}";
+    }
+
+    public Map<String, String> toMap() {
+        Map<String, String> map = new HashMap<>(5);
+        map.put("monitorTime", monitorTime);
+        map.put("monitorValue", String.valueOf(monitorValue));
+        map.put("monitorStatus", String.valueOf(monitorStatus));
+        return map;
     }
 }
