@@ -24,7 +24,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_5dp"
         android:orientation="horizontal">
 
         <EditText
@@ -64,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_operation"
-            android:layout_marginLeft="@dimen/dimen_16sp"
+            android:layout_marginStart="@dimen/dimen_10dp"
             android:minWidth="@dimen/dimen_50dp"
             android:minHeight="@dimen/dimen_35dp"
             android:onClick="connectClick"
@@ -116,9 +115,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_10dp"
-        android:layout_marginLeft="@dimen/dimen_25dp"
-        android:gravity="left"
+        android:layout_marginStart="@dimen/dimen_5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -138,8 +135,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dimen_25dp"
-        android:gravity="left"
+        android:layout_marginStart="@dimen/dimen_5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -148,6 +144,7 @@
             android:layout_height="wrap_content"
             android:onClick="selectSeries"
             android:text="@string/detect_series"
+            android:textSize="@dimen/dimen_16sp"
             android:textColor="@color/launch_text_color" />
         <TextView
             android:id="@+id/detectFactor"
@@ -156,12 +153,14 @@
             android:layout_marginStart="@dimen/dimen_25dp"
             android:onClick="selectFactor"
             android:text="@string/detect_factor"
+            android:textSize="@dimen/dimen_16sp"
             android:visibility="gone"
             android:textColor="@color/launch_text_color" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimen_25dp"
+            android:textSize="@dimen/dimen_16sp"
             android:text="@string/detect_value" />
 
         <EditText
@@ -169,12 +168,14 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:inputType="number"
-            android:minWidth="@dimen/dimen_50dp" />
+            android:textSize="@dimen/dimen_16sp"
+            android:minWidth="@dimen/dimen_80dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dimen_10dp"
+            android:textSize="@dimen/dimen_16sp"
             android:text="@string/max_value" />
 
         <EditText
@@ -182,15 +183,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:minWidth="@dimen/dimen_50dp" />
+            android:textSize="@dimen/dimen_16sp"
+            android:minWidth="@dimen/dimen_80dp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginLeft="@dimen/dimen_25dp"
-        android:gravity="left"
+        android:layout_marginStart="@dimen/dimen_5dp"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -400,7 +401,6 @@
             android:id="@+id/startRecordBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fab_margin"
             android:background="@drawable/button_cycle"
             android:minWidth="@dimen/dimen_50dp"
             android:minHeight="@dimen/dimen_50dp"
