@@ -55,7 +55,7 @@ public class SeriesDialog {
                 } catch (ArrayIndexOutOfBoundsException e) {
                     String msg = "曲线选择失败！";
                     LogUtil.errorOut(TAG, e, msg);
-                    ToastUtil.toastWithoutLog(msg);
+                    ToastUtil.longToastShow(msg);
                 }
             }
         });

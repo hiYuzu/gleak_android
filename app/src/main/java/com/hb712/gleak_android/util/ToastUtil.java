@@ -4,11 +4,23 @@ import android.widget.Toast;
 
 import com.hb712.gleak_android.base.BaseApplication;
 
+/**
+ *
+ * @author hiYuzu
+ * @version V1.0
+ * @date 2020/11/19 14:58
+ */
 public class ToastUtil {
-    private static final Toast M_TOAST = Toast.makeText(BaseApplication.baseApplication, "", Toast.LENGTH_LONG);
+    private static final Toast M_LONG_TOAST = Toast.makeText(BaseApplication.baseApplication, "", Toast.LENGTH_LONG);
+    private static final Toast M_SHORT_TOAST = Toast.makeText(BaseApplication.baseApplication, "", Toast.LENGTH_SHORT);
 
-    public static void toastWithoutLog(CharSequence cs) {
-        M_TOAST.setText(cs);
-        M_TOAST.show();
+    public static synchronized void longToastShow(CharSequence cs) {
+        M_LONG_TOAST.setText(cs);
+        M_LONG_TOAST.show();
+    }
+
+    public static synchronized void shortToastShow(CharSequence cs) {
+        M_SHORT_TOAST.setText(cs);
+        M_SHORT_TOAST.show();
     }
 }

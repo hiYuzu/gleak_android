@@ -89,12 +89,12 @@ public class MainActivity extends BaseActivity implements HttpInterface {
 
                 @Override
                 public void onServiceError(Bundle bundle) {
-                    ToastUtil.toastWithoutLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    ToastUtil.longToastShow(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                 }
 
                 @Override
                 public void onNetworkError(Bundle bundle) {
-                    ToastUtil.toastWithoutLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    ToastUtil.longToastShow(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                 }
             });
         } catch (NullPointerException npe) {

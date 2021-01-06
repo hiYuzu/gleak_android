@@ -65,7 +65,7 @@ public class DateUtil {
         try {
             date = new SimpleDateFormat(format).parse(dateStr);
         } catch (ParseException pe) {
-            ToastUtil.toastWithoutLog("日期格式有误！");
+            ToastUtil.longToastShow("日期格式有误！");
         }
         return null;
     }

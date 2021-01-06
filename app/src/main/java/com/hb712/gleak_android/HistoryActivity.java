@@ -91,7 +91,7 @@ public class HistoryActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (isExporting) {
-            ToastUtil.toastWithoutLog("请等待导出结束...");
+            ToastUtil.longToastShow("请等待导出结束...");
             return;
         }
         super.onBackPressed();
@@ -150,7 +150,7 @@ public class HistoryActivity extends AppCompatActivity {
                         }
                     }
                 } catch (Exception e) {
-                    ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                    ToastUtil.longToastShow("本地数据库发生错误！");
                     LogUtil.assertOut(TAG, e, "DetectInfoDao");
                 }
             }).show();
@@ -176,7 +176,7 @@ public class HistoryActivity extends AppCompatActivity {
         try {
             detectInfoList = DBManager.getInstance().getReadableSession().getDetectInfoDao().queryBuilder().limit(100).list();
         } catch (Exception e) {
-            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            ToastUtil.longToastShow("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "DetectInfoDao");
         }
         if (detectInfoList != null && detectInfoList.size() > 0) {
@@ -257,7 +257,7 @@ public class HistoryActivity extends AppCompatActivity {
         try {
             daoSession = DBManager.getInstance().getReadableSession();
         } catch (Exception e) {
-            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            ToastUtil.longToastShow("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "DetectInfoDao");
             return;
         }
@@ -291,7 +291,7 @@ public class HistoryActivity extends AppCompatActivity {
 
     public void exportHistory(View view) {
         if (historyAdapter.detectInfoViewList.size() < 1) {
-            ToastUtil.toastWithoutLog("请先搜索记录数据！");
+            ToastUtil.longToastShow("请先搜索记录数据！");
             return;
         }
         new ExportTask(new ITaskHandler() {
@@ -306,7 +306,7 @@ public class HistoryActivity extends AppCompatActivity {
                 isExporting = false;
                 mLoading.hideLoading();
                 Looper.prepare();
-                ToastUtil.toastWithoutLog("导出成功：" + bundle.getString("result"));
+                ToastUtil.longToastShow("导出成功：" + bundle.getString("result"));
                 Looper.loop();
             }
 
@@ -315,7 +315,7 @@ public class HistoryActivity extends AppCompatActivity {
                 isExporting = false;
                 mLoading.hideLoading();
                 Looper.prepare();
-                ToastUtil.toastWithoutLog(failMsg);
+                ToastUtil.longToastShow(failMsg);
                 Looper.loop();
             }
         }).execute();

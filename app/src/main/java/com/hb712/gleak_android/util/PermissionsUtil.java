@@ -51,7 +51,7 @@ public class PermissionsUtil {
                     }
                 }
             } else {
-                ToastUtil.toastWithoutLog("未开启GPS定位服务");
+                ToastUtil.longToastShow("未开启GPS定位服务");
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

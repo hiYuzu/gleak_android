@@ -68,7 +68,7 @@ public class LogUtil {
      */
     public static void infoOut(String tag, String detail) {
         Log.i(tag, detail);
-        ToastUtil.toastWithoutLog(detail);
+        ToastUtil.longToastShow(detail);
         if (isSave) {
             writeToFile(INFO, tag, detail);
         }

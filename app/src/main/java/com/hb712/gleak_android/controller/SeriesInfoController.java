@@ -36,7 +36,7 @@ public class SeriesInfoController {
                 seriesInfo.setStdSeries(true);
                 DBManager.getInstance().getWritableSession().getSeriesInfoDao().save(seriesInfo);
             } catch (Exception e) {
-                ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                ToastUtil.longToastShow("本地数据库发生错误！");
                 LogUtil.assertOut(TAG, e, "SeriesInfoDao");
             }
         }
@@ -47,7 +47,7 @@ public class SeriesInfoController {
         try {
             return DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().list();
         } catch (Exception e) {
-            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            ToastUtil.longToastShow("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "SeriesInfoDao");
             return new ArrayList<>();
         }
@@ -58,7 +58,7 @@ public class SeriesInfoController {
         try {
             return DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().where(SeriesInfoDao.Properties.STD_SERIES.eq(Boolean.FALSE), new WhereCondition[0]).list();
         } catch (Exception e) {
-            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            ToastUtil.longToastShow("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "SeriesInfoDao");
             return new ArrayList<>();
         }

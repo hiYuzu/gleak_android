@@ -59,7 +59,7 @@ public class LimitSettingFragment extends Fragment {
         add.setOnClickListener(v -> {
             String limitValue = this.limitValue.getText().toString().trim();
             if (limitValue.isEmpty()) {
-                ToastUtil.toastWithoutLog("请输入限值！");
+                ToastUtil.longToastShow("请输入限值！");
                 return;
             }
             int position = seriesSettingSp.getSelectedItemPosition();
@@ -83,7 +83,7 @@ public class LimitSettingFragment extends Fragment {
             try {
                 DBManager.getInstance().getWritableSession().getSeriesLimitInfoDao().save(seriesLimitInfo);
             } catch (Exception e) {
-                ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                ToastUtil.longToastShow("本地数据库发生错误！");
                 LogUtil.assertOut(TAG, e, "SeriesInfoDao");
             }
             selectIndex = -1;
@@ -100,14 +100,14 @@ public class LimitSettingFragment extends Fragment {
                 try {
                     DBManager.getInstance().getWritableSession().getSeriesLimitInfoDao().delete(seriesLimitInfo);
                 } catch (Exception e) {
-                    ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                    ToastUtil.longToastShow("本地数据库发生错误！");
                     LogUtil.assertOut(TAG, e, "SeriesLimitInfoDao");
                 }
                 seriesLimitAdapter.setSelectItem(selectIndex);
                 seriesLimitAdapter.notifyDataSetChanged();
                 return;
             }
-            ToastUtil.toastWithoutLog("请选择要删除的项目！");
+            ToastUtil.longToastShow("请选择要删除的项目！");
         });
     }
 
@@ -124,7 +124,7 @@ public class LimitSettingFragment extends Fragment {
         try {
             seriesLimitInfoList = DBManager.getInstance().getReadableSession().getSeriesLimitInfoDao().loadAll();
         } catch (Exception e) {
-            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            ToastUtil.longToastShow("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "SeriesLimitInfoDao");
         }
 

@@ -74,7 +74,7 @@ public class FactorDialog {
         try {
             factorCoefficientInfoList = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().loadAll();
         } catch (Exception e) {
-            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            ToastUtil.longToastShow("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "FactorCoefficientInfoDao");
         }
         adapter = new FactorAdapter(context, factorCoefficientInfoList);
@@ -92,7 +92,7 @@ public class FactorDialog {
             try {
                 queryBuilder = DBManager.getInstance().getReadableSession().getFactorCoefficientInfoDao().queryBuilder();
             } catch (Exception e) {
-                ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                ToastUtil.longToastShow("本地数据库发生错误！");
                 LogUtil.assertOut(TAG, e, "FactorCoefficientInfoDao");
                 return;
             }
@@ -111,7 +111,7 @@ public class FactorDialog {
                 factorAddSuccessCallback.onSave(null);
             } else {
                 if (selectIndex < 0) {
-                    ToastUtil.toastWithoutLog("请选择响应因子");
+                    ToastUtil.longToastShow("请选择响应因子");
                     return;
                 }
                 if (factorAddSuccessCallback != null) {

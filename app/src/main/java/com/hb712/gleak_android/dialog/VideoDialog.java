@@ -4,19 +4,13 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.VideoView;
 
 import com.hb712.gleak_android.R;
-import com.hb712.gleak_android.util.PermissionsUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 
 import java.io.File;
@@ -50,7 +44,7 @@ public class VideoDialog {
 
     public void showVideo(String videoPath) {
         if (videoPath == null) {
-            ToastUtil.toastWithoutLog("视频不存在");
+            ToastUtil.longToastShow("视频不存在");
             return;
         }
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
@@ -59,10 +53,10 @@ public class VideoDialog {
             if (!video.isDirectory() && video.exists()) {
                 showVideo();
             } else {
-                ToastUtil.toastWithoutLog("未找到视频");
+                ToastUtil.longToastShow("未找到视频");
             }
         } else {
-            ToastUtil.toastWithoutLog("权限不足");
+            ToastUtil.longToastShow("权限不足");
         }
     }
 }

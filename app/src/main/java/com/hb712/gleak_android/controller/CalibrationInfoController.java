@@ -43,7 +43,7 @@ public class CalibrationInfoController {
             try {
                 DBManager.getInstance().getWritableSession().getCalibrationInfoDao().save(temp);
             } catch (Exception e) {
-                ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                ToastUtil.longToastShow("本地数据库发生错误！");
                 LogUtil.assertOut(TAG, e, "CalibrationInfoDao");
             }
         }
@@ -143,7 +143,7 @@ public class CalibrationInfoController {
                 calibrationInfoList = DBManager.getInstance().getReadableSession().getCalibrationInfoDao().queryBuilder().where(CalibrationInfoDao.Properties.SERIES_ID.eq(seriesInfo.getId()), new WhereCondition[0]).list();
                 Collections.sort(calibrationInfoList);
             } catch (Exception e) {
-                ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                ToastUtil.longToastShow("本地数据库发生错误！");
                 LogUtil.assertOut(TAG, e, "CalibrationInfoDao");
             }
         }
@@ -155,7 +155,7 @@ public class CalibrationInfoController {
         try {
             seriesInfoList = DBManager.getInstance().getReadableSession().getSeriesInfoDao().queryBuilder().where(SeriesInfoDao.Properties.SERIES_NAME.eq(seriesName), new WhereCondition[0]).list();
         } catch (Exception e) {
-            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            ToastUtil.longToastShow("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "SeriesInfoDao");
         }
         if (seriesInfoList != null && seriesInfoList.size() > 0) {

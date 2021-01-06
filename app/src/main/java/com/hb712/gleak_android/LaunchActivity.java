@@ -6,7 +6,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -20,9 +19,6 @@ import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.PermissionsUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Objects;
 
 public class LaunchActivity extends BaseActivity implements HttpInterface {
@@ -130,13 +126,13 @@ public class LaunchActivity extends BaseActivity implements HttpInterface {
 
                 @Override
                 public void onServiceError(Bundle bundle) {
-                    ToastUtil.toastWithoutLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    ToastUtil.longToastShow(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                     gotoLoginActivity();
                 }
 
                 @Override
                 public void onNetworkError(Bundle bundle) {
-                    ToastUtil.toastWithoutLog(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
+                    ToastUtil.longToastShow(Objects.requireNonNull(bundle.getString(HttpUtils.MESSAGE)));
                     gotoLoginActivity();
                 }
             });

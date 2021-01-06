@@ -59,7 +59,7 @@ public class SeriesSettingFragment extends Fragment {
         addNewSeriesBtn.setOnClickListener(v -> {
             String seriesName = newSeriesNameEt.getText().toString().trim();
             if (seriesName.isEmpty()) {
-                ToastUtil.toastWithoutLog("请输入曲线名称！");
+                ToastUtil.longToastShow("请输入曲线名称！");
                 return;
             }
             SeriesInfo seriesInfo = new SeriesInfo();
@@ -79,7 +79,7 @@ public class SeriesSettingFragment extends Fragment {
             try {
                 DBManager.getInstance().getWritableSession().getSeriesInfoDao().save(seriesInfo);
             } catch (Exception e) {
-                ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                ToastUtil.longToastShow("本地数据库发生错误！");
                 LogUtil.assertOut(TAG, e, "SeriesInfoDao");
             }
             selectIndex = -1;
@@ -92,14 +92,14 @@ public class SeriesSettingFragment extends Fragment {
             if (selectIndex > -1) {
                 SeriesInfo seriesInfo = seriesInfoList.get(selectIndex);
                 if (seriesInfo.isStdSeries()) {
-                    ToastUtil.toastWithoutLog("标准曲线不能删除！");
+                    ToastUtil.longToastShow("标准曲线不能删除！");
                 } else {
                     seriesInfoList.remove(selectIndex);
                     selectIndex = -1;
                     try {
                         DBManager.getInstance().getWritableSession().getSeriesInfoDao().delete(seriesInfo);
                     } catch (Exception e) {
-                        ToastUtil.toastWithoutLog("本地数据库发生错误！");
+                        ToastUtil.longToastShow("本地数据库发生错误！");
                         LogUtil.assertOut(TAG, e, "SeriesInfoDao");
                     }
                     deleteInvokeSeriesData(seriesInfo);
@@ -108,7 +108,7 @@ public class SeriesSettingFragment extends Fragment {
                 }
                 return;
             }
-            ToastUtil.toastWithoutLog("请选择要删除的项目！");
+            ToastUtil.longToastShow("请选择要删除的项目！");
         });
     }
 
@@ -117,7 +117,7 @@ public class SeriesSettingFragment extends Fragment {
             DBManager.getInstance().getWritableSession().getSeriesLimitInfoDao().queryBuilder().where(SeriesLimitInfoDao.Properties.SERIES_ID.eq(seriesInfo.getId()), new WhereCondition[0]).buildDelete().executeDeleteWithoutDetachingEntities();
             DBManager.getInstance().getWritableSession().getCalibrationInfoDao().queryBuilder().where(CalibrationInfoDao.Properties.SERIES_ID.eq(seriesInfo.getId()), new WhereCondition[0]).buildDelete().executeDeleteWithoutDetachingEntities();
         } catch (Exception e) {
-            ToastUtil.toastWithoutLog("本地数据库发生错误！");
+            ToastUtil.longToastShow("本地数据库发生错误！");
             LogUtil.assertOut(TAG, e, "SeriesLimitInfoDao | CalibrationInfoDao");
         }
     }
