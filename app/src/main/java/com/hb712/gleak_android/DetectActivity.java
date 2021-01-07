@@ -124,6 +124,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private final String defaultVideoUrl = "192.168.3.137";
 
     private int saveMode;
+
     private enum SaveMode {
         /**
          * 仅保存上传视频
@@ -460,7 +461,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             // 视频 + 数据
             startRecord();
             saveMode = SaveMode.ALL_DATA.getValue();
-        } else if (deviceController.isFireOn()){
+        } else if (deviceController.isFireOn()) {
             // 数据
             isSaving = true;
             startRecordBtn.setText(R.string.stopRecord);
