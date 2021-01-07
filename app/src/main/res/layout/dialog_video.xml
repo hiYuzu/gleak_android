@@ -6,6 +6,6 @@
 
     <VideoView
         android:id="@+id/historyVideoView"
-        android:layout_width="1080px"
-        android:layout_height="864px" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
