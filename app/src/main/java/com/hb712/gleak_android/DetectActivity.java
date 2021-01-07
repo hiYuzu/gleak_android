@@ -404,7 +404,9 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
             if (resultCode == Activity.RESULT_FIRST_USER) {
                 addNewLeak(data.getExtras());
             } else if (resultCode == Activity.RESULT_OK) {
-                startSave(data.getExtras());
+                selectedLeakId = data.getExtras().getString("leakId");
+                selectedLeakName = data.getExtras().getString("leakName");
+                startSave();
             } else {
                 ToastUtil.longToastShow("获取漏点信息失败，请重试");
             }
@@ -454,25 +456,6 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     }
 
     private void startSave() {
-        if (deviceController.isFireOn() && mRtspPlayer.isPlaying()) {
-            // 视频 + 数据
-            startRecord();
-            saveMode = SaveMode.ALL_DATA.getValue();
-        } else if (deviceController.isFireOn()){
-            // 数据
-            isSaving = true;
-            saveMode = SaveMode.ONLY_DETECT.getValue();
-        } else {
-            // 视频
-            startRecord();
-            saveMode = SaveMode.ONLY_VIDEO.getValue();
-        }
-    }
-
-    private void startSave(@NonNull Bundle bundle) {
-        selectedLeakId = bundle.getString("leakId");
-        selectedLeakName = bundle.getString("leakName");
-
         if (deviceController.isFireOn() && mRtspPlayer.isPlaying()) {
             // 视频 + 数据
             startRecord();
