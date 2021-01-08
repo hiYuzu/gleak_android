@@ -13,7 +13,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 import com.hb712.gleak_android.MainApplication;
@@ -21,6 +20,7 @@ import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
 
+import java.io.File;
 import java.util.Objects;
 
 /**
@@ -31,45 +31,14 @@ import java.util.Objects;
 public class CommonUtil implements HttpInterface {
     private final String TAG = CommonUtil.class.getSimpleName();
     private final Activity activity;
-    private final DownloadManager downloadManager;
-    private long downloadReferenceId;
 
     public CommonUtil(@NonNull Activity activity) throws NullPointerException {
         this.activity = activity;
-        downloadManager = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
-        if (downloadManager == null) {
-            throw new NullPointerException("无法获取 DownloadManager");
-        }
-        BroadcastReceiver updateCompleteReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                long referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-                if (referenceId != downloadReferenceId) {
-                    return;
-                }
-                DownloadManager.Query query = new DownloadManager.Query();
-                query.setFilterById(referenceId);
-                Cursor c = downloadManager.query(query);
-                if (c.moveToFirst()) {
-                    int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
-                    if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
-                        String fileUriString = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-                        if (fileUriString != null) {
-                            LogUtil.debugOut(TAG, "Update Download App Complete: " + fileUriString);
-                            Intent installIntent = new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse(fileUriString), "application/vnd.android.package-archive");
-                            installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            activity.startActivity(installIntent);
-                        }
-                    }
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        activity.registerReceiver(updateCompleteReceiver, filter);
     }
 
     public void checkUpdate() {
-        String url = MainApplication.getInstance().baseUrl + "/" + activity.getPackageName();
+        PermissionsUtil.requestRWPermission(activity);
+        String url = MainApplication.getInstance().baseUrl + "/api/app/selectAppByAppName?code=" + activity.getPackageName();
         HttpUtils.get(this, url, new OKHttpListener() {
             @Override
             public void onStart() {
@@ -114,11 +83,10 @@ public class CommonUtil implements HttpInterface {
 
     private void downloadApk(String url) {
         CommonDialog.getDialog(activity, "更新", "检测到新的版本，是否更新？", null, "更新", "暂不更新", () -> {
-            Uri uri = Uri.parse(url);
-            DownloadManager.Request request = new DownloadManager.Request(uri);
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION);
-            downloadReferenceId = downloadManager.enqueue(request);
-        });
+            Intent updateIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            updateIntent.setClassName("com.android.browser", "com.android.browser.BrowserActivity");
+            activity.startActivity(updateIntent);
+        }).show();
     }
 
     @Override

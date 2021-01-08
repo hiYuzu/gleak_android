@@ -111,7 +111,7 @@ public class HttpUtils {
                     result.putInt(CODE, response.code());
                     result.putBoolean(RESULT, true);
                     if (response.code() != SUCCESS_CODE) {
-                        result.putString(MESSAGE, "服务器响应异常：" + response.code());
+                        result.putString(MESSAGE, "服务器 " + response.code() + " 异常: " + response.message());
                     } else {
                         if (response.body() != null) {
                             result.putString(MESSAGE, response.body().string());

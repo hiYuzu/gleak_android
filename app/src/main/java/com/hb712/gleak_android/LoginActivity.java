@@ -66,7 +66,6 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
                     startActivity(intent);
                 }
             }
-            new CommonUtil(this).checkUpdate();
         } catch (Exception e) {
             LogUtil.errorOut(TAG, e, e.getMessage());
         } finally {
@@ -81,9 +80,8 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
             mMessageText.setVisibility(View.GONE);
             mResultText.setVisibility(View.GONE);
             mLoadingImage.setVisibility(View.GONE);
-            PermissionsUtil.requestRWPermission(this);
             MainApplication.getInstance().removeUserPwd();
-
+            new CommonUtil(this).checkUpdate();
             mLoginButton.setOnClickListener(v -> {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
@@ -108,10 +106,10 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResult) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResult);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == GlobalParam.REQUEST_RW_PERMISSION) {
-            for (int grant : grantResult) {
+            for (int grant : grantResults) {
                 if (grant != PackageManager.PERMISSION_GRANTED) {
                     CommonDialog.getDialog(this, "权限不足", "应用需要开启读写功能，请到 “应用信息 -> 权限” 中授予！", null, null, "拒绝", () -> {
                         Intent intent = new Intent();

@@ -85,9 +85,11 @@ public class LogUtil {
         StringBuilder sb = new StringBuilder();
         if (e != null) {
             sb.append(e.getMessage());
-        }
-        if (detail != null && !detail.isEmpty()) {
-            sb.append(", detail: ").append(detail);
+            if (detail != null && !detail.isEmpty()) {
+                sb.append(", detail: ").append(detail);
+            }
+        } else if (detail != null && !detail.isEmpty()) {
+            sb.append(detail);
         }
         String msg = sb.toString();
         Log.w(tag, msg);
@@ -107,9 +109,11 @@ public class LogUtil {
         StringBuilder sb = new StringBuilder();
         if (e != null) {
             sb.append(e.getMessage());
-        }
-        if (detail != null && !detail.isEmpty()) {
-            sb.append(", detail: ").append(detail);
+            if (detail != null && !detail.isEmpty()) {
+                sb.append(", detail: ").append(detail);
+            }
+        } else if (detail != null && !detail.isEmpty()) {
+            sb.append(detail);
         }
         String msg = sb.toString();
         Log.e(tag, msg);
