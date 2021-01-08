@@ -25,14 +25,26 @@
     native <methods>;
 }
 
-#greendao不被混淆
--keep class org.greenrobot.greendao.**{*;}
+#不被混淆
+-keep class org.greenrobot.*.**{*;}
 -keepclassmembers class * extends org.greenrobot.greendao.AbstractDao{
     public static java.lang.String TABLENAME;
 }
+# 不要混淆导入的包，忽略警告
+-dontwarn com.baidu.**
+-keep class com.baidu.*.** {*;}
+-dontwarn com.alibaba.**
+-keep class com.alibaba.*.** {*;}
+-dontwarn okhttp3.**
+-keep class okhttp3.*.** {*;}
+-dontwarn okio.**
+-keep class okio.*.** {*;}
+
 -keep class **$Properties
 # If you do not use SQLCipher:
 -dontwarn org.greenrobot.greendao.database.**
 # If you do not use RxJava:
 -dontwarn rx.**
+# ignore packge warnings
+#-ignorewarnings
 
