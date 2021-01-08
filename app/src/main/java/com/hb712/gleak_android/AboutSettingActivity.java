@@ -48,6 +48,6 @@ public class AboutSettingActivity extends AppCompatActivity {
         versionName.setText(GlobalParam.versionName);
 
         TextView updateDate = findViewById(R.id.updateDate);
-        updateDate.setText(DateUtil.getDefaultTime());
+        updateDate.setText(GlobalParam.updateTime);
     }
 }

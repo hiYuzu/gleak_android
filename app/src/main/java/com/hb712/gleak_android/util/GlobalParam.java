@@ -1,6 +1,5 @@
 package com.hb712.gleak_android.util;
 
-import android.annotation.SuppressLint;
 import android.os.Environment;
 
 import com.hb712.gleak_android.message.net.InitLeakData;
@@ -14,7 +13,8 @@ import java.util.List;
  * @date 2020/9/30 13:38
  */
 public class GlobalParam {
-    public static String versionName = "1.0";
+    public static String versionName = "1.0.0";
+    public static String updateTime = "";
 
     public static String SERVE_IP = "serve_ip";
     public static String SERVE_PORT = "serve_port";

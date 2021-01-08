@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.service.UploadPositionService;
+import com.hb712.gleak_android.util.CommonUtil;
 import com.hb712.gleak_android.util.LogUtil;
 import com.hb712.gleak_android.util.ToastUtil;
 import com.hb712.gleak_android.util.GlobalParam;
@@ -22,6 +23,7 @@ import com.hb712.gleak_android.util.SPUtil;
 import java.util.List;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
+
     private static final String TAG = SettingsActivity.class.getSimpleName();
 
     private static boolean isXLargeTablet(Context context) {
@@ -68,15 +70,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public void onHeaderClick(Header header, int position) {
         super.onHeaderClick(header, position);
         if (header.id == R.id.checkUpdate) {
-            checkUpdate();
+            ToastUtil.shortToastShow("检查更新中...");
+            try {
+                new CommonUtil(this).checkUpdate();
+            } catch (NullPointerException npe) {
+                LogUtil.errorOut(TAG, npe, null);
+            }
+
         } else if (header.id == R.id.exitApp) {
             backLogin();
         }
-    }
-
-    private void checkUpdate() {
-        ToastUtil.longToastShow("检查更新中...");
-        // TODO: hiYuzu 2020/12/2 检查更新功能
     }
 
     private void backLogin() {

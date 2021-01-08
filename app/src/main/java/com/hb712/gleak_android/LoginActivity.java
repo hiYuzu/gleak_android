@@ -26,6 +26,7 @@ import com.hb712.gleak_android.base.BaseActivity;
 import com.hb712.gleak_android.dialog.CommonDialog;
 import com.hb712.gleak_android.interfaceabs.HttpInterface;
 import com.hb712.gleak_android.interfaceabs.OKHttpListener;
+import com.hb712.gleak_android.util.CommonUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
@@ -65,6 +66,7 @@ public class LoginActivity extends BaseActivity implements HttpInterface {
                     startActivity(intent);
                 }
             }
+            new CommonUtil(this).checkUpdate();
         } catch (Exception e) {
             LogUtil.errorOut(TAG, e, e.getMessage());
         } finally {

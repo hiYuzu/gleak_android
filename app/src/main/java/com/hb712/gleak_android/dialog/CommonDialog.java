@@ -14,8 +14,8 @@ import com.hb712.gleak_android.MainApplication;
  * @date 2020/12/2 15:30
  */
 public class CommonDialog {
-    private final String DEFAULT_POSITIVE_BUTTON = "确认";
-    private final String DEFAULT_NEGATIVE_BUTTON = "取消";
+    private static final String DEFAULT_POSITIVE_BUTTON = "确定";
+    private static final String DEFAULT_NEGATIVE_BUTTON = "取消";
     /**
      * 通用 dialog 窗口
      * @param context 调用者
@@ -41,11 +41,11 @@ public class CommonDialog {
             builder.setView(view);
         }
         if (positiveBtn == null) {
-            positiveBtn = "确定";
+            positiveBtn = DEFAULT_POSITIVE_BUTTON;
         }
         builder.setPositiveButton(positiveBtn, (dialog, which) -> successCallback.onConfirm());
         if (negativeBtn == null) {
-            negativeBtn = "取消";
+            negativeBtn = DEFAULT_NEGATIVE_BUTTON;
         }
         builder.setNegativeButton(negativeBtn, (dialog, which) -> dialog.dismiss());
         AlertDialog dialog = builder.create();
@@ -57,7 +57,7 @@ public class CommonDialog {
         new AlertDialog.Builder(context)
                 .setTitle("提示")
                 .setMessage(message)
-                .setPositiveButton("确定", (dialog, which) -> dialog.dismiss())
+                .setPositiveButton(DEFAULT_POSITIVE_BUTTON, (dialog, which) -> dialog.dismiss())
                 .create()
                 .show();
     }
@@ -66,7 +66,7 @@ public class CommonDialog {
         new AlertDialog.Builder(context)
                 .setTitle("警告")
                 .setMessage(message)
-                .setPositiveButton("确定", (dialog, which) -> dialog.dismiss())
+                .setPositiveButton(DEFAULT_POSITIVE_BUTTON, (dialog, which) -> dialog.dismiss())
                 .create()
                 .show();
     }

@@ -106,7 +106,7 @@ public class HistoryAdapter extends BaseAdapter {
         if (detectInfoView.detectInfo.getMonitorValue() != -1.0D) {
             viewHolder.monitorValue.setText(new DecimalFormat("0.00").format(getUnitValue(detectInfoView.detectInfo.getMonitorValue())));
         } else {
-            viewHolder.monitorValue.setText("无数据");
+            viewHolder.monitorValue.setText("无数值");
         }
 
         viewHolder.monitorTime.setText(detectInfoView.detectInfo.getMonitorTime());
