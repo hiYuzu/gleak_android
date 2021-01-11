@@ -30,7 +30,6 @@ import com.hb712.gleak_android.util.CommonUtil;
 import com.hb712.gleak_android.util.GlobalParam;
 import com.hb712.gleak_android.util.HttpUtils;
 import com.hb712.gleak_android.util.LogUtil;
-import com.hb712.gleak_android.util.PermissionsUtil;
 
 /**
  * @author hiYuzu

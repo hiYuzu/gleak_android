@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -70,19 +69,12 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     private Button startRecordBtn;
     private Button uploadVideoBtn;
 
-    //连接
     private Button detectConnectB;
-    //连接的设备名
     private TextView connDeviceTV;
-    //单位
     private TextView detectUnit;
-    //曲线
     private TextView detectSeriesTV;
-    //响应因子
     private TextView detectFactorTV;
-    //检测值
     private EditText detectValueET;
-    //最大值
     private EditText detectMaxvalueET;
 
     private TextView detectParamPower;
@@ -610,7 +602,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     /**
      * 点火
      *
-     * @param view
+     * @param view 视图
      */
     public void fireClick(View view) {
         if (isConnected()) {
@@ -622,7 +614,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     /**
      * 点火2
      *
-     * @param view
+     * @param view 视图
      */
     public void fireClick2(View view) {
         if (isConnected()) {
@@ -634,7 +626,7 @@ public class DetectActivity extends BaseActivity implements HttpInterface {
     /**
      * 关火
      *
-     * @param view
+     * @param view 视图
      */
     public void ceasefireClick(View view) {
         if (isConnected()) {
